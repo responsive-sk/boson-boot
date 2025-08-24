@@ -1,0 +1,624 @@
+/* Boson PHP HTMX - Main Stylesheet */
+/* Converted from Lit JS version to work with HTMX components */
+/* Using original styles from mark.responsive.sk */
+
+/* Import base styles from original Lit version */
+@import url("./styles/fonts.css");
+@import url("./styles/layout.css");
+@import url("./styles/typography.css");
+
+/**
+ * Naming:
+ *
+ *  --[type]-[task]-[context]-[action]: ...
+ *
+ * Examples:
+ *
+ *  --[color|width|font] : Type is color, or width, or font, or etc
+ *  --color-[bg|text|border] : Type is color and task is background, or ...
+ *  --color-text-[button|link|tag] : Context is button, dropdown, link, tag, etc
+ *  --color-text-button-[*|hover|opacity|active|disabled|placeholder]
+ */
+:root {
+  /**
+   * ---------------------------------------------------------------------------
+   *  Overlay
+   * ---------------------------------------------------------------------------
+   */
+
+  /**
+   * Main background colors
+   */
+  --color-bg: #0d1119;
+  --color-bg-opacity: rgba(var(--color-bg), .5);
+  --color-bg-hover: rgba(158, 174, 242, 0.1);
+
+  /**
+   * Layer (dropdowns, popups, etc) element background colors
+   */
+  --color-bg-layer: #0f131c;
+  --color-bg-layer-opacity: rgba(var(--color-bg-layer), .5);
+  --color-bg-layer-hover: #0A0A0A;
+
+  /**
+   * Main + secondary text colors
+   */
+  --color-text: rgba(255, 255, 255, 0.9);
+  --color-text-secondary: rgba(255, 255, 255, 0.6);
+
+  /**
+   * Main brand background color
+   */
+  --color-text-brand: #F93904;
+  --color-text-brand-opacity: rgba(var(--color-text-brand), .5);
+  --color-text-brand-hover: #972203;
+
+  /**
+   * Main border color
+   */
+  --color-border: rgba(255, 255, 255, .05);
+
+  --color-quote: rgba(158, 174, 242, .1);
+  --color-quote-text: rgba(222, 225, 241, 0.8);
+  --color-quote-border: rgba(158, 174, 242, .1);
+
+  --color-quote-tip: var(--color-quote);
+  --color-quote-tip-text: var(--color-quote-text);
+  --color-quote-tip-border: var(--color-quote-border);
+
+  --color-quote-note: rgba(135, 223, 152, .15);
+  --color-quote-note-text: rgba(229, 238, 219, .88);
+  --color-quote-note-border: rgba(233, 248, 94, .17);
+
+  --color-quote-warning: rgba(215, 65, 84, 0.2);
+  --color-quote-warning-text: rgba(241, 229, 229, 0.9);
+  --color-quote-warning-border: rgba(240, 158, 169, .18);
+
+  /**
+   * Overlay Text
+   */
+  --font-fallback-main: BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  --font-fallback-mono: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+
+  --font-title: var(--font-fallback-main);
+  --font-mono: var(--font-fallback-mono);
+  --font-main: var(--font-fallback-main);
+
+  --font-size: 17px;
+  --font-line-height: 1.7;
+
+  --font-size-secondary: 15px;
+  --font-line-height-secondary: 1.6;
+
+  --font-size-h1: 96px;
+  --font-line-height-h1: 110%;
+
+  --font-size-h2: 64px;
+  --font-line-height-h2: 120%;
+
+  --font-size-h3: 40px;
+  --font-line-height-h3: 120%;
+
+  --font-size-h4: 32px;
+  --font-line-height-h4: 130%;
+
+  --font-size-h5: 24px;
+  --font-line-height-h5: 130%;
+
+  --font-size-h6: 20px;
+  --font-line-height-h6: 130%;
+
+  /**
+   * Overlay Width
+   */
+  --width-content: 90vw;
+  --width-max: 1440px;
+  --height-ui: 56px;
+  --height-ui-small: 36px;
+
+  /**
+   * ---------------------------------------------------------------------------
+   *  Button
+   * ---------------------------------------------------------------------------
+   */
+
+  /**
+   * Main button colors (improved contrast)
+   */
+  --color-bg-button: #F93904;
+  --color-bg-button-opacity: rgba(249, 57, 4, .5);
+  --color-bg-button-hover: #E02F00;
+
+  --color-text-button: #FFFFFF;
+
+  /**
+   * Secondary button background color
+   */
+  --color-bg-button-secondary: #151521;
+  --color-bg-button-secondary-opacity: rgba(var(--color-bg-button-secondary), .5);
+  --color-bg-button-secondary-hover: #1d1d2d;
+
+  --color-text-button-secondary: var(--color-text);
+
+  --landing-layout-gap: 4em;
+
+  interpolate-size: allow-keywords;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+@media (orientation: portrait) {
+  :root {
+    --width-content: unset;
+  }
+  segment-section [slot="title"] br {
+    display: none;
+  }
+}
+
+/* HTMX Component Styles */
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-main);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-title);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+p {
+  color: var(--color-text-secondary);
+  margin: 0 0 1rem 0;
+}
+
+a {
+  color: var(--color-text-brand);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-text-brand-hover);
+}
+
+/* Button Component */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 0.75em 1.5em;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-family: var(--font-main);
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.btn:focus {
+  outline: 2px solid var(--color-text-brand);
+  outline-offset: 2px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-primary {
+  background: var(--color-text-brand);
+  color: white;
+  border-color: var(--color-text-brand);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--color-text-brand-hover);
+  border-color: var(--color-text-brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(249, 57, 4, 0.3);
+}
+
+.btn-secondary {
+  background: var(--color-bg-layer);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--color-bg-hover);
+  border-color: var(--color-text-brand);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-color: transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--color-text);
+  background: var(--color-bg-hover);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-text-brand);
+  border-color: var(--color-text-brand);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: var(--color-text-brand);
+  color: white;
+}
+
+.btn-small {
+  padding: 0.5em 1em;
+  font-size: 0.875em;
+}
+
+.btn-large {
+  padding: 1em 2em;
+  font-size: 1.125em;
+}
+
+.btn.active {
+  background: var(--color-text-brand);
+  color: white;
+  border-color: var(--color-text-brand);
+}
+
+/* Header styles */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.header.scrolled {
+  height: 60px;
+  background: var(--color-bg-layer);
+  backdrop-filter: blur(10px);
+}
+
+.header .nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.header .nav-link {
+  color: var(--color-text-secondary);
+  transition: color 0.3s ease;
+}
+
+.header .nav-link:hover {
+  color: var(--color-text);
+}
+
+.header .aside {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Mobile menu styles */
+.mobile-menu-toggle {
+  display: none;
+}
+
+@media (orientation: portrait) {
+  .mobile-menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+  }
+
+  .header .nav {
+    display: none;
+  }
+
+  .search-container {
+    display: none;
+  }
+}
+
+.menu-icon span,
+.close-icon span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--color-text);
+  transition: all 0.3s ease;
+}
+
+.menu-icon span:not(:last-child) {
+  margin-bottom: 4px;
+}
+
+.close-icon {
+  position: relative;
+}
+
+.close-icon span:first-child {
+  transform: rotate(45deg);
+  position: absolute;
+}
+
+.close-icon span:last-child {
+  transform: rotate(-45deg);
+}
+
+.mobile-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+}
+
+.mobile-menu-content {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg);
+  z-index: 999;
+  overflow-y: auto;
+}
+
+.chevron {
+  transition: transform 0.3s ease;
+}
+
+.chevron.rotated {
+  transform: rotate(180deg);
+}
+
+/* Download Page Styles */
+.download-page {
+  max-width: var(--width-max, 1200px);
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.download-hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.download-hero h2 {
+  font-size: var(--font-size-h2);
+  margin-bottom: 1rem;
+}
+
+.download-platforms {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.platform-card {
+  background: var(--color-bg-layer);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.platform-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.platform-icon {
+  margin-bottom: 1rem;
+  color: var(--color-text-brand);
+}
+
+.platform-card h3 {
+  margin: 1rem 0 0.5rem 0;
+  font-size: var(--font-size-h4);
+}
+
+.platform-card p {
+  margin-bottom: 1.5rem;
+  color: var(--color-text-secondary);
+}
+
+.download-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.version-info {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.installation-guide {
+  margin-bottom: 4rem;
+}
+
+.install-steps {
+  display: grid;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--color-text-brand);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.step-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-h5);
+}
+
+.step-content p {
+  margin: 0;
+}
+
+.step-content code {
+  background: var(--color-bg-layer);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+.system-requirements {
+  margin-bottom: 4rem;
+}
+
+.requirements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.requirement-section {
+  background: var(--color-bg-layer);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.requirement-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: var(--font-size-h5);
+}
+
+.requirement-section ul {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.alternative-installs {
+  margin-bottom: 4rem;
+}
+
+.install-method {
+  margin-bottom: 2rem;
+}
+
+.install-method h3 {
+  margin-bottom: 1rem;
+  font-size: var(--font-size-h5);
+}
+
+.code-block {
+  background: var(--color-bg-layer);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.code-block h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: var(--font-size-base);
+  color: var(--color-text-brand);
+}
+
+.code-block pre {
+  margin: 0.5rem 0;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.help-section {
+  text-align: center;
+  padding: 2rem;
+  background: var(--color-bg-layer);
+  border-radius: 12px;
+}
+
+.help-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .download-platforms {
+    grid-template-columns: 1fr;
+  }
+
+  .requirements-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .help-links {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .step {
+    flex-direction: column;
+    text-align: center;
+  }
+}

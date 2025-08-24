@@ -1,0 +1,21 @@
+<svg viewBox="0 0 255 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Boson PHP Logo - matching original design -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#F93904;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e63304;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Logo symbol -->
+  <circle cx="40" cy="50" r="25" fill="url(#logoGradient)"/>
+  <path d="M30 40 L35 50 L30 60 M45 40 L50 50 L45 60" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Text -->
+  <text x="80" y="45" fill="#fff" font-family="system-ui, sans-serif" font-size="28" font-weight="700" letter-spacing="-0.5px">
+    Boson
+  </text>
+  <text x="80" y="65" fill="rgba(255,255,255,0.6)" font-family="system-ui, sans-serif" font-size="14" font-weight="400">
+    PHP Desktop
+  </text>
+</svg>

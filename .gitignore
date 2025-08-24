@@ -1,0 +1,65 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# Cache directories
+storage/cache/*
+storage/templates/*
+!storage/cache/.gitkeep
+!storage/templates/.gitkeep
+
+# Session files
+storage/sessions/*
+!storage/sessions/.gitkeep
+
+# Log files
+storage/logs/*
+!storage/logs/.gitkeep
+
+# Database files
+database/*.sqlite
+database/*.db
+
+# Upload files
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Composer
+vendor/
+composer.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.pid
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Node modules (if any)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# PHP specific
+*.php~
+.phpunit.result.cache
+
+# Test files
+tests/coverage/
+phpunit.xml

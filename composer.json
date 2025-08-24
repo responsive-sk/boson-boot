@@ -1,0 +1,38 @@
+{
+    "name": "boson/ddd-blog-htmx",
+    "description": "Pragmatic DDD + HTMX + SQLite implementation of Boson PHP blog",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "nikic/fast-route": "^1.3",
+        "league/plates": "^3.5",
+        "ext-sqlite3": "*",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Boson\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Boson\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse",
+        "serve": "php -S localhost:8080 -t public"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
