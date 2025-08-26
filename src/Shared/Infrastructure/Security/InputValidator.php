@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Security;
 
+use function array_slice;
+use function in_array;
+use function is_array;
+use function is_bool;
+use function is_string;
+use function strlen;
+
 class InputValidator
 {
     private array $errors = [];
@@ -30,13 +37,48 @@ class InputValidator
         return !empty($this->errors) ? reset($this->errors)[0] : null;
     }
 
+    public static function sanitizeString(string $input): string
+    {
+        return htmlspecialchars(trim($input), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
+    public static function sanitizeEmail(string $email): string
+    {
+        return filter_var(trim($email), FILTER_SANITIZE_EMAIL);
+    }
+
+    public static function sanitizeUrl(string $url): string
+    {
+        return filter_var(trim($url), FILTER_SANITIZE_URL);
+    }
+
+    public static function sanitizeInt(string $input): int
+    {
+        return (int) filter_var($input, FILTER_SANITIZE_NUMBER_INT);
+    }
+
+    public static function sanitizeFloat(string $input): float
+    {
+        return (float) filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    }
+
+    public static function stripTags(string $input, string $allowedTags = ''): string
+    {
+        return strip_tags($input, $allowedTags);
+    }
+
+    public static function escapeHtml(string $input): string
+    {
+        return htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    }
+
     private function validateField(string $field, $value, array $rules): void
     {
         foreach ($rules as $rule) {
             if (is_string($rule)) {
                 $this->applyRule($field, $value, $rule);
             } elseif (is_array($rule)) {
-                $ruleName = $rule[0];
+                $ruleName   = $rule[0];
                 $ruleParams = array_slice($rule, 1);
                 $this->applyRule($field, $value, $ruleName, $ruleParams);
             }
@@ -78,14 +120,14 @@ class InputValidator
 
             case 'min':
                 $min = $params[0] ?? 0;
-                if ($value !== null && strlen((string)$value) < $min) {
+                if ($value !== null && strlen((string) $value) < $min) {
                     $this->addError($field, "Field {$field} must be at least {$min} characters");
                 }
                 break;
 
             case 'max':
                 $max = $params[0] ?? 255;
-                if ($value !== null && strlen((string)$value) > $max) {
+                if ($value !== null && strlen((string) $value) > $max) {
                     $this->addError($field, "Field {$field} must not exceed {$max} characters");
                 }
                 break;
@@ -109,7 +151,7 @@ class InputValidator
                 break;
 
             case 'in':
-                if ($value !== null && !in_array($value, $params)) {
+                if ($value !== null && !in_array($value, $params, true)) {
                     $allowed = implode(', ', $params);
                     $this->addError($field, "Field {$field} must be one of: {$allowed}");
                 }
@@ -148,40 +190,5 @@ class InputValidator
             $this->errors[$field] = [];
         }
         $this->errors[$field][] = $message;
-    }
-
-    public static function sanitizeString(string $input): string
-    {
-        return htmlspecialchars(trim($input), ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    }
-
-    public static function sanitizeEmail(string $email): string
-    {
-        return filter_var(trim($email), FILTER_SANITIZE_EMAIL);
-    }
-
-    public static function sanitizeUrl(string $url): string
-    {
-        return filter_var(trim($url), FILTER_SANITIZE_URL);
-    }
-
-    public static function sanitizeInt(string $input): int
-    {
-        return (int) filter_var($input, FILTER_SANITIZE_NUMBER_INT);
-    }
-
-    public static function sanitizeFloat(string $input): float
-    {
-        return (float) filter_var($input, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    }
-
-    public static function stripTags(string $input, string $allowedTags = ''): string
-    {
-        return strip_tags($input, $allowedTags);
-    }
-
-    public static function escapeHtml(string $input): string
-    {
-        return htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 }

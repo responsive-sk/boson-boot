@@ -14,14 +14,23 @@ RewriteEngine On
     # Prevent clickjacking
     Header always set X-Frame-Options DENY
     
-    # Strict Transport Security (HTTPS only)
+    # Strict Transport Security (HTTPS only) - Enable in production
     # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    
-    # Content Security Policy
-    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'"
-    
+
+    # Content Security Policy - Improved security
+    Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; require-trusted-types-for 'script'"
+
+    # Cross-Origin-Opener-Policy
+    Header always set Cross-Origin-Opener-Policy "same-origin"
+
+    # Cross-Origin-Embedder-Policy
+    Header always set Cross-Origin-Embedder-Policy "require-corp"
+
     # Referrer Policy
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Permissions Policy
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
     
     # Remove server signature
     Header unset Server
@@ -123,9 +132,10 @@ RewriteRule ^(.*)$ index.php [QSA,L]
 # Limit file upload size (10MB)
 LimitRequestBody 10485760
 
-# Prevent hotlinking
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTP_REFERER} !^$
-    RewriteCond %{HTTP_REFERER} !^https?://(www\.)?yourdomain\.com [NC]
-    RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F,L]
-</IfModule>
+# Prevent hotlinking (disabled for development)
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTP_REFERER} !^$
+#     RewriteCond %{HTTP_REFERER} !^https?://(www\.)?test\.responsive\.sk [NC]
+#     RewriteCond %{HTTP_REFERER} !^https?://(www\.)?localhost [NC]
+#     RewriteRule \.(jpg|jpeg|png|gif|webp|svg)$ - [F,L]
+# </IfModule>

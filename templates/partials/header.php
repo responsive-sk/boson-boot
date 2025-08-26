@@ -1,11 +1,24 @@
 <?php
 /**
- * Header partial - converted from Lit boson-header component
+ * Header partial - supports both Svelte and Alpine.js themes
  * Features: scroll detection, mobile menu, navigation
  */
 ?>
 
-<header 
+
+
+<?php if (isset($themeManager) && $themeManager->getCurrentTheme() === 'svelte'): ?>
+    <!-- Svelte Header -->
+    <div id="svelte-header"
+         data-current-route="<?= $currentRoute ?? '' ?>"
+         data-search-query="<?= $searchQuery ?? '' ?>"></div>
+
+    <!-- Svelte Search Modal -->
+    <div id="svelte-search-modal"></div>
+<?php else: ?>
+    <!-- Alpine.js Header -->
+
+<header
     class="header" 
     x-data="{ 
         isScrolled: false,
@@ -24,22 +37,15 @@
     }"
     :class="{ 'scrolled': isScrolled }"
 >
-    <!-- Decorative dots -->
+    <!-- Decorative dots (absolute positioned) -->
     <div class="dots">
-        <?php $this->insert('components::dots-container') ?>
-    </div>
-
-    <!-- Logo -->
-    <div class="logo-container">
-        <a href="/" class="logo-link">
-            <?php $this->insert('components::logo') ?>
-        </a>
+        <?php $this->insert('components/ui/dots-container') ?>
     </div>
 
     <!-- Main Navigation -->
     <nav class="nav" role="navigation" aria-label="Main navigation">
         <a href="/docs/latest" class="nav-link">Documentation</a>
-        <a href="/blog" class="nav-link">Blog</a>
+        <a href="/articles" class="nav-link">Articles</a>
         <a href="/examples" class="nav-link">Examples</a>
         <a href="/download" class="nav-link">Download</a>
     </nav>
@@ -48,7 +54,7 @@
     <aside class="aside">
         <!-- Search -->
         <div class="search-container">
-            <?php $this->insert('components::search-input', [
+            <?php $this->insert('components/ui/search-input', [
                 'action' => '/search',
                 'query' => $searchQuery ?? '',
                 'placeholder' => 'Search documentation...'
@@ -71,7 +77,7 @@
 
     <!-- Decorative dots -->
     <div class="dots">
-        <?php $this->insert('components::dots-container') ?>
+        <?php $this->insert('components/ui/dots-container') ?>
     </div>
 
     <!-- Mobile Menu Overlay -->
@@ -114,18 +120,18 @@
                 </div>
             </div>
 
-            <!-- Blog Section -->
+            <!-- Articles Section -->
             <div class="menu-section" x-data="{ expanded: false }">
                 <div class="menu-title" @click="expanded = !expanded" :class="{ 'expanded': expanded }">
-                    <span>Blog</span>
+                    <span>Articles</span>
                     <svg class="chevron" :class="{ 'rotated': expanded }" width="12" height="8" viewBox="0 0 12 8">
                         <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" fill="none"/>
                     </svg>
                 </div>
                 <div class="collapsible-content" x-show="expanded" x-collapse>
-                    <a href="/blog" class="menu-link">All Posts</a>
-                    <a href="/blog/tutorials" class="menu-link">Tutorials</a>
-                    <a href="/blog/news" class="menu-link">News</a>
+                    <a href="/articles" class="menu-link">All Articles</a>
+                    <a href="/articles/category/1" class="menu-link">Tutorials</a>
+                    <a href="/articles/category/2" class="menu-link">News</a>
                 </div>
             </div>
 
@@ -141,6 +147,7 @@
 
 <!-- Header padding to prevent content jump -->
 <div class="header-padding"></div>
+<?php endif; ?>
 
 
 

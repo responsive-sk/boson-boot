@@ -11,11 +11,11 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     public function __construct(array $headers = [])
     {
         $this->headers = array_merge([
-            'X-Content-Type-Options' => 'nosniff',
-            'X-Frame-Options' => 'DENY',
-            'X-XSS-Protection' => '1; mode=block',
-            'Referrer-Policy' => 'strict-origin-when-cross-origin',
-            'X-Permitted-Cross-Domain-Policies' => 'none'
+            'X-Content-Type-Options'            => 'nosniff',
+            'X-Frame-Options'                   => 'DENY',
+            'X-XSS-Protection'                  => '1; mode=block',
+            'Referrer-Policy'                   => 'strict-origin-when-cross-origin',
+            'X-Permitted-Cross-Domain-Policies' => 'none',
         ], $headers);
     }
 

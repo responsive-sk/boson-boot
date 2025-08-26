@@ -3,7 +3,7 @@
  * Download Page - matching original mark.responsive.sk structure
  */
 
-$this->insert('layout::default', [
+$this->layout('layouts::app', [
     'title' => 'Download Boson PHP - Desktop Applications with PHP',
     'description' => 'Download Boson PHP and start building native desktop applications with PHP. Available for Windows, macOS, and Linux.',
     'currentRoute' => 'download',
@@ -12,8 +12,11 @@ $this->insert('layout::default', [
     'breadcrumbs' => [
         ['text' => 'Home', 'url' => '/'],
         ['text' => 'Download', 'url' => null]
-    ],
-    'content' => '
+    ]
+]);
+?>
+
+<?php $this->start('main') ?>
         <div class="download-page">
             <div class="download-hero">
                 <h2>Choose Your Platform</h2>
@@ -167,6 +170,5 @@ docker run -it bosonphp/boson</code></pre>
                 </div>
             </div>
         </div>
-    '
-]);
-?>
+
+<?php $this->stop() ?>

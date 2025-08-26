@@ -1,0 +1,68 @@
+includes:
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+    level: max
+    paths:
+        - src
+    
+    # Exclude generated files and vendor
+    excludePaths:
+        - vendor
+        - storage
+        - database/*.sqlite
+    
+    # Bootstrap file for autoloading
+    bootstrapFiles:
+        - vendor/autoload.php
+    
+    # Ignore specific errors that are acceptable
+    ignoreErrors:
+        # Allow mixed types for template data
+        - '#Parameter \#2 \$data of method .+::render\(\) expects array, array<string, mixed> given#'
+        
+        # Allow dynamic property access in templates
+        - '#Access to an undefined property League\\Plates\\Template::\$[a-zA-Z_]+#'
+        
+        # Allow superglobals usage
+        - '#Variable \$_(GET|POST|SERVER|SESSION|COOKIE) might not be defined#'
+        
+        # Allow PDO fetch methods returning mixed
+        - '#Method PDOStatement::fetch\(\) invoked with \d+ parameter, \d+ required#'
+    
+    # Check for missing return types
+    checkMissingIterableValueType: true
+    checkGenericClassInNonGenericObjectType: true
+    
+    # Report unused variables and parameters
+    reportUnmatchedIgnoredErrors: true
+    
+    # Strict rules
+    strictRules:
+        allRules: false
+        booleansInConditions: true
+        uselessCast: true
+        requireParentConstructorCall: true
+        disallowedLooseComparison: true
+        noVariableVariables: true
+        strictCalls: true
+    
+    # Type coverage
+    typeAliases:
+        TemplateData: 'array<string, mixed>'
+        RouteParams: 'array<string, string>'
+        ValidationRules: 'array<string, array<int|string, mixed>>'
+    
+    # Parallel processing
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 32
+        minimumNumberOfJobsPerProcess: 2
+    
+    # Memory limit
+    memoryLimitFile: .phpstan-memory-limit
+    
+    # Temporary files
+    tmpDir: storage/phpstan
+    
+

@@ -309,10 +309,74 @@ a:hover {
   transition: all 0.3s ease;
 }
 
-.header.scrolled {
+/* Header padding to prevent content overlap */
+.header-padding {
+  height: 100px;
+  flex-shrink: 0;
+}
+
+/* Decorative dots - absolute positioned to not interfere with flexbox */
+.header .dots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Logo styles */
+.header .logo-container {
+  flex-shrink: 0;
+}
+
+.header .logo-link {
+  display: block;
+  text-decoration: none;
+}
+
+.logo-component {
+  display: block;
+}
+
+.logo-component.size-default .logo-svg {
+  width: 180px;
+  height: 40px;
+}
+
+.logo-component.size-small .logo-svg {
+  width: 120px;
+  height: 30px;
+}
+
+.logo-component.size-large .logo-svg {
+  width: 255px;
   height: 60px;
+}
+
+.logo-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.logo-svg text {
+  fill: var(--color-text);
+}
+
+.logo-svg rect {
+  fill: var(--color-text-brand);
+}
+
+.header.scrolled {
+  height: 80px;
   background: var(--color-bg-layer);
   backdrop-filter: blur(10px);
+}
+
+.header.scrolled + .header-padding {
+  height: 80px;
 }
 
 .header .nav {
@@ -341,6 +405,27 @@ a:hover {
 }
 
 @media (orientation: portrait) {
+  .header {
+    height: 80px;
+    padding: 0 1rem;
+  }
+
+  .header-padding {
+    height: 80px;
+  }
+
+  .header.scrolled {
+    height: 70px;
+  }
+
+  .header.scrolled + .header-padding {
+    height: 70px;
+  }
+
+  .mobile-menu-content {
+    top: 80px;
+  }
+
   .mobile-menu-toggle {
     display: flex;
     align-items: center;
@@ -348,6 +433,42 @@ a:hover {
     width: 60px;
     height: 60px;
     cursor: pointer;
+  }
+
+  .header .nav {
+    display: none;
+  }
+
+  .search-container {
+    display: none;
+  }
+}
+
+/* Additional mobile styles for smaller screens */
+@media (max-width: 768px) {
+  .header {
+    height: 80px;
+    padding: 0 1rem;
+  }
+
+  .header-padding {
+    height: 80px;
+  }
+
+  .header.scrolled {
+    height: 70px;
+  }
+
+  .header.scrolled + .header-padding {
+    height: 70px;
+  }
+
+  .mobile-menu-content {
+    top: 80px;
+  }
+
+  .mobile-menu-toggle {
+    display: flex;
   }
 
   .header .nav {
@@ -397,7 +518,7 @@ a:hover {
 
 .mobile-menu-content {
   position: fixed;
-  top: 60px;
+  top: 100px;
   left: 0;
   right: 0;
   bottom: 0;

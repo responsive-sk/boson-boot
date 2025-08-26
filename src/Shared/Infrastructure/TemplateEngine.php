@@ -4,21 +4,27 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure;
 
-use League\Plates\Engine;
 use Boson\Shared\Infrastructure\Cache\CacheInterface;
 use Boson\Shared\Infrastructure\Cache\FileCache;
+use DateTime;
+use League\Plates\Engine;
+
+use function is_string;
+use function strlen;
 
 class TemplateEngine
 {
     private Engine $plates;
+
     private CacheInterface $cache;
+
     private bool $cacheEnabled;
 
-    public function __construct(string $templatesPath = null, CacheInterface $cache = null, bool $cacheEnabled = true)
+    public function __construct(?string $templatesPath = null, ?CacheInterface $cache = null, bool $cacheEnabled = true)
     {
-        $templatesPath = $templatesPath ?? __DIR__ . '/../../../templates';
-        $this->plates = new Engine($templatesPath);
-        $this->cache = $cache ?? new FileCache(__DIR__ . '/../../../storage/templates');
+        $templatesPath ??= __DIR__ . '/../../../templates';
+        $this->plates       = new Engine($templatesPath);
+        $this->cache        = $cache ?? new FileCache(__DIR__ . '/../../../storage/templates');
         $this->cacheEnabled = $cacheEnabled;
 
         // Register template folders
@@ -38,7 +44,7 @@ class TemplateEngine
         }
 
         $cacheKey = $this->generateCacheKey($template, $data);
-        $cached = $this->cache->get($cacheKey);
+        $cached   = $this->cache->get($cacheKey);
 
         if ($cached !== null) {
             return $cached;
@@ -62,61 +68,64 @@ class TemplateEngine
         $this->cacheEnabled = $enabled;
     }
 
-    private function generateCacheKey(string $template, array $data): string
-    {
-        $dataHash = md5(serialize($data));
-        return "template:{$template}:{$dataHash}";
-    }
-
     public function getEngine(): Engine
     {
         return $this->plates;
     }
 
+    private function generateCacheKey(string $template, array $data): string
+    {
+        $dataHash = md5(serialize($data));
+
+        return "template:{$template}:{$dataHash}";
+    }
+
     private function registerHelpers(): void
     {
         // HTML escaping helper (Plates uses 'e' by default, but we need 'escapeHtml')
-        $this->plates->registerFunction('escapeHtml', function (string $string): string {
+        $this->plates->registerFunction('escapeHtml', static function (string $string): string {
             return htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         });
 
         // URL helper
-        $this->plates->registerFunction('url', function (string $route, array $params = []): string {
+        $this->plates->registerFunction('url', static function (string $route, array $params = []): string {
             // Simple URL generation - can be enhanced later
             $routes = [
-                'home' => '/',
+                'home'       => '/',
                 'blog.index' => '/blog',
-                'blog.show' => '/blog/' . ($params['slug'] ?? ''),
+                'blog.show'  => '/blog/' . ($params['slug'] ?? ''),
                 'docs.index' => '/docs',
-                'docs.show' => '/docs/' . ($params['version'] ?? 'latest') . '/' . ($params['slug'] ?? ''),
-                'search' => '/search',
-                'about' => '/about',
-                'contact' => '/contact',
-                'privacy' => '/privacy',
-                'terms' => '/terms',
+                'docs.show'  => '/docs/' . ($params['version'] ?? 'latest') . '/' . ($params['slug'] ?? ''),
+                'search'     => '/search',
+                'about'      => '/about',
+                'contact'    => '/contact',
+                'privacy'    => '/privacy',
+                'terms'      => '/terms',
             ];
 
             return $routes[$route] ?? '#';
         });
 
         // Asset helper
-        $this->plates->registerFunction('asset', function (string $path): string {
+        $this->plates->registerFunction('asset', static function (string $path): string {
             return '/assets/' . ltrim($path, '/');
         });
 
         // Date helper
-        $this->plates->registerFunction('formatDate', function ($date, string $format = 'Y-m-d'): string {
+        $this->plates->registerFunction('formatDate', static function ($date, string $format = 'Y-m-d'): string {
             if (is_string($date)) {
-                $date = new \DateTime($date);
+                $date = new DateTime($date);
             }
-            return $date instanceof \DateTime ? $date->format($format) : '';
+
+            return $date instanceof DateTime ? $date->format($format) : '';
         });
 
         // Excerpt helper
-        $this->plates->registerFunction('excerpt', function (string $text, int $length = 150): string {
+        $this->plates->registerFunction('excerpt', static function (string $text, int $length = 150): string {
             if (strlen($text) <= $length) {
                 return $text;
             }
+
             return substr($text, 0, $length) . '...';
         });
     }

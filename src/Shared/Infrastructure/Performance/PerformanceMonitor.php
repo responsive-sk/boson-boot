@@ -4,58 +4,64 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Performance;
 
+use function array_slice;
+use function count;
+
 class PerformanceMonitor
 {
     private float $startTime;
+
     private int $startMemory;
+
     private array $checkpoints = [];
+
     private array $queries = [];
 
     public function __construct()
     {
-        $this->startTime = microtime(true);
+        $this->startTime   = microtime(true);
         $this->startMemory = memory_get_usage(true);
     }
 
     public function checkpoint(string $name): void
     {
         $this->checkpoints[$name] = [
-            'time' => microtime(true),
-            'memory' => memory_get_usage(true),
-            'elapsed' => microtime(true) - $this->startTime,
-            'memory_delta' => memory_get_usage(true) - $this->startMemory
+            'time'         => microtime(true),
+            'memory'       => memory_get_usage(true),
+            'elapsed'      => microtime(true) - $this->startTime,
+            'memory_delta' => memory_get_usage(true) - $this->startMemory,
         ];
     }
 
     public function logQuery(string $sql, array $params = [], float $executionTime = 0): void
     {
         $this->queries[] = [
-            'sql' => $sql,
-            'params' => $params,
+            'sql'            => $sql,
+            'params'         => $params,
             'execution_time' => $executionTime,
-            'timestamp' => microtime(true)
+            'timestamp'      => microtime(true),
         ];
     }
 
     public function getStats(): array
     {
-        $currentTime = microtime(true);
+        $currentTime   = microtime(true);
         $currentMemory = memory_get_usage(true);
-        $peakMemory = memory_get_peak_usage(true);
+        $peakMemory    = memory_get_peak_usage(true);
 
         return [
             'execution_time' => round(($currentTime - $this->startTime) * 1000, 2), // ms
-            'memory_usage' => [
+            'memory_usage'   => [
                 'current' => $this->formatBytes($currentMemory),
-                'peak' => $this->formatBytes($peakMemory),
-                'delta' => $this->formatBytes($currentMemory - $this->startMemory)
+                'peak'    => $this->formatBytes($peakMemory),
+                'delta'   => $this->formatBytes($currentMemory - $this->startMemory),
             ],
             'queries' => [
-                'count' => count($this->queries),
+                'count'      => count($this->queries),
                 'total_time' => round(array_sum(array_column($this->queries, 'execution_time')) * 1000, 2),
-                'details' => $this->queries
+                'details'    => $this->queries,
             ],
-            'checkpoints' => $this->checkpoints
+            'checkpoints' => $this->checkpoints,
         ];
     }
 
@@ -68,8 +74,8 @@ class PerformanceMonitor
     {
         return [
             'current' => memory_get_usage(true),
-            'peak' => memory_get_peak_usage(true),
-            'delta' => memory_get_usage(true) - $this->startMemory
+            'peak'    => memory_get_peak_usage(true),
+            'delta'   => memory_get_usage(true) - $this->startMemory,
         ];
     }
 
@@ -81,7 +87,7 @@ class PerformanceMonitor
     public function getSlowestQueries(int $limit = 5): array
     {
         $queries = $this->queries;
-        usort($queries, function($a, $b) {
+        usort($queries, static function ($a, $b) {
             return $b['execution_time'] <=> $a['execution_time'];
         });
 
@@ -101,52 +107,52 @@ class PerformanceMonitor
     public function renderDebugInfo(): string
     {
         $stats = $this->getStats();
-        
+
         $html = '<div id="debug-info" style="
-            position: fixed; 
-            bottom: 0; 
-            right: 0; 
-            background: rgba(0,0,0,0.9); 
-            color: white; 
-            padding: 10px; 
-            font-family: monospace; 
-            font-size: 12px; 
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
             z-index: 9999;
             max-width: 400px;
             border-radius: 5px 0 0 0;
         ">';
-        
+
         $html .= '<strong>Performance Debug</strong><br>';
         $html .= 'Time: ' . $stats['execution_time'] . 'ms<br>';
         $html .= 'Memory: ' . $stats['memory_usage']['current'] . ' (Peak: ' . $stats['memory_usage']['peak'] . ')<br>';
         $html .= 'Queries: ' . $stats['queries']['count'] . ' (' . $stats['queries']['total_time'] . 'ms)<br>';
-        
+
         if (!empty($this->checkpoints)) {
             $html .= '<br><strong>Checkpoints:</strong><br>';
             foreach ($this->checkpoints as $name => $data) {
                 $html .= $name . ': ' . round($data['elapsed'] * 1000, 2) . 'ms<br>';
             }
         }
-        
+
         $html .= '</div>';
-        
+
         return $html;
+    }
+
+    public static function start(): self
+    {
+        return new self();
     }
 
     private function formatBytes(int $bytes): string
     {
         $units = ['B', 'KB', 'MB', 'GB'];
         $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        
-        $bytes /= pow(1024, $pow);
-        
-        return round($bytes, 2) . ' ' . $units[$pow];
-    }
+        $pow   = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow   = min($pow, count($units) - 1);
 
-    public static function start(): self
-    {
-        return new self();
+        $bytes /= 1024 ** $pow;
+
+        return round($bytes, 2) . ' ' . $units[$pow];
     }
 }

@@ -1,0 +1,37 @@
+default:
+    suites:
+        web:
+            paths:
+                - '%paths.base%/tests/Feature'
+            contexts:
+                - Tests\Feature\WebContext
+                - Tests\Feature\BlogContext
+                - Tests\Feature\SearchContext
+    
+    extensions:
+        Behat\MinkExtension:
+            base_url: 'http://localhost:8080'
+            sessions:
+                default:
+                    goutte: ~
+                javascript:
+                    selenium2:
+                        wd_host: 'http://localhost:4444/wd/hub'
+                        capabilities:
+                            browserName: chromium
+                            browser: chromium
+                            version: ''
+    
+    formatters:
+        pretty:
+            verbose: true
+            paths: false
+            snippets: false
+        html:
+            output_path: 'tests/results/behat.html'
+        junit:
+            output_path: 'tests/results/behat.xml'
+    
+    gherkin:
+        filters:
+            tags: '~@javascript'

@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Cache;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+
+use function dirname;
+use function is_array;
+
 class FileCache implements CacheInterface
 {
     private string $cacheDir;
@@ -11,16 +17,16 @@ class FileCache implements CacheInterface
     public function __construct(?string $cacheDir = null)
     {
         $this->cacheDir = $cacheDir ?? __DIR__ . '/../../../../storage/cache';
-        
+
         if (!is_dir($this->cacheDir)) {
-            mkdir($this->cacheDir, 0755, true);
+            mkdir($this->cacheDir, 0o755, true);
         }
     }
 
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         $file = $this->getFilePath($key);
-        
+
         if (!file_exists($file)) {
             return $default;
         }
@@ -31,32 +37,33 @@ class FileCache implements CacheInterface
         }
 
         $cached = unserialize($data);
-        
+
         if (!is_array($cached) || !isset($cached['expires'], $cached['data'])) {
             return $default;
         }
 
         if ($cached['expires'] > 0 && $cached['expires'] < time()) {
             $this->delete($key);
+
             return $default;
         }
 
         return $cached['data'];
     }
 
-    public function set(string $key, $value, int $ttl = 3600): bool
+    public function set(string $key, mixed $value, int $ttl = 3600): bool
     {
         $file = $this->getFilePath($key);
-        $dir = dirname($file);
-        
+        $dir  = dirname($file);
+
         if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+            mkdir($dir, 0o755, true);
         }
 
         $expires = $ttl > 0 ? time() + $ttl : 0;
-        $data = serialize([
+        $data    = serialize([
             'expires' => $expires,
-            'data' => $value
+            'data'    => $value,
         ]);
 
         return file_put_contents($file, $data, LOCK_EX) !== false;
@@ -65,7 +72,7 @@ class FileCache implements CacheInterface
     public function delete(string $key): bool
     {
         $file = $this->getFilePath($key);
-        
+
         if (file_exists($file)) {
             return unlink($file);
         }
@@ -83,10 +90,10 @@ class FileCache implements CacheInterface
         return $this->get($key) !== null;
     }
 
-    public function getMultiple(array $keys, $default = null): array
+    public function getMultiple(array $keys, mixed $default = null): array
     {
         $result = [];
-        
+
         foreach ($keys as $key) {
             $result[$key] = $this->get($key, $default);
         }
@@ -97,7 +104,7 @@ class FileCache implements CacheInterface
     public function setMultiple(array $values, int $ttl = 3600): bool
     {
         $success = true;
-        
+
         foreach ($values as $key => $value) {
             if (!$this->set($key, $value, $ttl)) {
                 $success = false;
@@ -110,7 +117,7 @@ class FileCache implements CacheInterface
     public function deleteMultiple(array $keys): bool
     {
         $success = true;
-        
+
         foreach ($keys as $key) {
             if (!$this->delete($key)) {
                 $success = false;
@@ -122,9 +129,9 @@ class FileCache implements CacheInterface
 
     public function cleanup(): int
     {
-        $deleted = 0;
-        $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($this->cacheDir, \RecursiveDirectoryIterator::SKIP_DOTS)
+        $deleted  = 0;
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($this->cacheDir, RecursiveDirectoryIterator::SKIP_DOTS),
         );
 
         foreach ($iterator as $file) {
@@ -132,10 +139,10 @@ class FileCache implements CacheInterface
                 $data = file_get_contents($file->getPathname());
                 if ($data !== false) {
                     $cached = unserialize($data);
-                    if (is_array($cached) && isset($cached['expires']) && 
-                        $cached['expires'] > 0 && $cached['expires'] < time()) {
+                    if (is_array($cached) && isset($cached['expires'])
+                        && $cached['expires'] > 0 && $cached['expires'] < time()) {
                         unlink($file->getPathname());
-                        $deleted++;
+                        ++$deleted;
                     }
                 }
             }
@@ -147,7 +154,8 @@ class FileCache implements CacheInterface
     private function getFilePath(string $key): string
     {
         $hash = hash('sha256', $key);
-        $dir = substr($hash, 0, 2);
+        $dir  = substr($hash, 0, 2);
+
         return $this->cacheDir . '/' . $dir . '/' . $hash . '.cache';
     }
 
@@ -158,10 +166,10 @@ class FileCache implements CacheInterface
         }
 
         $files = array_diff(scandir($dir), ['.', '..']);
-        
+
         foreach ($files as $file) {
             $path = $dir . '/' . $file;
-            
+
             if (is_dir($path)) {
                 $this->deleteDirectory($path);
             } else {

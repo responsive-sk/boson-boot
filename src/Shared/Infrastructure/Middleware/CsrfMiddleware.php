@@ -6,29 +6,33 @@ namespace Boson\Shared\Infrastructure\Middleware;
 
 use Boson\Shared\Infrastructure\Security\CsrfProtection;
 
+use function in_array;
+
 class CsrfMiddleware implements MiddlewareInterface
 {
     private CsrfProtection $csrf;
+
     private array $excludedMethods;
+
     private array $excludedPaths;
 
     public function __construct(
         ?CsrfProtection $csrf = null,
         array $excludedMethods = ['GET', 'HEAD', 'OPTIONS'],
-        array $excludedPaths = []
+        array $excludedPaths = [],
     ) {
-        $this->csrf = $csrf ?? new CsrfProtection();
+        $this->csrf            = $csrf ?? new CsrfProtection();
         $this->excludedMethods = $excludedMethods;
-        $this->excludedPaths = $excludedPaths;
+        $this->excludedPaths   = $excludedPaths;
     }
 
     public function handle(array $request, callable $next): array
     {
         $method = $request['method'] ?? $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $path = $request['path'] ?? $_SERVER['REQUEST_URI'] ?? '/';
+        $path   = $request['path'] ?? $_SERVER['REQUEST_URI'] ?? '/';
 
         // Skip CSRF check for excluded methods
-        if (in_array($method, $this->excludedMethods)) {
+        if (in_array($method, $this->excludedMethods, true)) {
             return $next($request);
         }
 
@@ -43,13 +47,14 @@ class CsrfMiddleware implements MiddlewareInterface
         if (!$this->csrf->validateRequest()) {
             http_response_code(403);
             header('Content-Type: application/json');
-            
+
             $request['response'] = json_encode([
-                'error' => 'CSRF Token Mismatch',
-                'message' => 'Invalid or missing CSRF token.'
+                'error'   => 'CSRF Token Mismatch',
+                'message' => 'Invalid or missing CSRF token.',
             ]);
-            
+
             $request['stop_execution'] = true;
+
             return $request;
         }
 

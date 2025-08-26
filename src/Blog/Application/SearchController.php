@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\TemplateEngine;
-use Boson\Shared\Infrastructure\Database;
 use Boson\Shared\Infrastructure\Config;
+use Boson\Shared\Infrastructure\Database;
 use Boson\Shared\Infrastructure\Security\InputValidator;
 use Boson\Shared\Infrastructure\Security\RateLimiter;
+use Exception;
+
+use function array_slice;
+use function count;
+use function strlen;
 
 class SearchController
 {
     public function __construct(
         private $templateEngine,
         private Database $database,
-        private Config $config
+        private Config $config,
     ) {}
 
     public function index(array $params = []): string
     {
-        $query = $_GET['q'] ?? '';
+        $query   = $_GET['q'] ?? '';
         $results = [];
 
         if ($query) {
@@ -29,18 +33,18 @@ class SearchController
 
         $breadcrumbs = [
             ['text' => 'Home', 'url' => '/'],
-            ['text' => 'Search', 'url' => null]
+            ['text' => 'Search', 'url' => null],
         ];
 
         return $this->templateEngine->render('layout::default', [
-            'title' => $query ? "Search results for \"$query\"" : 'Search - Boson PHP',
-            'description' => 'Search documentation, blog posts, and examples.',
+            'title'        => $query ? "Search results for \"{$query}\"" : 'Search - Boson PHP',
+            'description'  => 'Search documentation, blog posts, and examples.',
             'currentRoute' => 'search',
-            'pageTitle' => 'Search',
-            'pageSubtitle' => $query ? "Results for \"$query\"" : 'Search documentation, blog posts, and examples',
-            'breadcrumbs' => $breadcrumbs,
-            'content' => $this->renderSearchResults($query, $results),
-            'searchQuery' => $query
+            'pageTitle'    => 'Search',
+            'pageSubtitle' => $query ? "Results for \"{$query}\"" : 'Search documentation, blog posts, and examples',
+            'breadcrumbs'  => $breadcrumbs,
+            'content'      => $this->renderSearchResults($query, $results),
+            'searchQuery'  => $query,
         ]);
     }
 
@@ -56,10 +60,11 @@ class SearchController
     {
         // Rate limiting for search requests
         $rateLimiter = new RateLimiter();
-        $identifier = $rateLimiter->getClientIdentifier() . ':search';
+        $identifier  = $rateLimiter->getClientIdentifier() . ':search';
 
         if (!$rateLimiter->isAllowed($identifier, 30, 300)) { // 30 searches per 5 minutes
             http_response_code(429);
+
             return '<div class="search-results-error">Too many search requests. Please wait a moment.</div>';
         }
 
@@ -69,7 +74,7 @@ class SearchController
         // Input validation
         $validator = new InputValidator();
         if (!$validator->validate(['q' => $query], [
-            'q' => ['required', ['min', 2], ['max', 100], 'string']
+            'q' => ['required', ['min', 2], ['max', 100], 'string'],
         ])) {
             return '<div class="search-results-empty">Type at least 2 characters to search...</div>';
         }
@@ -93,43 +98,42 @@ class SearchController
             return [];
         }
 
-        $results = [];
+        $results    = [];
         $maxResults = $this->config->getSearchMaxResults();
 
-        // Search blog posts using FTS
-        $blogResults = $this->searchBlogPosts($query, $maxResults);
-        foreach ($blogResults as $post) {
+        // Search articles using FTS
+        $articleResults = $this->searchArticles($query, $maxResults);
+        foreach ($articleResults as $article) {
             $results[] = [
-                'type' => 'blog',
-                'title' => $post['title'],
-                'url' => '/blog/' . $post['slug'],
-                'excerpt' => $this->highlightSearchTerms($post['excerpt'] ?? '', $query),
-                'category' => $post['category'] ?? 'Blog',
-                'published_at' => $post['published_at']
+                'type'         => 'article',
+                'title'        => $article['title'],
+                'url'          => '/articles/' . $article['slug'],
+                'excerpt'      => $this->highlightSearchTerms($article['excerpt'] ?? '', $query),
+                'category'     => $article['category'] ?? 'Article',
+                'published_at' => $article['published_at'],
             ];
         }
 
         // Add mock documentation results (can be replaced with real docs search later)
         if (count($results) < $maxResults) {
             $docResults = $this->searchDocumentation($query, $maxResults - count($results));
-            $results = array_merge($results, $docResults);
+            $results    = array_merge($results, $docResults);
         }
 
         return array_slice($results, 0, $maxResults);
     }
 
-    private function searchBlogPosts(string $query, int $limit): array
+    private function searchArticles(string $query, int $limit): array
     {
-        // Use SQLite FTS for blog posts
+        // Use SQLite FTS for articles
         $sql = "
             SELECT
-                bp.title, bp.slug, bp.excerpt, bp.published_at,
-                c.name as category,
-                bm_rank(blog_posts_fts) as rank
-            FROM blog_posts_fts
-            JOIN blog_posts bp ON blog_posts_fts.rowid = bp.id
-            LEFT JOIN categories c ON bp.category_id = c.id
-            WHERE blog_posts_fts MATCH ? AND bp.status = 'published'
+                a.title, a.slug, a.excerpt, a.published_at,
+                c.name as category
+            FROM articles_fts
+            JOIN articles a ON articles_fts.rowid = a.id
+            LEFT JOIN categories c ON a.category_id = c.id
+            WHERE articles_fts MATCH ? AND a.status = 'published'
             ORDER BY rank
             LIMIT ?
         ";
@@ -137,30 +141,32 @@ class SearchController
         try {
             $stmt = $this->database->getConnection()->prepare($sql);
             $stmt->execute([$query, $limit]);
+
             return $stmt->fetchAll();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Fallback to LIKE search if FTS fails
-            return $this->fallbackBlogSearch($query, $limit);
+            return $this->fallbackArticleSearch($query, $limit);
         }
     }
 
-    private function fallbackBlogSearch(string $query, int $limit): array
+    private function fallbackArticleSearch(string $query, int $limit): array
     {
         $sql = "
             SELECT
-                bp.title, bp.slug, bp.excerpt, bp.published_at,
+                a.title, a.slug, a.excerpt, a.published_at,
                 c.name as category
-            FROM blog_posts bp
-            LEFT JOIN categories c ON bp.category_id = c.id
-            WHERE (bp.title LIKE ? OR bp.excerpt LIKE ? OR bp.content LIKE ?)
-            AND bp.status = 'published'
-            ORDER BY bp.published_at DESC
+            FROM articles a
+            LEFT JOIN categories c ON a.category_id = c.id
+            WHERE (a.title LIKE ? OR a.excerpt LIKE ? OR a.content LIKE ?)
+            AND a.status = 'published'
+            ORDER BY a.published_at DESC
             LIMIT ?
         ";
 
         $searchTerm = '%' . $query . '%';
-        $stmt = $this->database->getConnection()->prepare($sql);
+        $stmt       = $this->database->getConnection()->prepare($sql);
         $stmt->execute([$searchTerm, $searchTerm, $searchTerm, $limit]);
+
         return $stmt->fetchAll();
     }
 
@@ -169,28 +175,28 @@ class SearchController
         // Mock documentation search - replace with real implementation
         $docs = [
             [
-                'type' => 'documentation',
-                'title' => 'Installation Guide',
-                'url' => '/docs/latest/installation',
-                'excerpt' => 'Learn how to install Boson PHP on your system...',
-                'category' => 'Getting Started'
+                'type'     => 'documentation',
+                'title'    => 'Installation Guide',
+                'url'      => '/docs/latest/installation',
+                'excerpt'  => 'Learn how to install Boson PHP on your system...',
+                'category' => 'Getting Started',
             ],
             [
-                'type' => 'documentation',
-                'title' => 'Building Your First App',
-                'url' => '/docs/latest/first-app',
-                'excerpt' => 'Create your first desktop application with Boson PHP...',
-                'category' => 'Tutorial'
-            ]
+                'type'     => 'documentation',
+                'title'    => 'Building Your First App',
+                'url'      => '/docs/latest/first-app',
+                'excerpt'  => 'Create your first desktop application with Boson PHP...',
+                'category' => 'Tutorial',
+            ],
         ];
 
-        $results = [];
+        $results    = [];
         $queryLower = strtolower($query);
 
         foreach ($docs as $doc) {
             if (
-                strpos(strtolower($doc['title']), $queryLower) !== false ||
-                strpos(strtolower($doc['excerpt']), $queryLower) !== false
+                strpos(strtolower($doc['title']), $queryLower) !== false
+                || strpos(strtolower($doc['excerpt']), $queryLower) !== false
             ) {
                 $results[] = $doc;
                 if (count($results) >= $limit) {
@@ -214,7 +220,7 @@ class SearchController
                 $text = preg_replace(
                     '/(' . preg_quote($word, '/') . ')/i',
                     '<mark>$1</mark>',
-                    $text
+                    $text,
                 );
             }
         }
@@ -225,7 +231,7 @@ class SearchController
     private function renderSearchResults(string $query, array $results): string
     {
         $html = '<div class="search-page">';
-        
+
         if ($query && !empty($results)) {
             $html .= '<div class="search-summary">';
             $html .= '<p>Found ' . count($results) . ' result' . (count($results) !== 1 ? 's' : '') . ' for "' . htmlspecialchars($query) . '"</p>';
@@ -242,13 +248,14 @@ class SearchController
         }
 
         $html .= '</div>';
+
         return $html;
     }
 
     private function renderSearchResultsHtml(array $results): string
     {
         $html = '<div class="search-results">';
-        
+
         foreach ($results as $result) {
             $html .= '<div class="search-result">';
             $html .= '<div class="result-type">' . ucfirst($result['type']) . '</div>';
@@ -260,8 +267,9 @@ class SearchController
             $html .= '</div>';
             $html .= '</div>';
         }
-        
+
         $html .= '</div>';
+
         return $html;
     }
 }

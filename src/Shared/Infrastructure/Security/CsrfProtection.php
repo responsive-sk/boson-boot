@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Security;
 
+use function array_slice;
+use function count;
+use function in_array;
+
 class CsrfProtection
 {
     private const TOKEN_LENGTH = 32;
+
     private const SESSION_KEY = '_csrf_tokens';
+
     private const MAX_TOKENS = 10;
 
     public function __construct()
@@ -20,15 +26,15 @@ class CsrfProtection
     public function generateToken(string $action = 'default'): string
     {
         $token = bin2hex(random_bytes(self::TOKEN_LENGTH));
-        
+
         if (!isset($_SESSION[self::SESSION_KEY])) {
             $_SESSION[self::SESSION_KEY] = [];
         }
 
         // Store token with timestamp
         $_SESSION[self::SESSION_KEY][$action] = [
-            'token' => $token,
-            'timestamp' => time()
+            'token'     => $token,
+            'timestamp' => time(),
         ];
 
         // Clean old tokens
@@ -44,7 +50,7 @@ class CsrfProtection
         }
 
         $storedData = $_SESSION[self::SESSION_KEY][$action];
-        
+
         // Check if token matches
         if (!hash_equals($storedData['token'], $token)) {
             return false;
@@ -53,12 +59,13 @@ class CsrfProtection
         // Check if token is not too old (1 hour)
         if (time() - $storedData['timestamp'] > 3600) {
             unset($_SESSION[self::SESSION_KEY][$action]);
+
             return false;
         }
 
         // Token is valid, remove it (one-time use)
         unset($_SESSION[self::SESSION_KEY][$action]);
-        
+
         return true;
     }
 
@@ -86,7 +93,7 @@ class CsrfProtection
     public function validateRequest(string $action = 'default'): bool
     {
         $token = $this->getTokenFromRequest();
-        
+
         if ($token === null) {
             return false;
         }
@@ -97,44 +104,15 @@ class CsrfProtection
     public function getHiddenInput(string $action = 'default'): string
     {
         $token = $this->generateToken($action);
+
         return '<input type="hidden" name="_token" value="' . htmlspecialchars($token, ENT_QUOTES) . '">';
     }
 
     public function getMetaTag(string $action = 'default'): string
     {
         $token = $this->generateToken($action);
+
         return '<meta name="csrf-token" content="' . htmlspecialchars($token, ENT_QUOTES) . '">';
-    }
-
-    private function cleanOldTokens(): void
-    {
-        if (!isset($_SESSION[self::SESSION_KEY])) {
-            return;
-        }
-
-        $tokens = $_SESSION[self::SESSION_KEY];
-        $currentTime = time();
-
-        // Remove expired tokens (older than 1 hour)
-        foreach ($tokens as $action => $data) {
-            if ($currentTime - $data['timestamp'] > 3600) {
-                unset($_SESSION[self::SESSION_KEY][$action]);
-            }
-        }
-
-        // If we have too many tokens, remove the oldest ones
-        if (count($_SESSION[self::SESSION_KEY]) > self::MAX_TOKENS) {
-            uasort($_SESSION[self::SESSION_KEY], function($a, $b) {
-                return $a['timestamp'] <=> $b['timestamp'];
-            });
-
-            $_SESSION[self::SESSION_KEY] = array_slice(
-                $_SESSION[self::SESSION_KEY], 
-                -self::MAX_TOKENS, 
-                null, 
-                true
-            );
-        }
     }
 
     public static function isSecureRequest(): bool
@@ -150,10 +128,42 @@ class CsrfProtection
         }
     }
 
+    private function cleanOldTokens(): void
+    {
+        if (!isset($_SESSION[self::SESSION_KEY])) {
+            return;
+        }
+
+        $tokens      = $_SESSION[self::SESSION_KEY];
+        $currentTime = time();
+
+        // Remove expired tokens (older than 1 hour)
+        foreach ($tokens as $action => $data) {
+            if ($currentTime - $data['timestamp'] > 3600) {
+                unset($_SESSION[self::SESSION_KEY][$action]);
+            }
+        }
+
+        // If we have too many tokens, remove the oldest ones
+        if (count($_SESSION[self::SESSION_KEY]) > self::MAX_TOKENS) {
+            uasort($_SESSION[self::SESSION_KEY], static function ($a, $b) {
+                return $a['timestamp'] <=> $b['timestamp'];
+            });
+
+            $_SESSION[self::SESSION_KEY] = array_slice(
+                $_SESSION[self::SESSION_KEY],
+                -self::MAX_TOKENS,
+                null,
+                true,
+            );
+        }
+    }
+
     private static function isLocalhost(): bool
     {
         $host = $_SERVER['HTTP_HOST'] ?? '';
-        return in_array($host, ['localhost', '127.0.0.1', '::1']) || 
-               strpos($host, 'localhost:') === 0;
+
+        return in_array($host, ['localhost', '127.0.0.1', '::1'], true)
+               || strpos($host, 'localhost:') === 0;
     }
 }

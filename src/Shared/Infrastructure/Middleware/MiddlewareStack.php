@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Middleware;
 
+use function count;
+
 class MiddlewareStack
 {
     private array $stack = [];
@@ -17,6 +19,7 @@ class MiddlewareStack
     {
         $runner = new class($this->stack) {
             private array $stack;
+
             private int $index = 0;
 
             public function __construct(array $stack)
@@ -31,7 +34,7 @@ class MiddlewareStack
                 }
 
                 $middleware = $this->stack[$this->index];
-                $this->index++;
+                ++$this->index;
 
                 return $middleware->handle($request, $this);
             }

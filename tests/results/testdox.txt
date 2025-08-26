@@ -1,0 +1,53 @@
+Article (Tests\Unit\Blog\Domain\Article)
+ [x] Create article
+ [x] Publish article
+ [x] Cannot publish already published article
+ [x] Unpublish article
+ [x] Cannot unpublish non published article
+ [x] Archive article
+ [x] Update content
+ [x] To array
+ [x] From array
+ [x] Generate slug
+
+Input Validator (Tests\Unit\Shared\Infrastructure\Security\InputValidator)
+ [x] Required validation
+ [x] Required validation fails
+ [x] Email validation
+ [x] Email validation fails
+ [x] Min length validation
+ [x] Min length validation fails
+ [x] Max length validation
+ [x] Max length validation fails
+ [x] Integer validation
+ [x] Integer validation fails
+ [x] Slug validation
+ [x] Slug validation fails
+ [x] In validation
+ [x] In validation fails
+ [x] Multiple rules
+ [x] Multiple rules with errors
+ [x] Sanitize string
+ [x] Sanitize email
+ [x] Sanitize int
+ [x] Strip tags
+ [x] Strip tags with allowed tags
+ [x] Escape html
+ [x] Get first error
+ [x] Get first error when no errors
+
+Sqlite Article Repository (Tests\Integration\Blog\Infrastructure\SqliteArticleRepository)
+ [x] Save new article
+ [x] Update existing article
+ [x] Find by id
+ [x] Find by id not found
+ [x] Find by slug
+ [x] Find by slug not found
+ [x] Find published
+ [x] Find by status
+ [x] Count by status
+ [x] Delete
+ [x] Slug exists
+ [x] Slug exists with exclusion
+ [x] Search
+
