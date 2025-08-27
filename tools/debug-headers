@@ -1,0 +1,134 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Debug HTTP Headers Script
+ * Helps diagnose malformed header issues in production
+ * 
+ * Usage: ./tools/debug-headers
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+echo "🔍 HTTP Headers Debug Tool\n\n";
+
+// Test 1: Check for output before headers
+echo "1. Testing output buffering...\n";
+use Boson\Shared\Infrastructure\Http\Kernel;
+use Boson\Shared\Infrastructure\Environment;
+
+ob_start();
+
+try {
+    // Simulate kernel initialization
+    
+    // Load environment
+    $envPath = __DIR__ . '/../.env';
+    if (file_exists($envPath)) {
+        Environment::load($envPath);
+        echo "✅ Environment loaded\n";
+    } else {
+        echo "⚠️  .env file not found\n";
+    }
+    
+    // Check for any output before headers
+    $output = ob_get_contents();
+    if (!empty($output)) {
+        echo "❌ Found output before headers:\n";
+        echo "Length: " . strlen($output) . " bytes\n";
+        echo "Content: " . bin2hex(substr($output, 0, 50)) . "\n";
+        echo "Visible: " . var_export(substr($output, 0, 50), true) . "\n";
+    } else {
+        echo "✅ No premature output detected\n";
+    }
+    
+} catch (Exception $e) {
+    echo "❌ Error during initialization: " . $e->getMessage() . "\n";
+}
+
+ob_end_clean();
+
+// Test 2: Check file encodings
+echo "\n2. Checking file encodings...\n";
+$criticalFiles = [
+    'public/index.php',
+    'src/Shared/Infrastructure/Http/Kernel.php',
+    'src/Shared/Infrastructure/Environment.php'
+];
+
+foreach ($criticalFiles as $file) {
+    if (file_exists($file)) {
+        $content = file_get_contents($file);
+        $encoding = mb_detect_encoding($content, ['UTF-8', 'ASCII', 'ISO-8859-1'], true);
+        
+        // Check for BOM
+        $hasBOM = substr($content, 0, 3) === "\xEF\xBB\xBF";
+        
+        // Check for non-printable characters at start
+        $firstBytes = bin2hex(substr($content, 0, 10));
+        
+        echo "  $file:\n";
+        echo "    Encoding: $encoding\n";
+        echo "    BOM: " . ($hasBOM ? "❌ YES" : "✅ NO") . "\n";
+        echo "    First bytes: $firstBytes\n";
+        
+        if ($hasBOM) {
+            echo "    ⚠️  BOM detected - this can cause header issues!\n";
+        }
+    } else {
+        echo "  $file: ❌ Not found\n";
+    }
+}
+
+// Test 3: Check for whitespace issues
+echo "\n3. Checking for whitespace issues...\n";
+foreach ($criticalFiles as $file) {
+    if (file_exists($file)) {
+        $content = file_get_contents($file);
+        
+        // Check for whitespace before <?php
+        if (substr($content, 0, 5) !== '<?php') {
+            $beforePhp = substr($content, 0, strpos($content, '<?php'));
+            if (!empty($beforePhp)) {
+                echo "  $file: ❌ Whitespace before <?php\n";
+                echo "    Content: " . bin2hex($beforePhp) . "\n";
+            }
+        }
+        
+        // Check for whitespace after ?>
+        if (strpos($content, '?>') !== false) {
+            $parts = explode('?>', $content);
+            $lastPart = end($parts);
+            if (!empty(trim($lastPart))) {
+                echo "  $file: ❌ Content after ?>\n";
+                echo "    Content: " . bin2hex(substr($lastPart, 0, 20)) . "\n";
+            }
+        }
+    }
+}
+
+// Test 4: Test minimal HTTP response
+echo "\n4. Testing minimal HTTP response...\n";
+ob_start();
+
+try {
+    // Simulate minimal response
+    header('Content-Type: text/html; charset=UTF-8');
+    echo "Test response";
+    
+    $headers = headers_list();
+    echo "✅ Headers can be sent\n";
+    echo "  Headers: " . implode(', ', $headers) . "\n";
+    
+} catch (Exception $e) {
+    echo "❌ Error sending headers: " . $e->getMessage() . "\n";
+}
+
+ob_end_clean();
+
+echo "\n🎉 Debug completed!\n";
+echo "\n💡 Common fixes for malformed headers:\n";
+echo "  1. Remove BOM from PHP files\n";
+echo "  2. Remove whitespace before <?php\n";
+echo "  3. Remove content after ?> (or remove ?> entirely)\n";
+echo "  4. Check for binary data in templates\n";
+echo "  5. Ensure proper character encoding\n";

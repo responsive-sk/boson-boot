@@ -1,0 +1,78 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Production Header Fix Script
+ * Fixes common causes of malformed HTTP headers
+ * 
+ * Usage: ./bin/fix-headers
+ */
+
+echo "🔧 Fixing HTTP Header Issues...\n\n";
+
+$fixedFiles = 0;
+$totalFiles = 0;
+
+// Find all PHP files
+$iterator = new RecursiveIteratorIterator(
+    new RecursiveDirectoryIterator('.', RecursiveDirectoryIterator::SKIP_DOTS)
+);
+
+foreach ($iterator as $file) {
+    if ($file->getExtension() === 'php' && !str_contains($file->getPathname(), 'vendor/')) {
+        $totalFiles++;
+        $filePath = $file->getPathname();
+        $content = file_get_contents($filePath);
+        $originalContent = $content;
+        $fixed = false;
+        
+        // Fix 1: Remove BOM
+        if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+            $content = substr($content, 3);
+            $fixed = true;
+            echo "  ✅ Removed BOM from: $filePath\n";
+        }
+        
+        // Fix 2: Remove whitespace before <?php
+        if (preg_match('/^(\s+)<\?php/', $content, $matches)) {
+            $content = preg_replace('/^(\s+)<\?php/', '<?php', $content);
+            $fixed = true;
+            echo "  ✅ Removed whitespace before <?php in: $filePath\n";
+        }
+        
+        // Fix 3: Remove content after ?>
+        if (preg_match('/\?>\s*(.+)$/s', $content, $matches)) {
+            if (!empty(trim($matches[1]))) {
+                $content = preg_replace('/\?>\s*(.+)$/s', '?>', $content);
+                $fixed = true;
+                echo "  ✅ Removed content after ?> in: $filePath\n";
+            }
+        }
+        
+        // Save if fixed
+        if ($fixed) {
+            file_put_contents($filePath, $content);
+            $fixedFiles++;
+        }
+    }
+}
+
+echo "\n📊 Summary:\n";
+echo "  Total PHP files checked: $totalFiles\n";
+echo "  Files fixed: $fixedFiles\n";
+
+if ($fixedFiles > 0) {
+    echo "\n✅ Header issues fixed! Test your application now.\n";
+} else {
+    echo "\n💡 No header issues found in PHP files.\n";
+    echo "   The malformed header error might be caused by:\n";
+    echo "   1. Binary data in templates\n";
+    echo "   2. Corrupted cache files\n";
+    echo "   3. Server configuration issues\n";
+    echo "   4. PHP extensions outputting binary data\n";
+}
+
+echo "\n🔍 Additional debugging steps:\n";
+echo "  1. Clear all caches: ./tools/cache-manager clear\n";
+echo "  2. Check server error logs for more details\n";
+echo "  3. Test with minimal PHP script\n";
+echo "  4. Check PHP extensions and configuration\n";

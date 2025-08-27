@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+/**
+ * BOM Removal Script
+ * Removes BOM from PHP files that can cause malformed headers
+ */
+
+echo "🔧 Removing BOM from PHP files...\n\n";
+
+$fixedFiles = 0;
+
+// Find and fix PHP files
+$files = shell_exec('find . -name "*.php" -not -path "./vendor/*"');
+$fileList = array_filter(explode("\n", $files));
+
+foreach ($fileList as $file) {
+    if (empty($file)) continue;
+    
+    $content = file_get_contents($file);
+    
+    // Check for BOM
+    if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+        $content = substr($content, 3);
+        file_put_contents($file, $content);
+        echo "✅ Removed BOM from: $file\n";
+        $fixedFiles++;
+    }
+}
+
+echo "\n📊 Fixed $fixedFiles files\n";
+
+if ($fixedFiles > 0) {
+    echo "✅ BOM removal completed!\n";
+} else {
+    echo "💡 No BOM found in PHP files\n";
+}
+
+echo "\n🔍 If malformed headers persist, check:\n";
+echo "  1. Server error logs\n";
+echo "  2. PHP extensions\n";
+echo "  3. Template files for binary data\n";
+echo "  4. Cache files\n";
