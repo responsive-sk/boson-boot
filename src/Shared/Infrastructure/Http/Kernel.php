@@ -177,22 +177,45 @@ class Kernel
             http_response_code($processedRequest['status']);
         }
 
-        // Set custom headers
+        // Set custom headers (with binary data protection)
         if (isset($processedRequest['headers'])) {
             foreach ($processedRequest['headers'] as $header) {
                 if (is_array($header)) {
-                    header($header['name'] . ': ' . $header['value']);
+                    // Sanitize header values to prevent binary data
+                    $name = preg_replace('/[^\x20-\x7E]/', '', (string)$header['name']);
+                    $value = preg_replace('/[^\x20-\x7E]/', '', (string)$header['value']);
+                    if ($name && $value) {
+                        header($name . ': ' . $value);
+                    }
                 } else {
-                    header($header);
+                    // Sanitize simple header strings
+                    $cleanHeader = preg_replace('/[^\x20-\x7E]/', '', (string)$header);
+                    if ($cleanHeader) {
+                        header($cleanHeader);
+                    }
                 }
             }
         }
 
-        // Send response body
+        // Send response body (with binary data check)
         if (isset($processedRequest['response'])) {
-            echo $processedRequest['response'];
+            $response = $processedRequest['response'];
+            // Check for binary data in response
+            if (is_string($response) && !mb_check_encoding($response, 'UTF-8')) {
+                error_log('Binary data detected in response, converting to safe output');
+                echo 'Response contains binary data - check logs';
+            } else {
+                echo $response;
+            }
         } elseif (isset($processedRequest['body'])) {
-            echo $processedRequest['body'];
+            $body = $processedRequest['body'];
+            // Check for binary data in body
+            if (is_string($body) && !mb_check_encoding($body, 'UTF-8')) {
+                error_log('Binary data detected in body, converting to safe output');
+                echo 'Body contains binary data - check logs';
+            } else {
+                echo $body;
+            }
         } else {
             // Fallback ak middleware nevygeneroval response
             http_response_code(500);
