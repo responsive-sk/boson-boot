@@ -1,0 +1,347 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Emergency Production Build
+ * Creates bulletproof production build with all emergency fixes
+ * 
+ * Usage: ./bin/build-emergency-production [target-directory]
+ */
+
+$targetDir = $argv[1] ?? 'emergency-build';
+$sourceDir = __DIR__ . '/..';
+
+echo "🚨 Building Emergency Production Package...\n";
+echo "Target directory: $targetDir\n\n";
+
+// Clean and create build directory
+if (is_dir($targetDir)) {
+    shell_exec("rm -rf $targetDir");
+}
+mkdir($targetDir, 0755, true);
+
+// Copy essential files
+$filesToCopy = [
+    'public' => 'public_html',
+    'src' => 'src',
+    'templates' => 'templates',
+    'vendor' => 'vendor',
+    'composer.json' => 'composer.json',
+    'composer.lock' => 'composer.lock'
+];
+
+foreach ($filesToCopy as $source => $dest) {
+    $sourcePath = "$sourceDir/$source";
+    $destPath = "$targetDir/$dest";
+    
+    if (file_exists($sourcePath)) {
+        if (is_dir($sourcePath)) {
+            shell_exec("cp -r '$sourcePath' '$destPath'");
+            echo "  ✅ Copied: $source -> $dest\n";
+        } else {
+            copy($sourcePath, $destPath);
+            echo "  ✅ Copied: $source -> $dest\n";
+        }
+    }
+}
+
+// Create storage directories
+$storageDirs = ['storage/cache', 'storage/logs', 'storage/uploads'];
+foreach ($storageDirs as $dir) {
+    $fullPath = "$targetDir/$dir";
+    mkdir($fullPath, 0755, true);
+    file_put_contents("$fullPath/.htaccess", "Deny from all\n");
+    echo "  ✅ Created: $dir\n";
+}
+
+// Apply emergency fixes
+echo "\n🔧 Applying emergency fixes...\n";
+
+// Emergency index.php
+$emergencyIndex = '<?php
+/**
+ * EMERGENCY PRODUCTION INDEX - Bulletproof Entry Point
+ * Designed to handle malformed header issues in production
+ */
+
+// Clean all output buffers
+while (ob_get_level()) {
+    ob_end_clean();
+}
+
+// Disable compression that causes corruption
+ini_set("zlib.output_compression", 0);
+ini_set("output_buffering", 0);
+
+// Error handling
+error_reporting(0);
+ini_set("display_errors", 0);
+ini_set("log_errors", 1);
+ini_set("error_log", "../storage/logs/production.log");
+
+// Disable Xdebug completely
+if (extension_loaded("xdebug")) {
+    ini_set("xdebug.mode", "off");
+    ini_set("xdebug.start_with_request", "no");
+}
+
+// Memory limits for shared hosting
+ini_set("memory_limit", "128M");
+ini_set("max_execution_time", "30");
+
+// Send clean headers immediately
+header("Content-Type: text/html; charset=UTF-8", true);
+header("X-Content-Type-Options: nosniff", true);
+header("X-Frame-Options: DENY", true);
+header("X-XSS-Protection: 1; mode=block", true);
+
+// Start fresh output buffer
+ob_start();
+
+try {
+    // Bootstrap application
+    require_once __DIR__ . "/../vendor/autoload.php";
+    
+    use Boson\Shared\Infrastructure\Http\Kernel;
+    
+    $kernel = new Kernel();
+    $response = $kernel->handle();
+    
+    echo $response;
+    
+} catch (Throwable $e) {
+    // Emergency fallback
+    ob_end_clean();
+    
+    http_response_code(503);
+    
+    echo "<!DOCTYPE html>
+<html>
+<head>
+    <title>Maintenance - Boson PHP</title>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 40px; background: #f8f9fa; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .status { background: #fff3cd; color: #856404; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107; }
+        .info { background: #d1ecf1; color: #0c5460; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #17a2b8; }
+        .footer { text-align: center; margin-top: 30px; color: #6c757d; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <div class=\"header\">
+            <h1>🔧 Temporary Maintenance</h1>
+        </div>
+        
+        <div class=\"status\">
+            <strong>Service Temporarily Unavailable</strong><br>
+            We are currently performing maintenance to improve your experience.
+        </div>
+        
+        <div class=\"info\">
+            <strong>What happened?</strong><br>
+            The application encountered a technical issue and has switched to maintenance mode for safety.
+        </div>
+        
+        <p><strong>For visitors:</strong> Please check back in a few minutes.</p>
+        
+        <p><strong>For administrators:</strong></p>
+        <ul>
+            <li>Check server error logs</li>
+            <li>Verify database connectivity</li>
+            <li>Review .env configuration</li>
+            <li>Check file permissions</li>
+        </ul>
+        
+        <div class=\"footer\">
+            <p>Boson PHP Emergency Mode</p>
+            <small>Incident logged at: " . date("Y-m-d H:i:s") . "</small>
+        </div>
+    </div>
+</body>
+</html>";
+    
+    // Log the error
+    $logDir = __DIR__ . "/../storage/logs";
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    error_log(date("Y-m-d H:i:s") . " - Emergency fallback: " . $e->getMessage() . "\n", 3, "$logDir/emergency.log");
+}
+
+// Clean output
+if (ob_get_level()) {
+    ob_end_flush();
+}
+?>';
+
+file_put_contents("$targetDir/public_html/index.php", $emergencyIndex);
+echo "  ✅ Emergency index.php created\n";
+
+// Emergency .htaccess
+$emergencyHtaccess = '# EMERGENCY PRODUCTION HTACCESS
+# Bulletproof configuration for shared hosting
+
+# Disable server signature
+ServerSignature Off
+
+# Disable compression that causes header corruption
+php_flag zlib.output_compression Off
+php_flag output_buffering Off
+
+# Error handling
+php_flag display_errors Off
+php_flag log_errors On
+php_value error_log ../storage/logs/apache_errors.log
+
+# Disable Xdebug
+php_flag xdebug.mode off
+
+# Memory and execution limits
+php_value memory_limit 128M
+php_value max_execution_time 30
+php_value max_input_time 30
+
+# Security
+php_value disable_functions "exec,passthru,shell_exec,system,proc_open,popen"
+
+# Basic headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# URL Rewriting
+RewriteEngine On
+
+# Main routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Protect sensitive files
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.*">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Block access to storage
+RedirectMatch 403 ^/storage/.*$
+';
+
+file_put_contents("$targetDir/public_html/.htaccess", $emergencyHtaccess);
+echo "  ✅ Emergency .htaccess created\n";
+
+// Create emergency environment
+$emergencyEnv = '# EMERGENCY PRODUCTION ENVIRONMENT
+APP_NAME="Boson PHP"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+# Database
+DB_HOST=localhost
+DB_NAME=your_database
+DB_USER=your_user
+DB_PASS=your_password
+DB_PORT=3306
+
+# Disable problematic features
+CACHE_DRIVER=file
+TEMPLATE_CACHE=false
+ENABLE_COMPRESSION=false
+ENABLE_DEBUG=false
+
+# Logging
+LOG_LEVEL=error
+LOG_FILE=../storage/logs/app.log
+';
+
+file_put_contents("$targetDir/.env.emergency", $emergencyEnv);
+echo "  ✅ Emergency .env template created\n";
+
+// Create deployment instructions
+$instructions = '# EMERGENCY DEPLOYMENT INSTRUCTIONS
+
+## 🚨 This is an emergency production build designed to fix malformed header issues.
+
+### Quick Deployment:
+
+1. **Backup Current Site**
+   ```bash
+   cp -r public_html public_html.backup
+   ```
+
+2. **Upload and Extract**
+   - Upload this entire directory to your hosting
+   - Extract to your account root (above public_html)
+
+3. **Move Files**
+   ```bash
+   # Move public_html contents to your domain
+   mv public_html/* /path/to/your/domain/
+   
+   # Move other files to private directory
+   mv src/ templates/ vendor/ storage/ ../
+   ```
+
+4. **Configure Environment**
+   ```bash
+   cp .env.emergency .env
+   nano .env  # Edit with your settings
+   ```
+
+5. **Set Permissions**
+   ```bash
+   chmod 755 /path/to/your/domain/
+   chmod 644 /path/to/your/domain/.htaccess
+   chmod -R 755 ../storage/
+   ```
+
+### Emergency Features:
+
+- ✅ **Bulletproof Headers**: Prevents malformed header errors
+- ✅ **Compression Disabled**: Eliminates corruption issues  
+- ✅ **Xdebug Disabled**: Clean production output
+- ✅ **Emergency Fallback**: Graceful error handling
+- ✅ **Minimal Dependencies**: Reduced failure points
+
+### Testing:
+
+1. Visit your domain - should show maintenance page if issues persist
+2. Check logs: `storage/logs/production.log`
+3. If working, gradually enable features
+
+### Rollback:
+
+If issues persist:
+```bash
+mv public_html.backup/* /path/to/your/domain/
+```
+
+### Support:
+
+- Check `storage/logs/` for error details
+- Contact hosting provider if server-level issues
+- Review database connectivity
+- Verify PHP version compatibility
+
+This emergency build prioritizes stability over features.
+Once stable, you can gradually restore full functionality.
+';
+
+file_put_contents("$targetDir/EMERGENCY-DEPLOYMENT.md", $instructions);
+echo "  ✅ Emergency deployment instructions created\n";
+
+echo "\n🎉 Emergency production build completed!\n";
+echo "📦 Location: $targetDir/\n";
+echo "📋 Read: EMERGENCY-DEPLOYMENT.md\n";
+echo "🚨 This build prioritizes stability over features\n\n";
+
+echo "📤 Ready for emergency deployment!\n";
