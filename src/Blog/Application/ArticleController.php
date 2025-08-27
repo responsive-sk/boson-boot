@@ -4,31 +4,26 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\Config;
-use Boson\Shared\Infrastructure\Database;
-use Boson\Shared\Infrastructure\ThemeManager;
+use Boson\Shared\Infrastructure\AbstractController;
+use Boson\Shared\Infrastructure\Traits\HasDatabase;
 
-class ArticleController
+class ArticleController extends AbstractController
 {
-    public function __construct(
-        private $templateEngine,
-        private Database $database,
-        private Config $config,
-        private ArticleService $articleService,
-        private ThemeManager $themeManager
-    ) {}
+    use HasDatabase;
+
+    private ArticleService $articleService;
+
+    public function setArticleService(ArticleService $articleService): void
+    {
+        $this->articleService = $articleService;
+    }
 
     public function index(array $params = []): string
     {
-        $page = (int) ($_GET['page'] ?? 1);
+        $page = $this->getParam('page', 1, 'int');
         $perPage = 6;
 
         $result = $this->articleService->getPaginatedArticles($page, $perPage);
-
-        $breadcrumbs = [
-            ['label' => 'Home', 'url' => '/'],
-            ['label' => 'Blog']
-        ];
 
         $filters = [
             ['label' => 'All Posts', 'url' => '/articles', 'active' => true, 'count' => $result['total']],
@@ -39,12 +34,12 @@ class ArticleController
             ['label' => 'Testing', 'url' => '/articles?category=testing', 'count' => 1]
         ];
 
-        return $this->templateEngine->render('pages::articles', [
+        return $this->render('pages::articles', [
             'title' => 'Articles - Boson PHP',
             'description' => 'Read the latest articles about Boson PHP development',
             'pageTitle' => 'Blog',
             'pageSubtitle' => 'All Blog Posts',
-            'breadcrumbs' => $breadcrumbs,
+            'breadcrumbs' => $this->breadcrumbs(['Blog']),
             'filters' => $filters,
             'background' => 'default',
             'articles' => $result['articles'],
@@ -52,29 +47,21 @@ class ArticleController
             'totalPages' => $result['totalPages'],
             'hasMore' => $result['hasMore'],
             'total' => $result['total'],
-            'currentRoute' => 'articles',
-            'themeManager' => $this->themeManager
         ]);
     }
 
     public function show(array $params = []): string
     {
         $slug = $params['slug'] ?? '';
-        
+
         if (empty($slug)) {
-            http_response_code(404);
-            return $this->templateEngine->render('pages::404', [
-                'title' => 'Article Not Found - Boson PHP'
-            ]);
+            return $this->notFound('Article Not Found');
         }
 
         $article = $this->articleService->getArticleBySlug($slug);
 
         if (!$article || !$article->isPublished()) {
-            http_response_code(404);
-            return $this->templateEngine->render('pages::404', [
-                'title' => 'Article Not Found - Boson PHP'
-            ]);
+            return $this->notFound('Article Not Found');
         }
 
         // Get related articles (same category, excluding current)
@@ -85,19 +72,17 @@ class ArticleController
             $relatedArticles = array_slice($relatedArticles, 0, 3);
         }
 
-        return $this->templateEngine->render('pages::article', [
+        return $this->render('pages::article', [
             'title' => $article->getTitle() . ' - Boson PHP',
             'description' => $article->getExcerpt() ?? substr(strip_tags($article->getContent()), 0, 160),
             'article' => $article,
             'relatedArticles' => $relatedArticles,
-            'currentRoute' => 'articles',
-            'themeManager' => $this->themeManager
         ]);
     }
 
     public function loadMore(array $params = []): string
     {
-        $page = (int) ($_GET['page'] ?? 2);
+        $page = $this->getParam('page', 2, 'int');
         $perPage = 6;
 
         $result = $this->articleService->getPaginatedArticles($page, $perPage);
@@ -116,7 +101,7 @@ class ArticleController
             $nextPage = $page + 1;
             $html .= '
                 <div class="load-more-container" id="load-more-container">
-                    <button 
+                    <button
                         class="btn btn-outline load-more-btn"
                         hx-get="/api/articles/load-more?page=' . $nextPage . '"
                         hx-target="#articles-container"
@@ -135,21 +120,18 @@ class ArticleController
     public function category(array $params = []): string
     {
         $categoryId = (int) ($params['id'] ?? 0);
-        
+
         if ($categoryId === 0) {
-            http_response_code(404);
-            return $this->templateEngine->render('pages::404', [
-                'title' => 'Category Not Found - Boson PHP'
-            ]);
+            return $this->notFound('Category Not Found');
         }
 
-        $page = (int) ($_GET['page'] ?? 1);
+        $page = $this->getParam('page', 1, 'int');
         $perPage = 6;
         $offset = ($page - 1) * $perPage;
 
         $articles = $this->articleService->getArticlesByCategory($categoryId, $perPage + 1, $offset);
         $hasMore = count($articles) > $perPage;
-        
+
         if ($hasMore) {
             array_pop($articles);
         }
@@ -157,7 +139,7 @@ class ArticleController
         // Get category name (simplified - in real app you'd have a CategoryService)
         $categoryName = $this->getCategoryName($categoryId);
 
-        return $this->templateEngine->render('pages::articles', [
+        return $this->render('pages::articles', [
             'title' => $categoryName . ' Articles - Boson PHP',
             'description' => 'Articles in the ' . $categoryName . ' category',
             'articles' => $articles,
@@ -197,10 +179,7 @@ class ArticleController
 
     private function getCategoryName(int $categoryId): string
     {
-        $sql = "SELECT name FROM categories WHERE id = ?";
-        $stmt = $this->database->getConnection()->prepare($sql);
-        $stmt->execute([$categoryId]);
-        
-        return $stmt->fetchColumn() ?: 'Unknown Category';
+        $result = $this->queryOne("SELECT name FROM categories WHERE id = ?", [$categoryId]);
+        return $result['name'] ?? 'Unknown Category';
     }
 }

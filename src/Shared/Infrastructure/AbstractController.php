@@ -95,7 +95,8 @@ abstract class AbstractController
      */
     protected function getCurrentRoute(): string
     {
-        return strtolower(str_replace('Controller', '', class_basename(static::class)));
+        $className = (new \ReflectionClass(static::class))->getShortName();
+        return strtolower(str_replace('Controller', '', $className));
     }
 
     /**
