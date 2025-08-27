@@ -1,0 +1,463 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Build Script for Shared Hosting Apache
+ * Creates optimized production build for shared hosting deployment
+ * 
+ * Usage: ./bin/build-shared-hosting [target-directory]
+ */
+
+$targetDir = $argv[1] ?? 'build';
+$sourceDir = __DIR__ . '/..';
+
+echo "🚀 Building for Shared Hosting Apache...\n";
+echo "Target directory: $targetDir\n\n";
+
+// Clean and create build directory
+if (is_dir($targetDir)) {
+    echo "🧹 Cleaning existing build directory...\n";
+    shell_exec("rm -rf $targetDir");
+}
+
+mkdir($targetDir, 0755, true);
+echo "✅ Created build directory: $targetDir\n";
+
+// Copy essential files and directories
+echo "\n📁 Copying application files...\n";
+
+$filesToCopy = [
+    'public' => 'public_html',  // Shared hosting typically uses public_html
+    'src' => 'src',
+    'templates' => 'templates',
+    'vendor' => 'vendor',
+    'composer.json' => 'composer.json',
+    'composer.lock' => 'composer.lock',
+    '.env.example' => '.env.example'
+];
+
+foreach ($filesToCopy as $source => $dest) {
+    $sourcePath = "$sourceDir/$source";
+    $destPath = "$targetDir/$dest";
+    
+    if (file_exists($sourcePath)) {
+        if (is_dir($sourcePath)) {
+            shell_exec("cp -r '$sourcePath' '$destPath'");
+            echo "  ✅ Copied directory: $source -> $dest\n";
+        } else {
+            copy($sourcePath, $destPath);
+            echo "  ✅ Copied file: $source -> $dest\n";
+        }
+    } else {
+        echo "  ⚠️  Source not found: $source\n";
+    }
+}
+
+// Create storage directories
+echo "\n📂 Creating storage directories...\n";
+$storageDirs = [
+    'storage/cache',
+    'storage/cache/templates',
+    'storage/cache/queries',
+    'storage/logs',
+    'storage/uploads'
+];
+
+foreach ($storageDirs as $dir) {
+    $fullPath = "$targetDir/$dir";
+    mkdir($fullPath, 0755, true);
+    
+    // Create .htaccess to protect storage
+    file_put_contents("$fullPath/.htaccess", "Deny from all\n");
+    echo "  ✅ Created: $dir\n";
+}
+
+echo "\n🔧 Applying production optimizations...\n";
+
+// Optimize index.php for production
+optimizeIndexPhp($targetDir);
+
+// Create production .htaccess
+createProductionHtaccess($targetDir);
+
+// Create production .env template
+createProductionEnv($targetDir);
+
+// Create deployment instructions
+createDeploymentInstructions($targetDir);
+
+// Create maintenance scripts
+createMaintenanceScripts($targetDir);
+
+echo "\n🎉 Build completed successfully!\n";
+echo "📦 Build location: $targetDir/\n";
+echo "📋 Next steps:\n";
+echo "  1. Upload contents to your shared hosting\n";
+echo "  2. Copy .env.example to .env and configure\n";
+echo "  3. Run composer install --no-dev --optimize-autoloader\n";
+echo "  4. Set proper file permissions\n";
+echo "  5. Test the application\n\n";
+
+function optimizeIndexPhp($targetDir) {
+    echo "  🔧 Optimizing index.php for production...\n";
+    
+    $indexPath = "$targetDir/public_html/index.php";
+    $content = file_get_contents($indexPath);
+    
+    // Add production optimizations
+    $productionCode = "<?php
+/**
+ * Boson PHP - Production Entry Point
+ * Optimized for shared hosting Apache
+ */
+
+// Production environment setup
+error_reporting(0);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+ini_set('error_log', '../storage/logs/php_errors.log');
+
+// Disable Xdebug in production
+if (extension_loaded('xdebug')) {
+    ini_set('xdebug.mode', 'off');
+}
+
+// Output buffering for clean headers
+ob_start();
+
+// Memory and time limits for shared hosting
+ini_set('memory_limit', '128M');
+ini_set('max_execution_time', 30);
+
+// Security headers
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+
+";
+    
+    // Replace the opening <?php with production code
+    $content = preg_replace('/^<\?php\s*/', $productionCode, $content);
+    
+    // Add output buffer flush at the end
+    $content .= "\n// Flush output buffer\nif (ob_get_level()) ob_end_flush();\n";
+    
+    file_put_contents($indexPath, $content);
+    echo "    ✅ index.php optimized\n";
+}
+
+function createProductionHtaccess($targetDir) {
+    echo "  🔧 Creating production .htaccess...\n";
+    
+    $htaccessContent = "# Boson PHP - Production .htaccess for Shared Hosting
+# Security and performance optimizations
+
+# Disable server signature
+ServerSignature Off
+
+# Hide PHP version
+Header unset X-Powered-By
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection \"1; mode=block\"
+Header always set Referrer-Policy \"strict-origin-when-cross-origin\"
+
+# PHP production settings
+php_flag display_errors Off
+php_flag log_errors On
+php_value error_log ../storage/logs/php_errors.log
+php_value memory_limit 128M
+php_value max_execution_time 30
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+
+# Disable dangerous PHP functions
+php_value disable_functions \"exec,passthru,shell_exec,system,proc_open,popen\"
+
+# URL Rewriting
+RewriteEngine On
+
+# Force HTTPS (uncomment if SSL available)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Remove www (or add www - choose one)
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Main routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Compression
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Browser caching
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css \"access plus 1 month\"
+    ExpiresByType application/javascript \"access plus 1 month\"
+    ExpiresByType image/png \"access plus 1 month\"
+    ExpiresByType image/jpg \"access plus 1 month\"
+    ExpiresByType image/jpeg \"access plus 1 month\"
+    ExpiresByType image/gif \"access plus 1 month\"
+    ExpiresByType image/svg+xml \"access plus 1 month\"
+</IfModule>
+
+# Protect sensitive files
+<Files \".env\">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files \"composer.json\">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files \"composer.lock\">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Protect storage directory
+RedirectMatch 403 ^/storage/.*$
+";
+    
+    file_put_contents("$targetDir/public_html/.htaccess", $htaccessContent);
+    echo "    ✅ .htaccess created\n";
+}
+
+function createProductionEnv($targetDir) {
+    echo "  🔧 Creating production .env template...\n";
+    
+    $envContent = "# Boson PHP - Production Environment Configuration
+# Copy this file to .env and configure for your hosting
+
+# Application
+APP_NAME=\"Boson PHP\"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+# Database Configuration
+DB_HOST=localhost
+DB_NAME=your_database_name
+DB_USER=your_database_user
+DB_PASS=your_database_password
+DB_PORT=3306
+DB_CHARSET=utf8mb4
+
+# Cache Configuration
+CACHE_DRIVER=file
+CACHE_TTL=3600
+
+# Template Configuration
+TEMPLATE_CACHE=true
+TEMPLATE_DEBUG=false
+
+# Security
+SESSION_SECURE=true
+SESSION_HTTPONLY=true
+SESSION_SAMESITE=Strict
+
+# Logging
+LOG_LEVEL=error
+LOG_FILE=../storage/logs/app.log
+
+# Performance
+ENABLE_COMPRESSION=true
+ENABLE_CACHING=true
+
+# Email (if needed)
+MAIL_HOST=smtp.yourdomain.com
+MAIL_PORT=587
+MAIL_USERNAME=noreply@yourdomain.com
+MAIL_PASSWORD=your_email_password
+MAIL_ENCRYPTION=tls
+";
+    
+    file_put_contents("$targetDir/.env.production", $envContent);
+    echo "    ✅ .env.production template created\n";
+}
+
+function createDeploymentInstructions($targetDir) {
+    echo "  📋 Creating deployment instructions...\n";
+    
+    $instructions = "# Deployment Instructions for Shared Hosting
+
+## Pre-deployment Checklist
+- [ ] Backup existing website
+- [ ] Prepare database credentials
+- [ ] Ensure PHP 8.1+ is available
+- [ ] Check available disk space
+
+## Deployment Steps
+
+### 1. Upload Files
+Upload all contents of this build directory to your shared hosting:
+- Upload `public_html/` contents to your domain's public folder
+- Upload other directories (`src/`, `templates/`, `vendor/`, etc.) to a private folder above public_html
+
+### 2. Configure Environment
+```bash
+cp .env.production .env
+nano .env  # Edit with your settings
+```
+
+### 3. Install Dependencies (if composer available)
+```bash
+composer install --no-dev --optimize-autoloader
+```
+
+### 4. Set File Permissions
+```bash
+chmod 755 public_html/
+chmod 644 public_html/.htaccess
+chmod 644 public_html/index.php
+chmod -R 755 storage/
+chmod -R 644 storage/cache/
+chmod -R 644 storage/logs/
+```
+
+### 5. Database Setup
+- Import your database schema
+- Update database credentials in .env
+- Test database connection
+
+### 6. Test Application
+- Visit your domain
+- Check error logs: `storage/logs/`
+- Test main functionality
+
+## Maintenance Scripts
+
+### Clear Cache
+```bash
+php maintenance/clear-cache.php
+```
+
+### Check Status
+```bash
+php maintenance/health-check.php
+```
+
+## Troubleshooting
+
+### Common Issues
+1. **500 Internal Server Error**
+   - Check .htaccess syntax
+   - Verify file permissions
+   - Check error logs
+
+2. **Database Connection Failed**
+   - Verify credentials in .env
+   - Check database server status
+   - Ensure database exists
+
+3. **Missing Dependencies**
+   - Run composer install
+   - Check PHP version compatibility
+   - Verify required extensions
+
+### Support
+- Check `storage/logs/php_errors.log`
+- Check `storage/logs/app.log`
+- Contact hosting provider if needed
+
+## Security Notes
+- Never expose .env file
+- Keep storage/ directory private
+- Regular security updates
+- Monitor error logs
+- Use HTTPS in production
+";
+    
+    file_put_contents("$targetDir/DEPLOYMENT.md", $instructions);
+    echo "    ✅ DEPLOYMENT.md created\n";
+}
+
+function createMaintenanceScripts($targetDir) {
+    echo "  🔧 Creating maintenance scripts...\n";
+    
+    mkdir("$targetDir/maintenance", 0755, true);
+    
+    // Clear cache script
+    $clearCacheScript = "<?php
+/**
+ * Clear Cache Script for Shared Hosting
+ */
+
+echo \"🧹 Clearing cache...\\n\";
+
+\$cacheDir = __DIR__ . '/../storage/cache';
+\$cleared = 0;
+
+if (is_dir(\$cacheDir)) {
+    \$files = glob(\$cacheDir . '/*');
+    foreach (\$files as \$file) {
+        if (is_file(\$file)) {
+            unlink(\$file);
+            \$cleared++;
+        }
+    }
+}
+
+echo \"✅ Cleared \$cleared cache files\\n\";
+";
+    
+    file_put_contents("$targetDir/maintenance/clear-cache.php", $clearCacheScript);
+    
+    // Health check script
+    $healthCheckScript = "<?php
+/**
+ * Health Check Script for Shared Hosting
+ */
+
+echo \"🔍 Health Check Report\\n\";
+echo \"=====================\\n\\n\";
+
+// PHP Version
+echo \"PHP Version: \" . PHP_VERSION . \"\\n\";
+
+// Memory usage
+echo \"Memory Usage: \" . memory_get_usage(true) / 1024 / 1024 . \" MB\\n\";
+
+// Disk space
+\$storageDir = __DIR__ . '/../storage';
+if (is_dir(\$storageDir)) {
+    \$size = 0;
+    \$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(\$storageDir));
+    foreach (\$files as \$file) {
+        \$size += \$file->getSize();
+    }
+    echo \"Storage Size: \" . round(\$size / 1024 / 1024, 2) . \" MB\\n\";
+}
+
+// Check critical files
+\$criticalFiles = ['.env', 'src/', 'templates/', 'vendor/'];
+foreach (\$criticalFiles as \$file) {
+    \$path = __DIR__ . '/../' . \$file;
+    echo \$file . \": \" . (file_exists(\$path) ? \"✅ OK\" : \"❌ Missing\") . \"\\n\";
+}
+
+echo \"\\n✅ Health check completed\\n\";
+";
+    
+    file_put_contents("$targetDir/maintenance/health-check.php", $healthCheckScript);
+    
+    echo "    ✅ Maintenance scripts created\n";
+}

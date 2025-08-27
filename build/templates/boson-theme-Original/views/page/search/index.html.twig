@@ -1,0 +1,62 @@
+{% extends 'layout/master.html.twig' %}
+
+{% block title %}
+    Search :: {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <boson-search-layout>
+        <boson-page-title>
+            <h2>Search</h2>
+        </boson-page-title>
+
+        <boson-breadcrumbs>
+            {% apply spaceless %}
+                <div class="breadcrumb-item">
+                    <boson-button type="ghost" href="{{ path('home') }}">
+                        Home
+                    </boson-button>
+                </div>
+
+                <div class="breadcrumb-item">
+                    <boson-button type="ghost">
+                        Boson Search
+                    </boson-button>
+                </div>
+            {% endapply %}
+        </boson-breadcrumbs>
+
+        <boson-search-input
+            slot="content"
+            action="{{ path('search.index') }}"
+            query="{{ app.request.get('q') }}"></boson-search-input>
+
+        <section slot="content" class="documentation">
+            {% for item in results %}
+                <article>
+                    <hgroup>
+                        <h2>
+                            <span style="opacity: .3">{{ item.category }}</span>
+                            &raquo;
+                            <a href="{{ path('doc.show', {
+                                version: version,
+                                page: item.uri,
+                            }) }}">{{ item.title }}</a>
+                        </h2>
+                    </hgroup>
+
+                    <p>
+                        {{ item.content | striptags | u.truncate(256, '...') }}
+                    </p>
+                </article>
+            {% else %}
+                <hgroup style="padding: 2em 0">
+                    <h1>No results</h1>
+                    <p>Try making your query more generic!</p>
+                </hgroup>
+            {% endfor %}
+        </section>
+
+    </boson-search-layout>
+{% endblock %}

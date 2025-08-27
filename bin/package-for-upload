@@ -1,0 +1,112 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Package Build for Upload
+ * Creates compressed archive ready for shared hosting upload
+ * 
+ * Usage: ./bin/package-for-upload [build-dir] [output-name]
+ */
+
+$buildDir = $argv[1] ?? 'build';
+$outputName = $argv[2] ?? 'boson-php-production';
+
+if (!is_dir($buildDir)) {
+    echo "❌ Build directory not found: $buildDir\n";
+    echo "💡 Run ./bin/build-shared-hosting first\n";
+    exit(1);
+}
+
+echo "📦 Packaging build for upload...\n";
+echo "Build directory: $buildDir\n";
+echo "Output name: $outputName\n\n";
+
+// Create tar.gz archive
+$archiveName = "$outputName.tar.gz";
+echo "🗜️  Creating compressed archive...\n";
+
+$command = "tar -czf '$archiveName' -C '$buildDir' .";
+$result = shell_exec($command . ' 2>&1');
+
+if (file_exists($archiveName)) {
+    $size = filesize($archiveName);
+    $sizeFormatted = round($size / 1024 / 1024, 2);
+    
+    echo "✅ Archive created successfully!\n";
+    echo "📁 File: $archiveName\n";
+    echo "📏 Size: {$sizeFormatted} MB\n\n";
+    
+    // Create upload instructions
+    $instructions = "# Upload Instructions for $archiveName
+
+## Quick Upload Steps:
+
+1. **Upload Archive**
+   - Upload $archiveName to your hosting control panel
+   - Or use FTP/SFTP to upload to your account
+
+2. **Extract Archive**
+   ```bash
+   tar -xzf $archiveName
+   ```
+   
+   Or use hosting control panel's extract feature
+
+3. **Move Files to Correct Locations**
+   ```bash
+   # Move public_html contents to your domain folder
+   mv public_html/* /path/to/your/domain/
+   
+   # Move other files to private directory above public
+   mv src/ templates/ vendor/ storage/ ../
+   mv .env.production ../.env
+   mv DEPLOYMENT.md ../
+   ```
+
+4. **Set Permissions**
+   ```bash
+   chmod 755 public_html/
+   chmod 644 .htaccess
+   chmod -R 755 ../storage/
+   ```
+
+5. **Configure Environment**
+   ```bash
+   cd ..
+   cp .env.production .env
+   nano .env  # Edit with your settings
+   ```
+
+6. **Test Application**
+   - Visit your domain
+   - Check for any errors
+   - Monitor error logs
+
+## Alternative: Manual Upload
+
+If you prefer manual upload:
+1. Extract $archiveName locally
+2. Upload public_html/ contents to your domain folder
+3. Upload other directories to private folder above public
+4. Follow configuration steps above
+
+## Support Files Included:
+- DEPLOYMENT.md - Complete deployment guide
+- maintenance/ - Maintenance scripts
+- .env.production - Environment template
+
+## Need Help?
+Check DEPLOYMENT.md for detailed troubleshooting guide.
+";
+    
+    file_put_contents("UPLOAD-INSTRUCTIONS.txt", $instructions);
+    echo "📋 Created: UPLOAD-INSTRUCTIONS.txt\n";
+    
+    echo "🎉 Package ready for upload!\n";
+    echo "📤 Upload $archiveName to your shared hosting\n";
+    echo "📖 Read UPLOAD-INSTRUCTIONS.txt for details\n";
+    
+} else {
+    echo "❌ Failed to create archive\n";
+    echo "Error: $result\n";
+    exit(1);
+}

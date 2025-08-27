@@ -1,0 +1,72 @@
+{% extends 'layout/master.html.twig' %}
+
+{% block title %}
+    Boson Documentation :: {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <boson-default-layout>
+
+        <boson-page-title>
+            <h2>Boson Documentation</h2>
+        </boson-page-title>
+
+        <boson-breadcrumbs>
+            {% apply spaceless %}
+                <div class="breadcrumb-item">
+                    <boson-button type="ghost" href="{{ path('home') }}">
+                        Home
+                    </boson-button>
+                </div>
+
+                <div class="breadcrumb-item">
+                    {% include 'page/docs/partials/version_selector.html.twig' with {
+                        version: version,
+                        versions: versions,
+                    } %}
+                </div>
+            {% endapply %}
+        </boson-breadcrumbs>
+
+        <boson-docs-toc>
+            {% for category in version.categories %}
+                <article>
+                    <hgroup>
+                        <h6>
+                            {% if category.icon is not null %}
+                                <img src="{{ category.icon }}" />
+                            {% endif %}
+                            {{ category.title }}
+                        </h6>
+                        {% if category.description is not null %}
+                            <p style="padding-top: 20px;">
+                                {{ category.description }}
+                            </p>
+                        {% endif %}
+                    </hgroup>
+                    <ul>
+                        {% for page in category.pages %}
+                            <li>
+                                {% if page.type.name == 'Link' %}
+                                    <a href="{{ page.uri }}" target="_blank">
+                                        {{ page.title }}
+                                        <img src="https://intellij-icons.jetbrains.design/icons/AllIcons/expui/ide/externalLink_dark.svg"
+                                             width="18" height="18" />
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('doc.show', {
+                                        page: page.uri,
+                                        version: version.name
+                                    }) }}">
+                                        {{ page.title }}
+                                    </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </article>
+            {% endfor %}
+        </boson-docs-toc>
+
+    </boson-default-layout>
+{% endblock %}

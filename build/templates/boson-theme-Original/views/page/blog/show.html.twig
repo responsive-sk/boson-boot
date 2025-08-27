@@ -1,0 +1,56 @@
+{% extends 'layout/master.html.twig' %}
+
+{% block title %}
+    {{ article.title }} :: {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <boson-default-layout>
+        <boson-page-title>
+            <h2>{{ article.title }}</h2>
+        </boson-page-title>
+
+    <boson-breadcrumbs>
+        {% apply spaceless %}
+            <div class="breadcrumb-item">
+                <boson-button type="ghost" href="{{ path('home') }}">
+                    Home
+                </boson-button>
+            </div>
+
+            <div class="breadcrumb-item">
+                <boson-button type="ghost" href="{{ path('blog.index') }}">
+                    Blog
+                </boson-button>
+            </div>
+
+            <div class="breadcrumb-item">
+                <boson-button type="ghost" href="{{ path('blog.index_by_category', {slug: category.uri}) }}">
+                    {{ category.title }}
+                </boson-button>
+            </div>
+
+            <div class="breadcrumb-item">
+                <boson-button type="ghost">
+                    {{ article.title }}
+                </boson-button>
+            </div>
+        {% endapply %}
+    </boson-breadcrumbs>
+
+    <div style="padding: 20px 0; display: grid; grid-template-columns: 2fr 1fr;">
+
+        <section>
+            <article>
+                {{ article.content | raw }}
+            </article>
+        </section>
+
+        {% include 'page/blog/partial/categories_list.html.twig' with {
+            categories: categories
+        } %}
+    </div>
+
+    </boson-default-layout>
+{% endblock %}

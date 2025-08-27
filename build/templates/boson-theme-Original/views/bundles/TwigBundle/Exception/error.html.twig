@@ -1,0 +1,72 @@
+{% extends 'layout/master.html.twig' %}
+
+{% block title %}
+    Error {{ status_code }} :: {{ parent() }}
+{% endblock %}
+
+{% block body %}
+
+    <boson-default-layout>
+        <boson-page-title>
+            <h2>Something went wrong</h2>
+        </boson-page-title>
+
+        <boson-breadcrumbs>
+            {% apply spaceless %}
+                <div class="breadcrumb-item">
+                    <boson-button type="ghost" href="{{ path('home') }}">
+                        Home
+                    </boson-button>
+                </div>
+
+                <div class="breadcrumb-item">
+                    <boson-button type="ghost">
+                        Error {{ status_code }}
+                    </boson-button>
+                </div>
+            {% endapply %}
+        </boson-breadcrumbs>
+
+        <section class="error-content">
+            <hgroup style="padding: 3em 0; text-align: center;">
+                <h1 style="font-size: 4em; color: #F93904; margin-bottom: 0.5em;">{{ status_code }}</h1>
+                <h2 style="margin-bottom: 1em;">{{ status_text }}</h2>
+                <p style="font-size: 1.2em; margin-bottom: 2em; opacity: 0.8;">
+                    We're sorry, but something went wrong on our end.
+                </p>
+                
+                <div style="display: flex; gap: 1em; justify-content: center; flex-wrap: wrap;">
+                    <boson-button href="{{ path('home') }}" icon="/images/icons/arrow_primary.svg">
+                        Go Home
+                    </boson-button>
+                    
+                    <boson-button type="secondary" onclick="window.history.back()" icon="/images/icons/arrow_secondary.svg">
+                        Go Back
+                    </boson-button>
+                </div>
+            </hgroup>
+
+            <div style="margin-top: 3em; padding: 2em; background: rgba(249, 57, 4, 0.1); border-radius: 8px;">
+                <h3 style="margin-bottom: 1em;">What happened?</h3>
+                <p style="margin-bottom: 1em;">
+                    The server encountered an error and couldn't complete your request.
+                    This might be a temporary issue.
+                </p>
+                
+                <h4 style="margin-bottom: 0.5em;">You can try:</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 0.5em;">
+                        <strong>🔄 Refresh the page</strong> - The issue might be temporary
+                    </li>
+                    <li style="margin-bottom: 0.5em;">
+                        <strong>🏠 Go to homepage</strong> - Start from the main page
+                    </li>
+                    <li>
+                        <strong>📧 Contact support</strong> - If the problem persists
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </boson-default-layout>
+{% endblock %}

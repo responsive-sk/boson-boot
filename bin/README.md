@@ -26,6 +26,39 @@ Automated cache cleanup for production maintenance.
 **When to use**: As a cron job or during maintenance windows
 **Frequency**: Recommended daily or weekly
 
+### `build-shared-hosting`
+Creates optimized build for shared hosting Apache deployment.
+
+```bash
+./bin/build-shared-hosting [target-directory]
+```
+
+**Purpose**: Builds production-ready package for shared hosting
+**Features**: Security hardening, performance optimization, Apache configuration
+**Output**: Complete build directory with deployment instructions
+
+### `package-for-upload`
+Creates compressed archive from build directory.
+
+```bash
+./bin/package-for-upload [build-dir] [output-name]
+```
+
+**Purpose**: Packages build into uploadable tar.gz archive
+**When to use**: After building for shared hosting
+**Output**: Compressed archive with upload instructions
+
+### `deploy-shared-hosting`
+One-command build and package for shared hosting.
+
+```bash
+./bin/deploy-shared-hosting [version]
+```
+
+**Purpose**: Complete build, package, and documentation generation
+**Features**: Versioned builds, deployment summaries, upload instructions
+**Output**: Ready-to-upload package with complete documentation
+
 ## Cron Job Examples
 
 ```bash

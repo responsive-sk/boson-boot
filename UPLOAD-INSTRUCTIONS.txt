@@ -1,0 +1,60 @@
+# Upload Instructions for boson-php-test-v1.tar.gz
+
+## Quick Upload Steps:
+
+1. **Upload Archive**
+   - Upload boson-php-test-v1.tar.gz to your hosting control panel
+   - Or use FTP/SFTP to upload to your account
+
+2. **Extract Archive**
+   ```bash
+   tar -xzf boson-php-test-v1.tar.gz
+   ```
+   
+   Or use hosting control panel's extract feature
+
+3. **Move Files to Correct Locations**
+   ```bash
+   # Move public_html contents to your domain folder
+   mv public_html/* /path/to/your/domain/
+   
+   # Move other files to private directory above public
+   mv src/ templates/ vendor/ storage/ ../
+   mv .env.production ../.env
+   mv DEPLOYMENT.md ../
+   ```
+
+4. **Set Permissions**
+   ```bash
+   chmod 755 public_html/
+   chmod 644 .htaccess
+   chmod -R 755 ../storage/
+   ```
+
+5. **Configure Environment**
+   ```bash
+   cd ..
+   cp .env.production .env
+   nano .env  # Edit with your settings
+   ```
+
+6. **Test Application**
+   - Visit your domain
+   - Check for any errors
+   - Monitor error logs
+
+## Alternative: Manual Upload
+
+If you prefer manual upload:
+1. Extract boson-php-test-v1.tar.gz locally
+2. Upload public_html/ contents to your domain folder
+3. Upload other directories to private folder above public
+4. Follow configuration steps above
+
+## Support Files Included:
+- DEPLOYMENT.md - Complete deployment guide
+- maintenance/ - Maintenance scripts
+- .env.production - Environment template
+
+## Need Help?
+Check DEPLOYMENT.md for detailed troubleshooting guide.

@@ -1,0 +1,28 @@
+<aside>
+    <nav>
+        <ul>
+            <li>
+                {% if app.request.get('_route') == 'blog.index' %}
+                    <strong>All Blog Posts</strong>
+                {% else %}
+                    <a href="{{ path('blog.index') }}">All Blog Posts</a>
+                {% endif %}
+            </li>
+            {% for available_category in categories %}
+                <li>
+                    {% if category is defined and category.uri == available_category.uri %}
+                        <strong>
+                            {{ available_category.title }}
+                        </strong>
+                    {% else %}
+                        <a href="{{ path('blog.index_by_category', {
+                            slug: available_category.uri
+                        }) }}">
+                            {{ available_category.title }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </nav>
+</aside>
