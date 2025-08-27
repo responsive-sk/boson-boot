@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\AbstractController;
-use Boson\Shared\Infrastructure\Traits\HasDatabase;
-use Boson\Shared\Infrastructure\Traits\HasValidation;
+use Boson\Shared\Application\Controller\AbstractController;
+use Boson\Shared\Application\Traits\HasDatabase;
+use Boson\Shared\Application\Traits\HasValidation;
 use Exception;
 
 use function array_slice;

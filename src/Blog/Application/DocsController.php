@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\ThemeManager;
+use Boson\Shared\Infrastructure\Templating\ThemeManager;
 
 class DocsController
 {

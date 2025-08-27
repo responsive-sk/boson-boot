@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure;
 
-use Boson\Shared\Infrastructure\Middleware\MiddlewareStack;
-use Boson\Shared\Infrastructure\Middleware\SecurityHeadersMiddleware;
-use Boson\Shared\Infrastructure\Middleware\RateLimitMiddleware;
-use Boson\Shared\Infrastructure\Middleware\RequestHandlerMiddleware;
-use Boson\Shared\Infrastructure\Performance\CompressionMiddleware;
+use Boson\Shared\Infrastructure\Http\Middleware\MiddlewareStack;
+use Boson\Shared\Infrastructure\Http\Middleware\SecurityHeadersMiddleware;
+use Boson\Shared\Infrastructure\Http\Middleware\RateLimitMiddleware;
+use Boson\Shared\Infrastructure\Http\Middleware\RequestHandlerMiddleware;
+use Boson\Shared\Infrastructure\Monitoring\CompressionMiddleware;
 use Exception;
 
 /**

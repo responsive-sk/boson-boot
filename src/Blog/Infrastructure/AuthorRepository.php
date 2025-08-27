@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Boson\Blog\Infrastructure;
 
 use Boson\Blog\Domain\Author;
-use Boson\Shared\Infrastructure\Database;
+use Boson\Shared\Infrastructure\Persistence\Database;
 use PDO;
 
 class AuthorRepository

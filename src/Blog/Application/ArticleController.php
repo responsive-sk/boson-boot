@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\AbstractController;
+use Boson\Shared\Application\Controller\AbstractController;
 use Boson\Blog\Application\Service\ArticleApplicationService;
 use Boson\Shared\Presentation\Request\PaginationRequest;
 

@@ -7,7 +7,7 @@ namespace Boson\Blog\Infrastructure;
 use Boson\Blog\Domain\Article;
 use Boson\Blog\Domain\ArticleRepository;
 use Boson\Blog\Domain\ArticleStatus;
-use Boson\Shared\Infrastructure\Database;
+use Boson\Shared\Infrastructure\Persistence\Database;
 use PDO;
 
 class SqliteArticleRepository implements ArticleRepository

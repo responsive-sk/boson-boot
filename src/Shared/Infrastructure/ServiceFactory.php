@@ -22,9 +22,13 @@ use Boson\Shared\Application\Query\Article\GetArticleBySlugQuery;
 use Boson\Shared\Application\Query\Article\GetArticlesByCategoryQuery;
 use Boson\Blog\Application\SearchController;
 use Boson\Blog\Infrastructure\SqliteArticleRepository;
-use Boson\Shared\Infrastructure\Middleware\RateLimitMiddleware;
-use Boson\Shared\Infrastructure\Middleware\SecurityHeadersMiddleware;
-use Boson\Shared\Infrastructure\ThemeManager;
+use Boson\Shared\Infrastructure\Http\Middleware\RateLimitMiddleware;
+use Boson\Shared\Infrastructure\Http\Middleware\SecurityHeadersMiddleware;
+use Boson\Shared\Infrastructure\Templating\ThemeManager;
+use Boson\Shared\Infrastructure\Templating\TemplateEngineWithCache;
+use Boson\Shared\Infrastructure\Persistence\Database;
+use Boson\Shared\Infrastructure\Http\Router;
+use Boson\Shared\Infrastructure\Http\RouterWithMiddleware;
 use InvalidArgumentException;
 
 class ServiceFactory
