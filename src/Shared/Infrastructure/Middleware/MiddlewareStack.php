@@ -17,30 +17,21 @@ class MiddlewareStack
 
     public function handle(array $request): array
     {
-        $runner = new class($this->stack) {
-            private array $stack;
-
-            private int $index = 0;
-
-            public function __construct(array $stack)
-            {
-                $this->stack = $stack;
-            }
-
-            public function __invoke(array $request): array
-            {
-                if (!isset($this->stack[$this->index])) {
-                    return $request;
-                }
-
-                $middleware = $this->stack[$this->index];
-                ++$this->index;
-
-                return $middleware->handle($request, $this);
-            }
+        // Create a closure that processes middleware in proper order
+        $next = function ($request) {
+            return $request; // Final handler - just return the request
         };
 
-        return $runner($request);
+        // Process through middleware in reverse order
+        // This ensures first added middleware executes first
+        for ($i = count($this->stack) - 1; $i >= 0; $i--) {
+            $middleware = $this->stack[$i];
+            $next = function ($request) use ($middleware, $next) {
+                return $middleware->handle($request, $next);
+            };
+        }
+
+        return $next($request);
     }
 
     public function getMiddleware(): array

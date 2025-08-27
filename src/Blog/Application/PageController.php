@@ -10,11 +10,14 @@ class PageController
 {
     public function __construct(
         private $templateEngine,
+        private ThemeManager $themeManager
     ) {}
 
     public function download(array $params = []): string
     {
-        return $this->templateEngine->render('pages::download');
+        return $this->templateEngine->render('pages::download', [
+            'themeManager' => $this->themeManager
+        ]);
     }
 
     public function about(array $params = []): string
@@ -32,6 +35,7 @@ class PageController
             'pageSubtitle' => 'Bringing PHP to desktop development',
             'breadcrumbs'  => $breadcrumbs,
             'aboutContent' => $this->renderAboutContent(),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -50,6 +54,7 @@ class PageController
             'pageSubtitle' => 'Get in touch with our team',
             'breadcrumbs'  => $breadcrumbs,
             'contactContent' => $this->renderContactContent(),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -67,6 +72,7 @@ class PageController
             'pageTitle'    => 'Privacy Policy',
             'breadcrumbs'  => $breadcrumbs,
             'privacyContent' => $this->renderPrivacyContent(),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -84,6 +90,7 @@ class PageController
             'pageTitle'    => 'Terms of Service',
             'breadcrumbs'  => $breadcrumbs,
             'termsContent' => $this->renderTermsContent(),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -224,290 +231,35 @@ class PageController
 
     public function test(array $params = []): string
     {
-        return '<!DOCTYPE html>
-<html>
-<head>
-    <title>Simple Component Test</title>
-    <style>
-        body { font-family: system-ui, sans-serif; margin: 20px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .test-section { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .component-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Simple PHP Component Test Layer</h1>
-        <p>Testing basic PHP components without JS dependencies.</p>
+        $breadcrumbs = [
+            ['label' => 'Home', 'url' => '/'],
+            ['label' => 'Components', 'url' => '/test'],
+            ['label' => 'Test']
+        ];
 
-        <div class="test-section">
-            <h2>Button Components</h2>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Primary Button', 'type' => 'primary']) . '
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Secondary Button', 'type' => 'secondary']) . '
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Danger Button', 'type' => 'danger']) . '
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Small Button', 'size' => 'small']) . '
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Large Button', 'size' => 'large']) . '
-                ' . $this->renderComponent('ui/button-simple', ['text' => 'Disabled Button', 'disabled' => true]) . '
-            </div>
-        </div>
+        $filters = [
+            ['label' => 'All Components', 'url' => '/test', 'active' => true, 'count' => 12],
+            ['label' => 'Buttons', 'url' => '/test?filter=buttons', 'count' => 6],
+            ['label' => 'Cards', 'url' => '/test?filter=cards', 'count' => 3],
+            ['label' => 'Forms', 'url' => '/test?filter=forms', 'count' => 2],
+            ['label' => 'Headlines', 'url' => '/test?filter=headlines', 'count' => 4]
+        ];
 
-        <div class="component-grid">
-            <div class="test-section">
-                <h2>Card Component</h2>
-                ' . $this->renderComponent('ui/card-simple', [
-                    'title' => 'Test Card',
-                    'content' => '<p>This is a simple card component for testing.</p><p>It has multiple paragraphs and <strong>formatted text</strong>.</p>',
-                    'footer' => '<small>Card footer content</small>'
-                ]) . '
-            </div>
-
-            <div class="test-section">
-                <h2>Form Component</h2>
-                ' . $this->renderComponent('ui/form-simple', [
-                    'title' => 'Contact Form',
-                    'action' => '/test-submit'
-                ]) . '
-            </div>
-        </div>
-
-    <script src="/assets/svelte/main.js"></script>
-    <script>
-        // Enhanced Test Component Manager
-        class TestComponentManager {
-            constructor() {
-                this.components = new Map();
-                this.activeComponents = new Set();
-                this.uiInitialized = false;
-                this.componentsLoaded = false;
-                this.init();
-            }
-
-            init() {
-                // Setup UI immediately
-                this.setupUI();
-
-                // Check for Svelte registry periodically
-                this.checkForSvelteRegistry();
-            }
-
-            checkForSvelteRegistry() {
-                if (window.svelteRegistry) {
-                    console.log("✅ Svelte registry found!");
-                    this.loadSvelteComponents();
-                } else {
-                    console.log("⏳ Waiting for Svelte registry...");
-                    setTimeout(() => this.checkForSvelteRegistry(), 1000);
-                }
-            }
-
-            loadSvelteComponents() {
-                if (this.componentsLoaded) return;
-
-                if (window.svelteRegistry) {
-                    const svelteComponents = window.svelteRegistry.listComponents();
-                    console.log("Available Svelte components:", svelteComponents);
-
-                    svelteComponents.forEach(name => {
-                        const info = window.svelteRegistry.getComponentInfo(name);
-                        this.registerComponent(name, {
-                            description: info.description,
-                            type: "svelte",
-                            svelteComponent: info
-                        });
-                    });
-
-                    this.componentsLoaded = true;
-                    console.log("🎯 All Svelte components loaded and registered");
-                }
-            }
-
-            registerComponent(name, config) {
-                this.components.set(name, config);
-                console.log("📝 Registered component:", name, config.type || "unknown");
-
-                // Only update UI after a short delay to batch updates
-                clearTimeout(this.updateTimeout);
-                this.updateTimeout = setTimeout(() => this.updateUI(), 100);
-            }
-
-            setupUI() {
-                const controls = document.getElementById("component-controls");
-                if (controls) {
-                    controls.innerHTML = "<h3>Component Controls</h3><p>Waiting for Svelte components...</p>";
-                }
-                console.log("🎯 Test manager UI ready");
-            }
-
-            updateUI() {
-                const controls = document.getElementById("component-controls");
-                if (!controls) return;
-
-                console.log("🔄 Updating UI with", this.components.size, "components");
-
-                let html = "<h3>Component Controls</h3>";
-
-                if (this.components.size === 0) {
-                    html += "<p>No components registered yet. Waiting for Svelte components...</p>";
-                } else {
-                    html += `<p>Found ${this.components.size} components. Click to activate/deactivate:</p>`;
-                    html += "<div style=\\"margin: 10px 0;\\">";
-                    this.components.forEach((config, name) => {
-                        const isActive = this.activeComponents.has(name);
-                        const buttonStyle = `
-                            margin: 5px;
-                            padding: 8px 12px;
-                            border: 1px solid #ddd;
-                            border-radius: 4px;
-                            cursor: pointer;
-                            background: ${isActive ? "#007bff" : "#fff"};
-                            color: ${isActive ? "#fff" : "#333"};
-                            transition: all 0.2s;
-                        `;
-                        html += `
-                            <button onclick="testManager.toggleComponent(\'${name}\')"
-                                    style="${buttonStyle}"
-                                    title="${config.description}">
-                                ${name} ${config.type ? `(${config.type})` : ""}
-                            </button>
-                        `;
-                    });
-                    html += "</div>";
-                }
-
-                controls.innerHTML = html;
-                console.log("✅ UI updated successfully");
-            }
-
-            toggleComponent(name) {
-                const config = this.components.get(name);
-                if (!config) return;
-
-                if (this.activeComponents.has(name)) {
-                    this.deactivateComponent(name);
-                } else {
-                    this.activateComponent(name);
-                }
-
-                this.updateUI();
-            }
-
-            activateComponent(name) {
-                const config = this.components.get(name);
-                if (!config) return;
-
-                this.activeComponents.add(name);
-                console.log("✅ Activating component:", name);
-
-                const instances = document.getElementById("component-instances");
-                if (!instances) return;
-
-                // Create container for this component
-                const container = document.createElement("div");
-                container.id = `component-${name}`;
-                container.style.cssText = `
-                    border: 1px solid #ddd;
-                    margin: 10px 0;
-                    padding: 15px;
-                    border-radius: 4px;
-                    background: #fafafa;
-                `;
-
-                container.innerHTML = `
-                    <h4 style="margin: 0 0 10px 0; color: #333;">${name}</h4>
-                    <p style="margin: 0 0 10px 0; color: #666; font-size: 14px;">${config.description}</p>
-                    <div id="component-content-${name}">Loading ${name}...</div>
-                `;
-
-                instances.appendChild(container);
-
-                // Load the actual component
-                if (config.type === "svelte" && window.svelteRegistry) {
-                    this.loadSvelteComponent(name, `component-content-${name}`);
-                }
-            }
-
-            deactivateComponent(name) {
-                this.activeComponents.delete(name);
-                console.log("❌ Deactivating component:", name);
-
-                const element = document.getElementById(`component-${name}`);
-                if (element) {
-                    element.remove();
-                }
-
-                // Cleanup Svelte component
-                if (window.svelteRegistry) {
-                    window.svelteRegistry.unloadComponent(name);
-                }
-            }
-
-            loadSvelteComponent(name, targetId) {
-                const target = document.getElementById(targetId);
-                if (!target || !window.svelteRegistry) return;
-
-                try {
-                    // Create a new container for the Svelte component
-                    const svelteContainer = document.createElement("div");
-                    svelteContainer.className = `svelte-test-${name.toLowerCase()}`;
-                    target.innerHTML = "";
-                    target.appendChild(svelteContainer);
-
-                    // Load the component through the registry
-                    window.svelteRegistry.loadComponent(name, svelteContainer);
-
-                } catch (error) {
-                    console.error(`Failed to load Svelte component ${name}:`, error);
-                    target.innerHTML = `<p style="color: red;">Error loading ${name}: ${error.message}</p>`;
-                }
-            }
-        }
-
-
-        <div class="test-section">
-            <h2>Component Status</h2>
-            <div style="background: #e8f5e8; padding: 15px; border-radius: 4px;">
-                <h3 style="margin: 0 0 10px 0; color: #2d5a2d;">✅ Simple PHP Components Working</h3>
-                <ul style="margin: 0; color: #2d5a2d;">
-                    <li>No JavaScript dependencies</li>
-                    <li>Server-side rendered</li>
-                    <li>Theme-independent</li>
-                    <li>Fast and reliable</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="test-section">
-            <h2>Next Steps</h2>
-            <p>Complex components with JS interactions will be moved to theme-specific test systems:</p>
-            <ul>
-                <li><strong>Svelte theme:</strong> Reactive components, state management</li>
-                <li><strong>Tailwind theme:</strong> Alpine.js components, HTMX interactions</li>
-                <li><strong>Bootstrap theme:</strong> Bootstrap JS components, HTMX forms</li>
-            </ul>
-        </div>
-    </div>
-</body>
-</html>';
+        return $this->templateEngine->render('pages::test', [
+            'title' => 'Component Test - Boson PHP',
+            'description' => 'Testing PHP components with optimal performance',
+            'currentRoute' => 'test',
+            'pageTitle' => 'Component Test',
+            'pageSubtitle' => 'Testing basic PHP components without JS dependencies',
+            'breadcrumbs' => $breadcrumbs,
+            'filters' => $filters,
+            'background' => 'subtle', // Nice gradient with subtle dots
+            'themeManager' => $this->themeManager,
+        ]);
     }
 
-    private function renderComponent(string $component, array $data = []): string
-    {
-        // Extract variables for the component
-        extract($data);
+    // Removed old test method with embedded HTML - that was a terrible anti-pattern!
+    // HTML belongs in templates, not controllers!
 
-        // Start output buffering
-        ob_start();
-
-        // Include the component file
-        $componentPath = __DIR__ . "/../../../templates/components/{$component}.php";
-        if (file_exists($componentPath)) {
-            include $componentPath;
-        } else {
-            echo "<p style=\"color: red;\">Component not found: {$component}</p>";
-        }
-
-        // Return the captured output
-        return ob_get_clean();
-    }
+    // All HTML content has been moved to templates/pages/test.php where it belongs!
 }

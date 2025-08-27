@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
+use Boson\Shared\Infrastructure\ThemeManager;
+
 class DocsController
 {
     public function __construct(
         private $templateEngine,
+        private ThemeManager $themeManager
     ) {}
 
     public function index(array $params = []): string
@@ -26,6 +29,7 @@ class DocsController
             'breadcrumbs'  => $breadcrumbs,
             'docsContent'  => $this->renderDocsIndex(),
             'sidebar'      => $this->renderDocsSidebar(),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -49,6 +53,7 @@ class DocsController
             'version'      => $version,
             'docsContent'  => $this->renderDocsVersion($version),
             'sidebar'      => $this->renderDocsSidebar($version),
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -77,6 +82,7 @@ class DocsController
             'version'         => $version,
             'sidebar'         => $this->renderDocsSidebar($version, $slug),
             'tableOfContents' => $doc['toc'] ?? [],
+            'themeManager'    => $this->themeManager,
         ]);
     }
 

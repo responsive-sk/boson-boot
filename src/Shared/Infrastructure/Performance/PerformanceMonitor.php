@@ -9,6 +9,8 @@ use function count;
 
 class PerformanceMonitor
 {
+    private static ?self $instance = null;
+
     private float $startTime;
 
     private int $startMemory;
@@ -17,10 +19,18 @@ class PerformanceMonitor
 
     private array $queries = [];
 
-    public function __construct()
+    private function __construct()
     {
         $this->startTime   = microtime(true);
         $this->startMemory = memory_get_usage(true);
+    }
+
+    public static function getInstance(): self
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function checkpoint(string $name): void
@@ -141,7 +151,7 @@ class PerformanceMonitor
 
     public static function start(): self
     {
-        return new self();
+        return self::getInstance();
     }
 
     private function formatBytes(int $bytes): string

@@ -25,9 +25,28 @@ class ArticleController
 
         $result = $this->articleService->getPaginatedArticles($page, $perPage);
 
+        $breadcrumbs = [
+            ['label' => 'Home', 'url' => '/'],
+            ['label' => 'Blog']
+        ];
+
+        $filters = [
+            ['label' => 'All Posts', 'url' => '/articles', 'active' => true, 'count' => $result['total']],
+            ['label' => 'Architecture', 'url' => '/articles?category=architecture', 'count' => 3],
+            ['label' => 'DDD', 'url' => '/articles?category=ddd', 'count' => 2],
+            ['label' => 'Patterns', 'url' => '/articles?category=patterns', 'count' => 2],
+            ['label' => 'PHP', 'url' => '/articles?category=php', 'count' => 4],
+            ['label' => 'Testing', 'url' => '/articles?category=testing', 'count' => 1]
+        ];
+
         return $this->templateEngine->render('pages::articles', [
             'title' => 'Articles - Boson PHP',
             'description' => 'Read the latest articles about Boson PHP development',
+            'pageTitle' => 'Blog',
+            'pageSubtitle' => 'All Blog Posts',
+            'breadcrumbs' => $breadcrumbs,
+            'filters' => $filters,
+            'background' => 'default',
             'articles' => $result['articles'],
             'currentPage' => $result['currentPage'],
             'totalPages' => $result['totalPages'],

@@ -10,9 +10,20 @@ Main project documentation covering installation, features, and basic usage.
 **Contents:**
 - Project overview and features
 - Installation and setup instructions
+- Modern kernel-based architecture
 - CLI tools and commands
-- Architecture overview
-- Basic usage examples
+- Controller development examples
+
+### [KERNEL.md](KERNEL.md)
+Comprehensive kernel architecture documentation for developers.
+
+**Contents:**
+- Kernel-based architecture overview
+- Middleware pipeline system
+- Abstract controllers and traits
+- Request lifecycle management
+- Error handling and session management
+- Migration guide and best practices
 
 ### [SECURITY.md](SECURITY.md)
 Comprehensive security documentation covering all implemented security measures.
@@ -105,6 +116,7 @@ Performance optimization guide and monitoring documentation.
 docs/
 ├── INDEX.md           # This file - documentation index
 ├── README.md          # Main project documentation
+├── KERNEL.md          # Kernel architecture documentation
 ├── SECURITY.md        # Security features and configuration
 ├── THEMES.md          # Theme system documentation
 ├── ASSETS.md          # Asset management system

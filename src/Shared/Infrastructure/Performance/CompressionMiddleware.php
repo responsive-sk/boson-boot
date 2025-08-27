@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Performance;
 
+use Boson\Shared\Infrastructure\Middleware\MiddlewareInterface;
 use function count;
 use function strlen;
 
-class CompressionMiddleware
+class CompressionMiddleware implements MiddlewareInterface
 {
     private bool $enabled;
 
@@ -22,7 +23,37 @@ class CompressionMiddleware
         $this->minLength        = max(0, $minLength);
     }
 
-    public function handle(string $content, array $headers = []): array
+    public function handle(array $request, callable $next): array
+    {
+        // Process request through next middleware first
+        $request = $next($request);
+
+        // If response is available, compress it
+        if (isset($request['response']) && is_string($request['response'])) {
+            $headers = [];
+
+            // Capture current headers
+            foreach (headers_list() as $header) {
+                $parts = explode(':', $header, 2);
+                if (count($parts) === 2) {
+                    $headers[trim($parts[0])] = trim($parts[1]);
+                }
+            }
+
+            $result = $this->compressContent($request['response'], $headers);
+
+            // Set new headers
+            foreach ($result['headers'] as $name => $value) {
+                header("{$name}: {$value}");
+            }
+
+            $request['response'] = $result['content'];
+        }
+
+        return $request;
+    }
+
+    public function compressContent(string $content, array $headers = []): array
     {
         if (!$this->enabled || !$this->shouldCompress($content, $headers)) {
             return ['content' => $content, 'headers' => $headers];
@@ -57,7 +88,7 @@ class CompressionMiddleware
                     }
                 }
 
-                $result = $middleware->handle($content, $headers);
+                $result = $middleware->compressContent($content, $headers);
 
                 // Set new headers
                 foreach ($result['headers'] as $name => $value) {

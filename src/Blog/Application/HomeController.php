@@ -4,20 +4,27 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\ThemeManager;
+use Boson\Shared\Infrastructure\AbstractController;
 
-class HomeController
+class HomeController extends AbstractController
 {
-    public function __construct(
-        private $templateEngine,
-        private ThemeManager $themeManager
-    ) {}
-
     public function index(array $params = []): string
     {
-        return $this->templateEngine->render('pages::home', [
-            'themeManager' => $this->themeManager,
-            'currentRoute' => 'home'
-        ]);
+        return $this->render('pages::home');
+    }
+
+    protected function getCurrentRoute(): string
+    {
+        return 'home';
+    }
+
+    protected function getDefaultTitle(): string
+    {
+        return 'Boson PHP - Go Native. Stay PHP.';
+    }
+
+    protected function getDefaultDescription(): string
+    {
+        return 'Turn your PHP project into cross-platform, compact, fast, native applications.';
     }
 }

@@ -4,79 +4,63 @@ declare(strict_types=1);
 
 namespace Boson\Blog\Application;
 
-use Boson\Shared\Infrastructure\Config;
-use Boson\Shared\Infrastructure\Database;
-use Boson\Shared\Infrastructure\Security\InputValidator;
-use Boson\Shared\Infrastructure\Security\RateLimiter;
+use Boson\Shared\Infrastructure\AbstractController;
+use Boson\Shared\Infrastructure\Traits\HasDatabase;
+use Boson\Shared\Infrastructure\Traits\HasValidation;
 use Exception;
 
 use function array_slice;
 use function count;
 use function strlen;
 
-class SearchController
+class SearchController extends AbstractController
 {
-    public function __construct(
-        private $templateEngine,
-        private Database $database,
-        private Config $config,
-    ) {}
+    use HasDatabase, HasValidation;
 
     public function index(array $params = []): string
     {
-        $query   = $_GET['q'] ?? '';
+        $query = $this->getParam('q');
         $results = [];
 
-        if ($query) {
+        if ($query && strlen($query) >= 2) {
             $results = $this->performSearch($query);
         }
 
-        $breadcrumbs = [
-            ['text' => 'Home', 'url' => '/'],
-            ['text' => 'Search', 'url' => null],
-        ];
-
-        return $this->templateEngine->render('layout::default', [
-            'title'        => $query ? "Search results for \"{$query}\"" : 'Search - Boson PHP',
-            'description'  => 'Search documentation, blog posts, and examples.',
-            'currentRoute' => 'search',
-            'pageTitle'    => 'Search',
+        return $this->render('pages::search', [
+            'title' => $query ? "Search results for \"{$query}\"" : 'Search - Boson PHP',
+            'description' => 'Search documentation, blog posts, and examples.',
+            'pageTitle' => 'Search',
             'pageSubtitle' => $query ? "Results for \"{$query}\"" : 'Search documentation, blog posts, and examples',
-            'breadcrumbs'  => $breadcrumbs,
-            'content'      => $this->renderSearchResults($query, $results),
-            'searchQuery'  => $query,
+            'breadcrumbs' => $this->breadcrumbs(['Search']),
+            'content' => $this->renderSearchResults($query, $results),
+            'searchQuery' => $query,
         ]);
     }
 
     public function search(array $params = []): string
     {
         // Handle POST search (redirect to GET)
-        $query = $_POST['q'] ?? '';
-        header('Location: /search?q=' . urlencode($query));
-        exit;
+        $query = $this->getParam('q');
+        $this->redirect('/search?q=' . urlencode($query));
     }
 
     public function apiSearch(array $params = []): string
     {
-        // Rate limiting for search requests
-        $rateLimiter = new RateLimiter();
-        $identifier  = $rateLimiter->getClientIdentifier() . ':search';
-
-        if (!$rateLimiter->isAllowed($identifier, 30, 300)) { // 30 searches per 5 minutes
-            http_response_code(429);
-
-            return '<div class="search-results-error">Too many search requests. Please wait a moment.</div>';
+        // Rate limiting check
+        $rateLimitError = $this->rateLimitOrFail('search', 30, 300);
+        if ($rateLimitError) {
+            return $rateLimitError;
         }
 
-        // HTMX API endpoint for live search results
-        $query = $_GET['q'] ?? '';
+        $query = $this->getParam('q');
 
         // Input validation
-        $validator = new InputValidator();
-        if (!$validator->validate(['q' => $query], [
+        $validationError = $this->validateOrFail(['q' => $query], [
             'q' => ['required', ['min', 2], ['max', 100], 'string'],
-        ])) {
-            return '<div class="search-results-empty">Type at least 2 characters to search...</div>';
+        ], 'partials::search-validation-error');
+
+        if ($validationError) {
+            return $validationError;
         }
 
         // Sanitize input

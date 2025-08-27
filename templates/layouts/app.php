@@ -32,22 +32,18 @@ $this->layout('layouts::base', [
 <?php endif; ?>
 
 <!-- Main Content -->
-<main id="main-content" class="main-content">
+<main id="main-content" class="main-content" style="padding-top: 100px;">
     <!-- Breadcrumbs -->
     <?php if (isset($breadcrumbs) && !empty($breadcrumbs)): ?>
         <?php $this->insert('components/ui/breadcrumbs', ['items' => $breadcrumbs]) ?>
     <?php endif; ?>
     
-    <!-- Page Header -->
+    <!-- Page Title Container -->
     <?php if (isset($pageTitle)): ?>
-        <div class="page-header">
-            <div class="container">
-                <h1 class="page-title"><?= $this->escapeHtml($pageTitle) ?></h1>
-                <?php if (isset($pageSubtitle)): ?>
-                    <p class="page-subtitle"><?= $this->escapeHtml($pageSubtitle) ?></p>
-                <?php endif; ?>
-            </div>
-        </div>
+        <?php
+        // Include page title container component
+        include __DIR__ . '/../components/ui/page-title-container.php';
+        ?>
     <?php endif; ?>
     
     <!-- Page Content -->

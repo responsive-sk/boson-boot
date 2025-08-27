@@ -123,13 +123,26 @@ class ServiceFactory
         $articleService = $this->createArticleService();
         $themeManager   = $this->createThemeManager();
 
-        return match ($controllerName) {
+        $controller = match ($controllerName) {
             'HomeController'   => new HomeController($templateEngine, $themeManager),
-            'ArticleController' => new ArticleController($templateEngine, $database, $config, $articleService, $themeManager),
-            'DocsController'   => new DocsController($templateEngine),
-            'SearchController' => new SearchController($templateEngine, $database, $config),
-            'PageController'   => new PageController($templateEngine),
+            'ArticleController' => new ArticleController($templateEngine, $themeManager),
+            'DocsController'   => new DocsController($templateEngine, $themeManager),
+            'SearchController' => new SearchController($templateEngine, $themeManager),
+            'PageController'   => new PageController($templateEngine, $themeManager),
             default            => throw new InvalidArgumentException("Unknown controller: {$controllerName}")
         };
+
+        // Inject dependencies for controllers that need them
+        if (method_exists($controller, 'setDatabase')) {
+            $controller->setDatabase($database);
+        }
+        if (method_exists($controller, 'setConfig')) {
+            $controller->setConfig($config);
+        }
+        if (method_exists($controller, 'setArticleService')) {
+            $controller->setArticleService($articleService);
+        }
+
+        return $controller;
     }
 }

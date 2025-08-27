@@ -123,16 +123,44 @@ npm run dev:bootstrap  # Port 5175
 
 ## Architecture
 
+### Modern Kernel-Based Architecture
+
+The application uses a modern **Kernel-based architecture** with middleware pipeline for maximum flexibility and maintainability.
+
+#### Core Components
+
+- **Kernel** - Application core managing the entire request lifecycle
+- **Middleware Stack** - Modular request processing pipeline
+- **Abstract Controllers** - Lightweight, trait-based controllers
+- **Service Factory** - Centralized dependency injection
+- **Error Handler** - Unified exception and error management
+- **Session Manager** - Secure session handling with CSRF protection
+
 ### Directory Structure
 
 ```
 src/
 ├── Blog/
 │   ├── Application/          # Controllers and services
+│   │   ├── *Controller.php   # Lightweight controllers extending AbstractController
+│   │   └── *Service.php      # Business logic services
 │   ├── Domain/              # Entities and repositories
 │   └── Infrastructure/      # Database implementations
 └── Shared/
     └── Infrastructure/      # Core infrastructure components
+        ├── Kernel.php       # Application kernel (main entry point)
+        ├── AbstractController.php  # Base controller with common functionality
+        ├── ErrorHandler.php # Centralized error handling
+        ├── SessionManager.php # Secure session management
+        ├── RequestHandler.php # Request processing logic
+        ├── Traits/          # Reusable controller traits
+        │   ├── HasDatabase.php
+        │   └── HasValidation.php
+        └── Middleware/      # Middleware components
+            ├── MiddlewareStack.php
+            ├── SecurityHeadersMiddleware.php
+            ├── RateLimitMiddleware.php
+            └── RequestHandlerMiddleware.php
 
 templates/                   # PHP Plates templates
 ├── assets/                  # Theme source files
@@ -166,11 +194,25 @@ tests/                      # Test files
 
 ### Key Components
 
+#### Application Kernel
+- **Kernel**: Central application core managing request lifecycle
+- **Environment Management**: Type-safe configuration loading with validation
+- **Middleware Pipeline**: Modular request processing with configurable stack
+- **Error Handling**: Centralized exception management with debug/production modes
+- **Session Management**: Secure session handling with CSRF protection
+
+#### Controllers & Services
+- **Abstract Controllers**: Lightweight base controllers with common functionality
+- **Controller Traits**: Modular functionality (HasDatabase, HasValidation)
+- **Service Factory**: Centralized dependency injection and service creation
+- **Request Handler**: Dedicated request processing and routing logic
+
+#### Infrastructure
 - **Router**: FastRoute with middleware support
 - **Templates**: League Plates with caching
 - **Database**: SQLite with query caching and FTS5 search
 - **Security**: Multi-layer protection system
-- **Performance**: Comprehensive optimization
+- **Performance**: Comprehensive optimization with singleton monitoring
 - **Theme System**: Multiple frontend frameworks with Vite build pipeline
 - **Testing**: PHPUnit, Behat, and PHPStan integration
 
@@ -226,14 +268,98 @@ composer quality
 - Domain-driven design principles
 - Repository pattern for data access
 
-### Adding Middleware
+### Kernel-Based Architecture
+
+The application uses a modern kernel-based architecture with environment-driven configuration.
+
+#### Application Kernel Usage
 
 ```php
-// Global middleware
-$router->addGlobalMiddleware(new CustomMiddleware());
+// public/index.php - Ultra-clean entry point
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// Route-specific middleware
-$router->addRouteMiddleware('/api/*', new ApiMiddleware());
+use Boson\Shared\Infrastructure\Kernel;
+
+$kernel = new Kernel();
+$kernel->run();
+```
+
+#### Environment Configuration
+
+```env
+# .env file
+APP_NAME="Boson PHP"
+APP_ENV=development
+APP_DEBUG=true
+
+# Middleware Configuration
+ENABLE_LOGGING=true
+ENABLE_RATE_LIMITING=false
+RATE_LIMIT_MAX_ATTEMPTS=100
+```
+
+#### Adding Custom Middleware
+
+```php
+// Add middleware before kernel boots
+$kernel = new Kernel();
+$kernel->addMiddleware(new CustomMiddleware());
+$kernel->run();
+
+// Or extend Kernel class for complex setups
+class CustomKernel extends Kernel
+{
+    protected function initializeMiddleware(): void
+    {
+        parent::initializeMiddleware();
+        $this->middlewareStack->add(new CustomMiddleware());
+    }
+}
+```
+
+#### Controller Development
+
+```php
+// Lightweight controllers extending AbstractController
+class BlogController extends AbstractController
+{
+    use HasDatabase, HasValidation;
+
+    public function index(array $params = []): string
+    {
+        $posts = $this->query('SELECT * FROM posts ORDER BY created_at DESC');
+
+        return $this->render('pages::blog', [
+            'posts' => $posts,
+            'pageTitle' => 'Blog Posts'
+        ]);
+    }
+
+    public function create(array $params = []): string
+    {
+        // Validation with automatic error handling
+        $error = $this->validateOrFail($_POST, [
+            'title' => ['required', ['min', 3]],
+            'content' => ['required', ['min', 10]]
+        ]);
+
+        if ($error) return $error; // Returns validation error fragment
+
+        // Rate limiting
+        if (!$this->checkRateLimit('post_create', 5, 3600)) {
+            return $this->fragment('partials::rate-limit-error');
+        }
+
+        // Business logic
+        $this->execute('INSERT INTO posts (title, content) VALUES (?, ?)', [
+            $_POST['title'], $_POST['content']
+        ]);
+
+        return $this->redirect('/blog');
+    }
+}
 ```
 
 ### Cache Management
