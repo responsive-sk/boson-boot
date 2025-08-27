@@ -80,9 +80,23 @@
 ├── storage
 │   ├── cache
 │   │   ├── templates
+│   │   │   ├── 0b53efcafffe4d5572c87f91b65f805e.cache
+│   │   │   ├── 1132e21aeebb2b41598f894928df7ef7.cache
+│   │   │   ├── 1dea64464a1790d26679e41a00acda89.cache
+│   │   │   ├── 20ae964011582a916fef2659807a16b2.cache
+│   │   │   ├── 2f7e108c855d6f7394c0fb7d855cecf6.cache
+│   │   │   ├── 4983666ef318da968cb3ac23294139c7.cache
+│   │   │   ├── 6bf62a4320bfc0eb905358c3d0f12504.cache
+│   │   │   ├── 6fd8a79df848b8d94ec1fe37cb09880d.cache
+│   │   │   ├── 74c9bd5ec83d90b29efb93a936ea2928.cache
+│   │   │   ├── 945b278125a693a4c15f6f30982efb15.cache
+│   │   │   ├── c2503bf8fb1501484f7fe39ea5a579c1.cache
+│   │   │   └── e57ce58ebebbb768eee022fec0b679bd.cache
 │   │   └── .gitkeep
 │   ├── logs
 │   │   ├── test
+│   │   ├── app-2025-08-27.log
+│   │   ├── error.log
 │   │   └── .gitkeep
 │   ├── phpstan
 │   ├── phpunit
@@ -374,4 +388,4 @@
 ├── phpunit.xml
 └── test_htmx_conversion.php
 
-87 directories, 288 files
+87 directories, 302 files

@@ -5,28 +5,29 @@ declare(strict_types=1);
 namespace Boson\Blog\Application;
 
 use Boson\Shared\Infrastructure\AbstractController;
-use Boson\Shared\Infrastructure\Traits\HasDatabase;
+use Boson\Blog\Application\Service\ArticleApplicationService;
+use Boson\Shared\Presentation\Request\PaginationRequest;
 
 class ArticleController extends AbstractController
 {
-    use HasDatabase;
+    private ArticleApplicationService $articleApplicationService;
 
-    private ArticleService $articleService;
-
-    public function setArticleService(ArticleService $articleService): void
+    public function setArticleApplicationService(ArticleApplicationService $articleApplicationService): void
     {
-        $this->articleService = $articleService;
+        $this->articleApplicationService = $articleApplicationService;
     }
 
     public function index(array $params = []): string
     {
-        $page = $this->getParam('page', 1, 'int');
-        $perPage = 6;
+        $paginationRequest = PaginationRequest::fromGlobals();
 
-        $result = $this->articleService->getPaginatedArticles($page, $perPage);
+        $articlesResponse = $this->articleApplicationService->getArticles(
+            page: $paginationRequest->getPage(),
+            perPage: 6
+        );
 
         $filters = [
-            ['label' => 'All Posts', 'url' => '/articles', 'active' => true, 'count' => $result['total']],
+            ['label' => 'All Posts', 'url' => '/articles', 'active' => true, 'count' => $articlesResponse->getTotal()],
             ['label' => 'Architecture', 'url' => '/articles?category=architecture', 'count' => 3],
             ['label' => 'DDD', 'url' => '/articles?category=ddd', 'count' => 2],
             ['label' => 'Patterns', 'url' => '/articles?category=patterns', 'count' => 2],
@@ -42,11 +43,11 @@ class ArticleController extends AbstractController
             'breadcrumbs' => $this->breadcrumbs(['Blog']),
             'filters' => $filters,
             'background' => 'default',
-            'articles' => $result['articles'],
-            'currentPage' => $result['currentPage'],
-            'totalPages' => $result['totalPages'],
-            'hasMore' => $result['hasMore'],
-            'total' => $result['total'],
+            'articles' => $articlesResponse->getArticles(),
+            'currentPage' => $articlesResponse->getCurrentPage(),
+            'totalPages' => $articlesResponse->getTotalPages(),
+            'hasMore' => $articlesResponse->hasMore(),
+            'total' => $articlesResponse->getTotal(),
         ]);
     }
 
@@ -58,24 +59,31 @@ class ArticleController extends AbstractController
             return $this->notFound('Article Not Found');
         }
 
-        $article = $this->articleService->getArticleBySlug($slug);
+        $articleResponse = $this->articleApplicationService->getArticleBySlug($slug);
 
-        if (!$article || !$article->isPublished()) {
+        if (!$articleResponse) {
             return $this->notFound('Article Not Found');
         }
 
         // Get related articles (same category, excluding current)
         $relatedArticles = [];
-        if ($article->getCategoryId()) {
-            $allRelated = $this->articleService->getArticlesByCategory($article->getCategoryId(), 4);
-            $relatedArticles = array_filter($allRelated, fn($a) => $a->getId() !== $article->getId());
+        if ($articleResponse->getCategoryId()) {
+            $relatedArticles = $this->articleApplicationService->getArticlesByCategory(
+                categoryId: $articleResponse->getCategoryId(),
+                limit: 4
+            );
+            // Filter out current article and limit to 3
+            $relatedArticles = array_filter(
+                $relatedArticles,
+                fn($a) => $a->getId() !== $articleResponse->getId()
+            );
             $relatedArticles = array_slice($relatedArticles, 0, 3);
         }
 
         return $this->render('pages::article', [
-            'title' => $article->getTitle() . ' - Boson PHP',
-            'description' => $article->getExcerpt() ?? substr(strip_tags($article->getContent()), 0, 160),
-            'article' => $article,
+            'title' => $articleResponse->getTitle() . ' - Boson PHP',
+            'description' => $articleResponse->getExcerpt() ?? substr(strip_tags($articleResponse->getContent()), 0, 160),
+            'article' => $articleResponse,
             'relatedArticles' => $relatedArticles,
         ]);
     }
@@ -85,19 +93,22 @@ class ArticleController extends AbstractController
         $page = $this->getParam('page', 2, 'int');
         $perPage = 6;
 
-        $result = $this->articleService->getPaginatedArticles($page, $perPage);
+        $articlesResponse = $this->articleApplicationService->getArticles(
+            page: $page,
+            perPage: $perPage
+        );
 
-        if (empty($result['articles'])) {
+        if (empty($articlesResponse->getArticles())) {
             return '<div class="no-more-articles">No more articles to load.</div>';
         }
 
         $html = '';
-        foreach ($result['articles'] as $article) {
+        foreach ($articlesResponse->getArticles() as $article) {
             $html .= $this->renderArticleCard($article);
         }
 
         // Add load more button if there are more articles
-        if ($result['hasMore']) {
+        if ($articlesResponse->hasMore()) {
             $nextPage = $page + 1;
             $html .= '
                 <div class="load-more-container" id="load-more-container">
@@ -125,16 +136,13 @@ class ArticleController extends AbstractController
             return $this->notFound('Category Not Found');
         }
 
-        $page = $this->getParam('page', 1, 'int');
-        $perPage = 6;
-        $offset = ($page - 1) * $perPage;
+        $paginationRequest = PaginationRequest::fromGlobals();
 
-        $articles = $this->articleService->getArticlesByCategory($categoryId, $perPage + 1, $offset);
-        $hasMore = count($articles) > $perPage;
-
-        if ($hasMore) {
-            array_pop($articles);
-        }
+        $articlesResponse = $this->articleApplicationService->getArticles(
+            page: $paginationRequest->getPage(),
+            perPage: 6,
+            categoryId: $categoryId
+        );
 
         // Get category name (simplified - in real app you'd have a CategoryService)
         $categoryName = $this->getCategoryName($categoryId);
@@ -142,9 +150,9 @@ class ArticleController extends AbstractController
         return $this->render('pages::articles', [
             'title' => $categoryName . ' Articles - Boson PHP',
             'description' => 'Articles in the ' . $categoryName . ' category',
-            'articles' => $articles,
-            'currentPage' => $page,
-            'hasMore' => $hasMore,
+            'articles' => $articlesResponse->getArticles(),
+            'currentPage' => $articlesResponse->getCurrentPage(),
+            'hasMore' => $articlesResponse->hasMore(),
             'categoryId' => $categoryId,
             'categoryName' => $categoryName
         ]);
@@ -179,7 +187,15 @@ class ArticleController extends AbstractController
 
     private function getCategoryName(int $categoryId): string
     {
-        $result = $this->queryOne("SELECT name FROM categories WHERE id = ?", [$categoryId]);
-        return $result['name'] ?? 'Unknown Category';
+        // TODO: Implement proper CategoryService
+        $categoryNames = [
+            1 => 'Architecture',
+            2 => 'DDD',
+            3 => 'Patterns',
+            4 => 'PHP',
+            5 => 'Testing'
+        ];
+
+        return $categoryNames[$categoryId] ?? 'Unknown Category';
     }
 }

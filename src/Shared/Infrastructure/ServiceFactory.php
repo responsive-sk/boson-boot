@@ -9,6 +9,17 @@ use Boson\Blog\Application\ArticleService;
 use Boson\Blog\Application\DocsController;
 use Boson\Blog\Application\HomeController;
 use Boson\Blog\Application\PageController;
+use Boson\Blog\Application\Service\ArticleApplicationService;
+use Boson\Shared\Application\Service\CommandBusInterface;
+use Boson\Shared\Application\Service\QueryBusInterface;
+use Boson\Shared\Application\Service\SimpleCommandBus;
+use Boson\Shared\Application\Service\SimpleQueryBus;
+use Boson\Shared\Application\Query\Handler\GetArticlesQueryHandler;
+use Boson\Shared\Application\Query\Handler\GetArticleBySlugQueryHandler;
+use Boson\Shared\Application\Query\Handler\GetArticlesByCategoryQueryHandler;
+use Boson\Shared\Application\Query\Article\GetArticlesQuery;
+use Boson\Shared\Application\Query\Article\GetArticleBySlugQuery;
+use Boson\Shared\Application\Query\Article\GetArticlesByCategoryQuery;
 use Boson\Blog\Application\SearchController;
 use Boson\Blog\Infrastructure\SqliteArticleRepository;
 use Boson\Shared\Infrastructure\Middleware\RateLimitMiddleware;
@@ -142,7 +153,51 @@ class ServiceFactory
         if (method_exists($controller, 'setArticleService')) {
             $controller->setArticleService($articleService);
         }
+        if (method_exists($controller, 'setArticleApplicationService')) {
+            $controller->setArticleApplicationService($this->createArticleApplicationService());
+        }
 
         return $controller;
+    }
+
+    /**
+     * Create Command Bus
+     */
+    public function createCommandBus(): CommandBusInterface
+    {
+        $bus = new SimpleCommandBus();
+
+        // Register command handlers
+        // TODO: Implement command handlers
+
+        return $bus;
+    }
+
+    /**
+     * Create Query Bus
+     */
+    public function createQueryBus(): QueryBusInterface
+    {
+        $bus = new SimpleQueryBus();
+
+        // Register query handlers
+        $articleService = $this->createArticleService();
+
+        $bus->register(GetArticlesQuery::class, fn($query) => (new GetArticlesQueryHandler($articleService))->handle($query));
+        $bus->register(GetArticleBySlugQuery::class, fn($query) => (new GetArticleBySlugQueryHandler($articleService))->handle($query));
+        $bus->register(GetArticlesByCategoryQuery::class, fn($query) => (new GetArticlesByCategoryQueryHandler($articleService))->handle($query));
+
+        return $bus;
+    }
+
+    /**
+     * Create Article Application Service
+     */
+    public function createArticleApplicationService(): ArticleApplicationService
+    {
+        return new ArticleApplicationService(
+            $this->createQueryBus(),
+            $this->createCommandBus()
+        );
     }
 }
