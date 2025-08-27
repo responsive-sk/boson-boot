@@ -1,0 +1,156 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Cache Management Script
+ * Provides cache operations: clear, stats, warmup
+ * 
+ * Usage: ./tools/cache-manager [command]
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\ServiceFactory;
+use Boson\Shared\Infrastructure\Templating\TemplateEngineWithCache;
+use Boson\Shared\Infrastructure\Caching\FileCache;
+
+function showUsage(): void
+{
+    echo "🗂️  Cache Manager\n";
+    echo "Usage: ./tools/cache-manager [command]\n\n";
+    echo "Commands:\n";
+    echo "  clear     Clear all caches\n";
+    echo "  stats     Show cache statistics\n";
+    echo "  warmup    Warm up template cache\n";
+    echo "  cleanup   Clean expired cache entries\n";
+    echo "  help      Show this help message\n\n";
+}
+
+function clearCaches(): void
+{
+    echo "🧹 Clearing caches...\n";
+    
+    $caches = [
+        'templates' => __DIR__ . '/../storage/cache/templates',
+        'queries' => __DIR__ . '/../storage/cache/queries',
+        'general' => __DIR__ . '/../storage/cache'
+    ];
+    
+    $totalDeleted = 0;
+    
+    foreach ($caches as $name => $path) {
+        if (is_dir($path)) {
+            $cache = new FileCache($path);
+            $deleted = $cache->clear();
+            $totalDeleted += $deleted;
+            echo "  ✅ Cleared $name cache ($deleted files)\n";
+        } else {
+            echo "  ⚠️  $name cache directory not found: $path\n";
+        }
+    }
+    
+    echo "\n🎉 All caches cleared! Total files deleted: $totalDeleted\n";
+}
+
+function showStats(): void
+{
+    echo "📊 Cache Statistics\n\n";
+    
+    $caches = [
+        'queries' => __DIR__ . '/../storage/cache/queries',
+        'general' => __DIR__ . '/../storage/cache'
+    ];
+    
+    foreach ($caches as $name => $path) {
+        if (is_dir($path)) {
+            $files = glob($path . '/*.cache');
+            $totalSize = 0;
+            
+            foreach ($files as $file) {
+                $totalSize += filesize($file);
+            }
+            
+            echo "$name cache:\n";
+            echo "  Files: " . count($files) . "\n";
+            echo "  Size: " . formatBytes($totalSize) . "\n\n";
+        } else {
+            echo "$name cache: Directory not found\n\n";
+        }
+    }
+}
+
+function formatBytes(int $bytes): string
+{
+    $units = ['B', 'KB', 'MB', 'GB'];
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+    
+    $bytes /= (1 << (10 * $pow));
+    
+    return round($bytes, 2) . ' ' . $units[$pow];
+}
+
+function warmupCache(): void
+{
+    echo "🔥 Warming up template cache...\n";
+    
+    try {
+        $serviceFactory = new ServiceFactory();
+        $templateEngine = $serviceFactory->createTemplateEngine();
+        
+        if ($templateEngine instanceof TemplateEngineWithCache) {
+            $templateEngine->warmup();
+            echo "✅ Template cache warmed up successfully\n";
+        } else {
+            echo "⚠️  Template caching not enabled\n";
+        }
+    } catch (Exception $e) {
+        echo "❌ Cache warmup failed: " . $e->getMessage() . "\n";
+    }
+}
+
+function cleanupCache(): void
+{
+    echo "🧹 Cleaning up expired cache entries...\n";
+    
+    $caches = [
+        'templates' => __DIR__ . '/../storage/cache/templates',
+        'queries' => __DIR__ . '/../storage/cache/queries',
+        'general' => __DIR__ . '/../storage/cache'
+    ];
+    
+    $totalDeleted = 0;
+    
+    foreach ($caches as $name => $path) {
+        if (is_dir($path)) {
+            $cache = new FileCache($path);
+            $deleted = $cache->cleanup();
+            $totalDeleted += $deleted;
+            echo "  ✅ Cleaned $name cache ($deleted expired entries)\n";
+        }
+    }
+    
+    echo "\n🎉 Cache cleanup completed! Total expired entries: $totalDeleted\n";
+}
+
+// Main execution
+$command = $argv[1] ?? 'help';
+
+switch ($command) {
+    case 'clear':
+        clearCaches();
+        break;
+    case 'stats':
+        showStats();
+        break;
+    case 'warmup':
+        warmupCache();
+        break;
+    case 'cleanup':
+        cleanupCache();
+        break;
+    case 'help':
+    default:
+        showUsage();
+        break;
+}

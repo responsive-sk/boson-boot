@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Database Migration Script
+ * Run this to create and seed the database
+ * 
+ * Usage: ./bin/migrate
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\Config;
+use Boson\Shared\Infrastructure\Persistence\Database;
+
+try {
+    echo "🚀 Starting database migration...\n\n";
+
+    // Load configuration
+    $config = Config::getInstance();
+    echo "✅ Configuration loaded\n";
+
+    // Create database connection
+    $database = new Database($config);
+    echo "✅ Database connection established\n";
+
+    // Run migrations
+    $database->migrate();
+    echo "✅ Database migrated successfully\n";
+
+    // Seed data
+    $database->seed();
+    echo "✅ Database seeded successfully\n\n";
+
+    echo "🎉 Migration completed successfully!\n";
+    echo "You can now start the server with: php -S localhost:8080 -t public\n";
+
+} catch (Exception $e) {
+    echo "❌ Migration failed: " . $e->getMessage() . "\n";
+    echo "Stack trace:\n" . $e->getTraceAsString() . "\n";
+    exit(1);
+}

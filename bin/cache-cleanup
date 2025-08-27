@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Cache Cleanup Script
+ * Run this periodically to clean expired cache entries
+ * 
+ * Usage: ./bin/cache-cleanup
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\Caching\FileCache;
+
+try {
+    echo "🧹 Starting cache cleanup...\n\n";
+
+    $caches = [
+        'templates' => new FileCache(__DIR__ . '/../storage/templates'),
+        'queries' => new FileCache(__DIR__ . '/../storage/cache/queries'),
+        'general' => new FileCache(__DIR__ . '/../storage/cache')
+    ];
+
+    $totalDeleted = 0;
+    $totalSize = 0;
+
+    foreach ($caches as $name => $cache) {
+        echo "Cleaning $name cache...\n";
+        
+        $deleted = $cache->cleanup();
+        $totalDeleted += $deleted;
+        
+        echo "  Deleted $deleted expired entries\n";
+    }
+
+    echo "\n✅ Cache cleanup completed!\n";
+    echo "Total expired entries deleted: $totalDeleted\n";
+
+} catch (Exception $e) {
+    echo "❌ Cache cleanup failed: " . $e->getMessage() . "\n";
+    exit(1);
+}

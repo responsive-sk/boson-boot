@@ -19,6 +19,8 @@
 ├── src
 │   ├── Blog
 │   │   ├── Application
+│   │   │   ├── Service
+│   │   │   │   └── ArticleApplicationService.php
 │   │   │   ├── ArticleController.php
 │   │   │   ├── ArticleService.php
 │   │   │   ├── DocsController.php
@@ -33,50 +35,98 @@
 │   │   └── Infrastructure
 │   │       ├── AuthorRepository.php
 │   │       └── SqliteArticleRepository.php
-│   └── Shared
-│       └── Infrastructure
-│           ├── Assets
-│           │   └── AssetManager.php
-│           ├── Cache
-│           │   ├── CacheInterface.php
-│           │   ├── FileCache.php
-│           │   └── QueryCache.php
-│           ├── Middleware
-│           │   ├── CorsMiddleware.php
-│           │   ├── CsrfMiddleware.php
-│           │   ├── JsonMiddleware.php
-│           │   ├── LoggingMiddleware.php
-│           │   ├── MiddlewareInterface.php
-│           │   ├── MiddlewareStack.php
-│           │   ├── RateLimitMiddleware.php
-│           │   ├── RequestHandlerMiddleware.php
-│           │   └── SecurityHeadersMiddleware.php
-│           ├── Performance
-│           │   ├── CompressionMiddleware.php
-│           │   └── PerformanceMonitor.php
-│           ├── Security
-│           │   ├── CsrfProtection.php
-│           │   ├── InputValidator.php
-│           │   └── RateLimiter.php
-│           ├── Traits
-│           │   ├── HasDatabase.php
-│           │   └── HasValidation.php
-│           ├── AbstractController.php
-│           ├── ApiKernel.php
-│           ├── Application.php
-│           ├── Config.php
-│           ├── Database.php
-│           ├── Environment.php
-│           ├── ErrorHandler.php
-│           ├── Kernel.php
-│           ├── RequestHandler.php
-│           ├── Router.php
-│           ├── RouterWithMiddleware.php
-│           ├── ServiceFactory.php
-│           ├── SessionManager.php
-│           ├── TemplateEngine.php
-│           ├── TemplateEngineWithCache.php
-│           └── ThemeManager.php
+│   ├── Shared
+│   │   ├── Application
+│   │   │   ├── Command
+│   │   │   │   ├── Article
+│   │   │   │   │   ├── CreateArticleCommand.php
+│   │   │   │   │   ├── DeleteArticleCommand.php
+│   │   │   │   │   └── UpdateArticleCommand.php
+│   │   │   │   └── Search
+│   │   │   │       └── SearchArticlesCommand.php
+│   │   │   ├── Controller
+│   │   │   │   └── AbstractController.php
+│   │   │   ├── Query
+│   │   │   │   ├── Article
+│   │   │   │   │   ├── GetArticleBySlugQuery.php
+│   │   │   │   │   ├── GetArticleQuery.php
+│   │   │   │   │   ├── GetArticlesByCategoryQuery.php
+│   │   │   │   │   └── GetArticlesQuery.php
+│   │   │   │   ├── Docs
+│   │   │   │   └── Handler
+│   │   │   │       ├── GetArticleBySlugQueryHandler.php
+│   │   │   │       ├── GetArticlesByCategoryQueryHandler.php
+│   │   │   │       └── GetArticlesQueryHandler.php
+│   │   │   ├── Service
+│   │   │   │   ├── CommandBusInterface.php
+│   │   │   │   ├── QueryBusInterface.php
+│   │   │   │   ├── SimpleCommandBus.php
+│   │   │   │   └── SimpleQueryBus.php
+│   │   │   └── Traits
+│   │   │       ├── HasDatabase.php
+│   │   │       └── HasValidation.php
+│   │   ├── Domain
+│   │   │   ├── Event
+│   │   │   ├── Exception
+│   │   │   └── ValueObject
+│   │   │       ├── ArticleContent.php
+│   │   │       ├── ArticleId.php
+│   │   │       ├── ArticleStatus.php
+│   │   │       ├── ArticleTitle.php
+│   │   │       └── ValueObject.php
+│   │   ├── Infrastructure
+│   │   │   ├── Caching
+│   │   │   │   ├── CacheInterface.php
+│   │   │   │   ├── FileCache.php
+│   │   │   │   └── QueryCache.php
+│   │   │   ├── Http
+│   │   │   │   ├── Middleware
+│   │   │   │   │   ├── CorsMiddleware.php
+│   │   │   │   │   ├── CsrfMiddleware.php
+│   │   │   │   │   ├── JsonMiddleware.php
+│   │   │   │   │   ├── LoggingMiddleware.php
+│   │   │   │   │   ├── MiddlewareInterface.php
+│   │   │   │   │   ├── MiddlewareStack.php
+│   │   │   │   │   ├── RateLimitMiddleware.php
+│   │   │   │   │   ├── RequestHandlerMiddleware.php
+│   │   │   │   │   └── SecurityHeadersMiddleware.php
+│   │   │   │   ├── ApiKernel.php
+│   │   │   │   ├── Kernel.php
+│   │   │   │   ├── RequestHandler.php
+│   │   │   │   ├── Router.php
+│   │   │   │   └── RouterWithMiddleware.php
+│   │   │   ├── Monitoring
+│   │   │   │   ├── CompressionMiddleware.php
+│   │   │   │   └── PerformanceMonitor.php
+│   │   │   ├── Persistence
+│   │   │   │   └── Database.php
+│   │   │   ├── Security
+│   │   │   │   ├── CsrfProtection.php
+│   │   │   │   ├── InputValidator.php
+│   │   │   │   ├── RateLimiter.php
+│   │   │   │   └── SessionManager.php
+│   │   │   ├── Templating
+│   │   │   │   ├── Assets
+│   │   │   │   │   └── AssetManager.php
+│   │   │   │   ├── TemplateEngine.php
+│   │   │   │   ├── TemplateEngineWithCache.php
+│   │   │   │   └── ThemeManager.php
+│   │   │   ├── Application.php
+│   │   │   ├── Config.php
+│   │   │   ├── Environment.php
+│   │   │   ├── ErrorHandler.php
+│   │   │   └── ServiceFactory.php
+│   │   └── Presentation
+│   │       ├── Request
+│   │       │   ├── ArticleRequest.php
+│   │       │   └── PaginationRequest.php
+│   │       ├── Response
+│   │       │   ├── ArticleResponse.php
+│   │       │   └── ArticlesResponse.php
+│   │       └── Transformer
+│   └── storage
+│       └── logs
+│           └── app-2025-08-27.log
 ├── storage
 │   ├── cache
 │   │   ├── templates
@@ -388,4 +438,4 @@
 ├── phpunit.xml
 └── test_htmx_conversion.php
 
-87 directories, 302 files
+111 directories, 328 files
