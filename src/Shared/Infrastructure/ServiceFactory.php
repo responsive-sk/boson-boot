@@ -14,12 +14,12 @@ use Boson\Shared\Application\Service\CommandBusInterface;
 use Boson\Shared\Application\Service\QueryBusInterface;
 use Boson\Shared\Application\Service\SimpleCommandBus;
 use Boson\Shared\Application\Service\SimpleQueryBus;
-use Boson\Shared\Application\Query\Handler\GetArticlesQueryHandler;
-use Boson\Shared\Application\Query\Handler\GetArticleBySlugQueryHandler;
-use Boson\Shared\Application\Query\Handler\GetArticlesByCategoryQueryHandler;
-use Boson\Shared\Application\Query\Article\GetArticlesQuery;
-use Boson\Shared\Application\Query\Article\GetArticleBySlugQuery;
-use Boson\Shared\Application\Query\Article\GetArticlesByCategoryQuery;
+use Boson\Blog\Application\Query\Handler\GetArticlesQueryHandler;
+use Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler;
+use Boson\Blog\Application\Query\Handler\GetArticlesByCategoryQueryHandler;
+use Boson\Blog\Application\Query\Article\GetArticlesQuery;
+use Boson\Blog\Application\Query\Article\GetArticleBySlugQuery;
+use Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery;
 use Boson\Blog\Application\SearchController;
 use Boson\Blog\Infrastructure\SqliteArticleRepository;
 use Boson\Shared\Infrastructure\Http\Middleware\RateLimitMiddleware;
@@ -29,6 +29,7 @@ use Boson\Shared\Infrastructure\Templating\TemplateEngineWithCache;
 use Boson\Shared\Infrastructure\Persistence\Database;
 use Boson\Shared\Infrastructure\Http\Router;
 use Boson\Shared\Infrastructure\Http\RouterWithMiddleware;
+use Boson\Shared\Infrastructure\PathManager;
 use InvalidArgumentException;
 
 class ServiceFactory
@@ -69,8 +70,8 @@ class ServiceFactory
     {
         if ($this->templateEngine === null) {
             $config        = $this->createConfig();
-            $templatesPath = __DIR__ . '/../../../templates';
-            $cachePath     = __DIR__ . '/../../../storage/cache/templates';
+            $templatesPath = PathManager::templates();
+            $cachePath     = PathManager::cache('templates');
             $cacheEnabled  = $config->get('TEMPLATE_CACHE', 'true') === 'true';
             $cacheTtl      = (int) $config->get('TEMPLATE_CACHE_TTL', '3600');
 
