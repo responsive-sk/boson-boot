@@ -25,7 +25,7 @@ interface ArticleRepository
     /**
      * @return Article[]
      */
-    public function findByCategory(int $categoryId, int $limit = 10, int $offset = 0): array;
+    public function findByCategory(int $categoryId, int $limit = 10, int $offset = 0, bool $publishedOnly = true): array;
     
     /**
      * @return Article[]

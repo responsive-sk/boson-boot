@@ -115,16 +115,24 @@ class SqliteArticleRepository implements ArticleRepository
         return array_map(fn($data) => Article::fromArray($data), $results);
     }
 
-    public function findByCategory(int $categoryId, int $limit = 10, int $offset = 0): array
+    public function findByCategory(int $categoryId, int $limit = 10, int $offset = 0, bool $publishedOnly = true): array
     {
-        $sql = "SELECT * FROM articles WHERE category_id = ? AND status = 'published' 
-                ORDER BY published_at DESC LIMIT ? OFFSET ?";
-        
+        $sql = "SELECT * FROM articles WHERE category_id = ?";
+        $params = [$categoryId];
+
+        if ($publishedOnly) {
+            $sql .= " AND status = 'published'";
+        }
+
+        $sql .= " ORDER BY published_at DESC LIMIT ? OFFSET ?";
+        $params[] = $limit;
+        $params[] = $offset;
+
         $stmt = $this->database->getConnection()->prepare($sql);
-        $stmt->execute([$categoryId, $limit, $offset]);
-        
+        $stmt->execute($params);
+
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         return array_map(fn($data) => Article::fromArray($data), $results);
     }
 

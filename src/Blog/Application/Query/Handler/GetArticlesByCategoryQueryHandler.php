@@ -20,7 +20,8 @@ class GetArticlesByCategoryQueryHandler
         $articles = $this->articleService->getArticlesByCategory(
             $query->getCategoryId(),
             $query->getLimit(),
-            $query->getOffset()
+            $query->getOffset(),
+            $query->isPublishedOnly()
         );
 
         return array_map(
@@ -35,7 +36,7 @@ class GetArticlesByCategoryQueryHandler
                 categoryId: $article->getCategoryId(),
                 categoryName: null,
                 authorId: $article->getAuthorId(),
-                author极Name: null,
+                authorName: null,
                 tags: [], // Article domain doesn't have tags yet
                 createdAt: $article->getCreatedAt(),
                 updatedAt: $article->getUpdatedAt(),

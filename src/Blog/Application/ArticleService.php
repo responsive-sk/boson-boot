@@ -138,9 +138,9 @@ class ArticleService
     /**
      * @return Article[]
      */
-    public function getArticlesByCategory(int $categoryId, int $limit = 10, int $offset = 0): array
+    public function getArticlesByCategory(int $categoryId, int $limit = 10, int $offset = 0, bool $publishedOnly = true): array
     {
-        return $this->repository->findByCategory($categoryId, $limit, $offset);
+        return $this->repository->findByCategory($categoryId, $limit, $offset, $publishedOnly);
     }
 
     /**
