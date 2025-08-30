@@ -1,0 +1,89 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Test PathManager Integration
+ * Verifies that all paths are correctly resolved
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\PathManager;
+
+echo "🧪 Testing PathManager Integration\n";
+echo "=================================\n\n";
+
+// Test basic paths
+$paths = [
+    'root' => PathManager::root(),
+    'storage' => PathManager::storage(),
+    'cache' => PathManager::cache(),
+    'logs' => PathManager::logs(),
+    'templates' => PathManager::templates(),
+    'public' => PathManager::public(),
+    'vendor' => PathManager::vendor(),
+    'src' => PathManager::src(),
+    'sessions' => PathManager::sessions(),
+    'uploads' => PathManager::uploads(),
+];
+
+echo "📁 Basic Paths:\n";
+foreach ($paths as $name => $path) {
+    $exists = file_exists($path) ? '✅' : '❌';
+    $relative = PathManager::relative($path);
+    echo "  $name: $exists $relative\n";
+}
+
+echo "\n📁 Nested Paths:\n";
+$nestedPaths = [
+    'cache/queries' => PathManager::cache('queries'),
+    'cache/templates' => PathManager::cache('templates'),
+    'logs/app.log' => PathManager::logs('app.log'),
+    'storage/sessions' => PathManager::sessions(),
+    'templates/pages' => PathManager::templates('pages'),
+];
+
+foreach ($nestedPaths as $name => $path) {
+    $exists = file_exists($path) ? '✅' : '❌';
+    $relative = PathManager::relative($path);
+    echo "  $name: $exists $relative\n";
+}
+
+echo "\n🔒 Security Tests:\n";
+$securityTests = [
+    'normal/path' => 'normal/path',
+    '../outside' => '../outside',
+    '../../etc/passwd' => '../../etc/passwd',
+    '/absolute/path' => '/absolute/path',
+    'path/with/../traversal' => 'path/with/../traversal',
+];
+
+foreach ($securityTests as $name => $testPath) {
+    $isSecure = PathManager::isSecure($testPath) ? '✅ SAFE' : '❌ UNSAFE';
+    $sanitized = PathManager::sanitize($testPath);
+    echo "  $name: $isSecure (sanitized: $sanitized)\n";
+}
+
+echo "\n📂 Directory Creation Test:\n";
+$testDir = PathManager::ensureDirectory('storage/test-' . date('Y-m-d-H-i-s'));
+$exists = is_dir($testDir) ? '✅' : '❌';
+echo "  Created: $exists " . PathManager::relative($testDir) . "\n";
+
+// Cleanup test directory
+if (is_dir($testDir)) {
+    rmdir($testDir);
+    echo "  Cleaned up test directory\n";
+}
+
+echo "\n🔍 Path Resolution Examples:\n";
+echo "  Project root: " . PathManager::root() . "\n";
+echo "  Cache queries: " . PathManager::cache('queries') . "\n";
+echo "  Template pages: " . PathManager::templates('pages') . "\n";
+echo "  Public assets: " . PathManager::public('assets') . "\n";
+
+echo "\n✅ PathManager integration test completed!\n";
+echo "\n💡 Usage in code:\n";
+echo "  PathManager::cache('queries')     // storage/cache/queries\n";
+echo "  PathManager::logs('app.log')      // storage/logs/app.log\n";
+echo "  PathManager::templates('pages')   // templates/pages\n";
+echo "  PathManager::ensureDirectory()    // Creates if not exists\n";
+echo "  PathManager::isSecure()           // Security validation\n";

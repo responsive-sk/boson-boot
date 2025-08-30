@@ -2,6 +2,7 @@ import './styles/main.css'
 import Header from './components/Header.svelte'
 import SearchModal from './components/SearchModal.svelte'
 import ArticleCard from './components/ArticleCard.svelte'
+import ArticleDetail from './components/ArticleDetail.svelte'
 import Footer from './components/Footer.svelte'
 import TailwindHero from './components/TailwindHero.svelte'
 
@@ -89,6 +90,32 @@ function initializeComponents() {
       console.error('Failed to parse article data:', error, element.dataset.article)
     }
   })
+
+  // Article detail component
+  const articleDetailElement = document.getElementById('svelte-article-detail')
+  console.log('ArticleDetail element found:', articleDetailElement)
+
+  if (articleDetailElement) {
+    try {
+      const articleData = JSON.parse(articleDetailElement.dataset.article || '{}')
+      console.log('Initializing Svelte ArticleDetail component:', articleData.title)
+
+      const articleDetailComponent = new ArticleDetail({
+        target: articleDetailElement,
+        props: {
+          article: articleData
+        }
+      })
+
+      components.set('articleDetail', articleDetailComponent)
+      console.log('Svelte ArticleDetail initialized successfully')
+    } catch (error) {
+      console.error('Failed to initialize ArticleDetail component:', error)
+      console.error('Error details:', error.message, error.stack)
+    }
+  } else {
+    console.log('ArticleDetail element not found')
+  }
 
   // Footer component
   const footerElement = document.getElementById('svelte-footer')

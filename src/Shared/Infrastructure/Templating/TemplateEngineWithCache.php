@@ -7,6 +7,7 @@ namespace Boson\Shared\Infrastructure\Templating;
 use DateTime;
 use Exception;
 use League\Plates\Engine;
+use Boson\Shared\Infrastructure\PathManager;
 
 use function count;
 use function dirname;
@@ -28,7 +29,7 @@ class TemplateEngineWithCache extends Engine
         int $cacheTtl = 3600,
     ) {
         parent::__construct($directory);
-        $this->cachePath    = $cachePath ?? __DIR__ . '/../../../storage/cache/templates';
+        $this->cachePath    = $cachePath ?? PathManager::cache('templates');
         $this->cacheEnabled = $cacheEnabled;
         $this->cacheTtl     = $cacheTtl;
 

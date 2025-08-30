@@ -1,13 +1,19 @@
-<?php $this->layout('layouts::app', [
+<?php $this->layout('layouts::landing', [
     'title' => $title,
     'description' => $description,
     'currentRoute' => $currentRoute,
     'pageTitle' => $pageTitle,
     'pageSubtitle' => $pageSubtitle,
-    'breadcrumbs' => $breadcrumbs
+    'breadcrumbs' => $breadcrumbs,
+    'themeManager' => $themeManager
 ]) ?>
 
 <?php $this->start('main') ?>
+
+<?php
+// Include page title container for consistent page title display
+include __DIR__ . '/../components/ui/page-title-container.php';
+?>
 
 <div class="about-page">
     <div class="container">

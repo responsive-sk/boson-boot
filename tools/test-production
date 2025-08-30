@@ -1,0 +1,240 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Production Environment Test
+ * Tests compatibility with test.responsive.sk environment
+ */
+
+echo "🧪 Production Environment Test\n";
+echo "==============================\n";
+echo "Target: test.responsive.sk (PHP 8.4.11)\n\n";
+
+$tests = [
+    'php_version' => 'PHP Version Compatibility',
+    'extensions' => 'Required Extensions',
+    'memory_limit' => 'Memory Configuration',
+    'security' => 'Security Settings',
+    'performance' => 'Performance Features',
+    'file_structure' => 'File Structure',
+    'environment' => 'Environment Configuration',
+];
+
+$results = [];
+$passed = 0;
+$failed = 0;
+
+foreach ($tests as $test => $description) {
+    echo "🔍 Testing: $description\n";
+    $result = runTest($test);
+    $results[$test] = $result;
+    
+    if ($result['passed']) {
+        echo "  ✅ PASSED: " . $result['message'] . "\n";
+        $passed++;
+    } else {
+        echo "  ❌ FAILED: " . $result['message'] . "\n";
+        $failed++;
+    }
+    echo "\n";
+}
+
+echo "📊 Test Summary:\n";
+echo "  ✅ Passed: $passed\n";
+echo "  ❌ Failed: $failed\n";
+echo "  📈 Success Rate: " . round(($passed / count($tests)) * 100, 1) . "%\n\n";
+
+if ($failed === 0) {
+    echo "🎉 All tests passed! Ready for production deployment.\n";
+} else {
+    echo "⚠️  Some tests failed. Review issues before deployment.\n";
+}
+
+echo "\n📋 Production Checklist:\n";
+$checklist = [
+    'PHP 8.4+ compatibility' => $results['php_version']['passed'],
+    'All extensions available' => $results['extensions']['passed'],
+    'Memory limits adequate' => $results['memory_limit']['passed'],
+    'Security configured' => $results['security']['passed'],
+    'Performance optimized' => $results['performance']['passed'],
+    'Files structured correctly' => $results['file_structure']['passed'],
+    'Environment ready' => $results['environment']['passed'],
+];
+
+foreach ($checklist as $item => $status) {
+    $icon = $status ? '✅' : '❌';
+    echo "  $icon $item\n";
+}
+
+echo "\n🚀 Deployment Commands:\n";
+echo "  # Upload to server\n";
+echo "  scp boson-php-responsive-sk.tar.gz user@test.responsive.sk:/home/resp/sub/test/\n\n";
+echo "  # Extract on server\n";
+echo "  ssh user@test.responsive.sk\n";
+echo "  cd /home/resp/sub/test/\n";
+echo "  tar -xzf boson-php-responsive-sk.tar.gz\n";
+echo "  chmod -R 755 storage/\n";
+echo "  cp .env.production .env\n";
+echo "  nano .env  # Configure database\n\n";
+
+echo "🌐 Test URL: https://test.responsive.sk/\n";
+
+function runTest(string $test): array
+{
+    switch ($test) {
+        case 'php_version':
+            $currentVersion = PHP_VERSION;
+            $requiredVersion = '8.1.0';
+            $compatible = version_compare($currentVersion, $requiredVersion, '>=');
+            
+            return [
+                'passed' => $compatible,
+                'message' => $compatible 
+                    ? "PHP $currentVersion >= $requiredVersion" 
+                    : "PHP $currentVersion < $requiredVersion (upgrade needed)"
+            ];
+            
+        case 'extensions':
+            $required = ['pdo', 'pdo_mysql', 'json', 'mbstring', 'curl', 'openssl', 'zip'];
+            $missing = [];
+            
+            foreach ($required as $ext) {
+                if (!extension_loaded($ext)) {
+                    $missing[] = $ext;
+                }
+            }
+            
+            return [
+                'passed' => empty($missing),
+                'message' => empty($missing) 
+                    ? 'All required extensions available' 
+                    : 'Missing extensions: ' . implode(', ', $missing)
+            ];
+            
+        case 'memory_limit':
+            $memoryLimit = ini_get('memory_limit');
+            $memoryBytes = convertToBytes($memoryLimit);
+            $requiredBytes = 128 * 1024 * 1024; // 128MB
+            
+            return [
+                'passed' => $memoryBytes >= $requiredBytes,
+                'message' => $memoryBytes >= $requiredBytes
+                    ? "Memory limit $memoryLimit is adequate"
+                    : "Memory limit $memoryLimit may be insufficient (need 128M+)"
+            ];
+            
+        case 'security':
+            $issues = [];
+            
+            if (ini_get('display_errors')) {
+                $issues[] = 'display_errors should be Off';
+            }
+            
+            if (!ini_get('log_errors')) {
+                $issues[] = 'log_errors should be On';
+            }
+            
+            return [
+                'passed' => empty($issues),
+                'message' => empty($issues) 
+                    ? 'Security settings configured correctly'
+                    : 'Issues: ' . implode(', ', $issues)
+            ];
+            
+        case 'performance':
+            $features = [];
+            
+            if (extension_loaded('opcache') && ini_get('opcache.enable')) {
+                $features[] = 'OPcache';
+            }
+            
+            if (extension_loaded('memcached')) {
+                $features[] = 'Memcached';
+            }
+            
+            if (function_exists('gzcompress')) {
+                $features[] = 'Compression';
+            }
+            
+            return [
+                'passed' => count($features) >= 2,
+                'message' => 'Available features: ' . implode(', ', $features)
+            ];
+            
+        case 'file_structure':
+            $buildDir = 'build-responsive-sk';
+            $requiredFiles = [
+                "$buildDir/public/index.php",
+                "$buildDir/src",
+                "$buildDir/templates", 
+                "$buildDir/vendor",
+                "$buildDir/storage",
+                "$buildDir/.env.production",
+                "$buildDir/DEPLOYMENT-RESPONSIVE-SK.md"
+            ];
+            
+            $missing = [];
+            foreach ($requiredFiles as $file) {
+                if (!file_exists($file)) {
+                    $missing[] = basename($file);
+                }
+            }
+            
+            return [
+                'passed' => empty($missing),
+                'message' => empty($missing)
+                    ? 'All required files present'
+                    : 'Missing files: ' . implode(', ', $missing)
+            ];
+            
+        case 'environment':
+            $envFile = 'build-responsive-sk/.env.production';
+            
+            if (!file_exists($envFile)) {
+                return [
+                    'passed' => false,
+                    'message' => 'Production .env template not found'
+                ];
+            }
+            
+            $envContent = file_get_contents($envFile);
+            $requiredVars = ['APP_ENV=production', 'APP_DEBUG=false', 'HTTPS_ONLY=true'];
+            $missing = [];
+            
+            foreach ($requiredVars as $var) {
+                if (strpos($envContent, $var) === false) {
+                    $missing[] = $var;
+                }
+            }
+            
+            return [
+                'passed' => empty($missing),
+                'message' => empty($missing)
+                    ? 'Environment configuration ready'
+                    : 'Missing config: ' . implode(', ', $missing)
+            ];
+            
+        default:
+            return [
+                'passed' => false,
+                'message' => 'Unknown test'
+            ];
+    }
+}
+
+function convertToBytes(string $value): int
+{
+    $value = trim($value);
+    $last = strtolower($value[strlen($value) - 1]);
+    $value = (int) $value;
+    
+    switch ($last) {
+        case 'g':
+            $value *= 1024;
+        case 'm':
+            $value *= 1024;
+        case 'k':
+            $value *= 1024;
+    }
+    
+    return $value;
+}

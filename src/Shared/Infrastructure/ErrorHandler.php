@@ -6,6 +6,7 @@ namespace Boson\Shared\Infrastructure;
 
 use Exception;
 use Throwable;
+use Boson\Shared\Infrastructure\Logger;
 
 /**
  * Centralizované spracovanie chýb a výnimiek
@@ -71,9 +72,15 @@ class ErrorHandler
         $themeManager = $this->serviceFactory->createThemeManager();
 
         $template = match($statusCode) {
+            400 => 'pages::400',
+            401 => 'pages::401',
+            403 => 'pages::403',
             404 => 'pages::404',
             405 => 'pages::405',
-            default => 'pages::error'
+            429 => 'pages::429',
+            502 => 'pages::502',
+            503 => 'pages::503',
+            default => 'pages::error' // 500 and others
         };
 
         echo $templateEngine->render($template, [
@@ -109,14 +116,18 @@ class ErrorHandler
      */
     private function logError(Throwable $e): void
     {
+        // Use centralized logger for structured logging
+        $logger = new Logger();
+        $logger->exception($e);
+
+        // Also log to PHP error log for backward compatibility
         $logMessage = sprintf(
-            "[%s] %s: %s in %s:%d\nStack trace:\n%s\n",
+            "[%s] %s: %s in %s:%d",
             date('Y-m-d H:i:s'),
             get_class($e),
             $e->getMessage(),
             $e->getFile(),
-            $e->getLine(),
-            $e->getTraceAsString()
+            $e->getLine()
         );
 
         error_log($logMessage);

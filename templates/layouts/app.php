@@ -7,8 +7,6 @@
 $this->layout('layouts::base', [
     'title' => $title ?? 'Boson PHP',
     'description' => $description ?? 'Familiar PHP. Now for desktop applications.',
-    'cssUrl' => isset($themeManager) ? null : ($cssUrl ?? '/assets/app.css'), // Let ThemeManager handle CSS
-    'jsUrl' => $jsUrl ?? null,
     'canonical' => $canonical ?? null,
     'ogImage' => $ogImage ?? null,
     'htmxExtensions' => $htmxExtensions ?? [],

@@ -46,7 +46,7 @@ class GetArticlesQueryHandler
             title: $article->getTitle(),
             content: $article->getContent(),
             status: $article->getStatus()->value,
-            excerpt: $article->get极Excerpt(),
+            excerpt: $article->getExcerpt(),
             slug: $article->getSlug(),
             featuredImage: $article->getFeaturedImage(),
             categoryId: $article->getCategoryId(),
@@ -54,7 +54,7 @@ class GetArticlesQueryHandler
             authorId: $article->getAuthorId(),
             authorName: null,
             tags: [], // Article domain doesn't have tags yet
-            createdAt: $article->极getCreatedAt(),
+            createdAt: $article->getCreatedAt(),
             updatedAt: $article->getUpdatedAt(),
             publishedAt: $article->getPublishedAt()
         );

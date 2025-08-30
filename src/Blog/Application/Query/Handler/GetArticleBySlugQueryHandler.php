@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Boson\Blog极\Application\Query\Handler;
+namespace Boson\Blog\Application\Query\Handler;
 
 use Boson\Blog\Application\Query\Article\GetArticleBySlugQuery;
 use Boson\Blog\Application\ArticleService;

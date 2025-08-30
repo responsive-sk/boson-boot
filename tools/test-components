@@ -1,0 +1,179 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Component-by-Component Tester
+ * Tests individual components to isolate binary data source
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+echo "🧪 Component-by-Component Binary Data Test\n";
+echo "==========================================\n\n";
+
+$tests = [
+    'autoloader' => 'Test Composer Autoloader',
+    'kernel_creation' => 'Test Kernel Creation',
+    'service_factory' => 'Test Service Factory',
+    'template_engine' => 'Test Template Engine',
+    'router' => 'Test Router',
+    'middleware' => 'Test Middleware Stack',
+    'performance_monitor' => 'Test Performance Monitor',
+    'article_controller' => 'Test Article Controller',
+    'home_page' => 'Test Home Page Generation',
+];
+
+$results = [];
+
+foreach ($tests as $testName => $description) {
+    echo "🔍 Testing: $description\n";
+    
+    ob_start();
+    $startTime = microtime(true);
+    $startMemory = memory_get_usage(true);
+    
+    try {
+        $result = runTest($testName);
+        $output = ob_get_contents();
+        ob_end_clean();
+        
+        $endTime = microtime(true);
+        $endMemory = memory_get_usage(true);
+        
+        $isBinary = !mb_check_encoding($output, 'UTF-8');
+        $outputLength = strlen($output);
+        
+        $results[$testName] = [
+            'success' => $result['success'],
+            'message' => $result['message'],
+            'output_length' => $outputLength,
+            'is_binary' => $isBinary,
+            'execution_time' => round(($endTime - $startTime) * 1000, 2),
+            'memory_used' => $endMemory - $startMemory,
+            'hex_sample' => $isBinary ? bin2hex(substr($output, 0, 50)) : null,
+        ];
+        
+        $status = $result['success'] ? '✅' : '❌';
+        $binaryStatus = $isBinary ? '🚨 BINARY' : '✅ UTF-8';
+        
+        echo "  $status Result: " . $result['message'] . "\n";
+        echo "  📊 Output: {$outputLength} bytes ($binaryStatus)\n";
+        echo "  ⏱️  Time: " . $results[$testName]['execution_time'] . "ms\n";
+        
+        if ($isBinary) {
+            echo "  🚨 BINARY DATA DETECTED!\n";
+            echo "  🔍 Hex sample: " . substr($results[$testName]['hex_sample'], 0, 40) . "...\n";
+        }
+        
+    } catch (Throwable $e) {
+        ob_end_clean();
+        
+        $results[$testName] = [
+            'success' => false,
+            'message' => 'Exception: ' . $e->getMessage(),
+            'output_length' => 0,
+            'is_binary' => false,
+            'execution_time' => 0,
+            'memory_used' => 0,
+            'hex_sample' => null,
+            'exception' => [
+                'class' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]
+        ];
+        
+        echo "  ❌ Exception: " . $e->getMessage() . "\n";
+        echo "  📍 Location: " . basename($e->getFile()) . ":" . $e->getLine() . "\n";
+    }
+    
+    echo "\n";
+}
+
+// Summary
+echo "📊 Test Summary:\n";
+echo str_pad("Test", 25) . str_pad("Status", 10) . str_pad("Output", 10) . str_pad("Binary", 8) . "Time\n";
+echo str_repeat("-", 70) . "\n";
+
+$binaryTests = [];
+foreach ($results as $testName => $result) {
+    $status = $result['success'] ? '✅ PASS' : '❌ FAIL';
+    $binary = $result['is_binary'] ? '🚨 YES' : '✅ NO';
+    $output = $result['output_length'] . 'B';
+    $time = $result['execution_time'] . 'ms';
+    
+    echo str_pad($testName, 25) . str_pad($status, 10) . str_pad($output, 10) . str_pad($binary, 8) . $time . "\n";
+    
+    if ($result['is_binary']) {
+        $binaryTests[] = $testName;
+    }
+}
+
+if (!empty($binaryTests)) {
+    echo "\n🚨 BINARY DATA SOURCES IDENTIFIED:\n";
+    foreach ($binaryTests as $testName) {
+        $result = $results[$testName];
+        echo "  • $testName: " . $result['output_length'] . " bytes\n";
+        echo "    Hex: " . substr($result['hex_sample'], 0, 60) . "...\n";
+    }
+    
+    echo "\n🔧 Next Steps:\n";
+    echo "1. Focus on components that produce binary data\n";
+    echo "2. Check template files and cached content\n";
+    echo "3. Verify database content encoding\n";
+    echo "4. Test with minimal configuration\n";
+} else {
+    echo "\n✅ No binary data detected in individual components!\n";
+    echo "💡 Binary data might be produced by component interaction\n";
+}
+
+function runTest($testName) {
+    switch ($testName) {
+        case 'autoloader':
+            // Already loaded, just test a class
+            class_exists('Boson\Shared\Infrastructure\Http\Kernel');
+            return ['success' => true, 'message' => 'Autoloader working'];
+            
+        case 'kernel_creation':
+            $kernel = new \Boson\Shared\Infrastructure\Http\Kernel();
+            return ['success' => true, 'message' => 'Kernel created successfully'];
+            
+        case 'service_factory':
+            $factory = new \Boson\Shared\Infrastructure\ServiceFactory();
+            return ['success' => true, 'message' => 'ServiceFactory created'];
+
+        case 'template_engine':
+            $factory = new \Boson\Shared\Infrastructure\ServiceFactory();
+            $engine = $factory->createTemplateEngine();
+            return ['success' => true, 'message' => 'TemplateEngine created'];
+
+        case 'router':
+            $factory = new \Boson\Shared\Infrastructure\ServiceFactory();
+            $router = $factory->createRouter();
+            return ['success' => true, 'message' => 'Router created'];
+
+        case 'middleware':
+            $stack = new \Boson\Shared\Infrastructure\Http\Middleware\MiddlewareStack();
+            return ['success' => true, 'message' => 'Middleware stack created'];
+
+        case 'performance_monitor':
+            $monitor = \Boson\Shared\Infrastructure\Monitoring\PerformanceMonitor::getInstance();
+            $debugInfo = $monitor->renderDebugInfo();
+            echo $debugInfo; // This might contain binary data!
+            return ['success' => true, 'message' => 'Performance monitor rendered debug info'];
+
+        case 'article_controller':
+            $factory = new \Boson\Shared\Infrastructure\ServiceFactory();
+            $controller = new \Boson\Blog\Application\ArticleController($factory->createTemplateEngine());
+            return ['success' => true, 'message' => 'ArticleController created'];
+
+        case 'home_page':
+            $factory = new \Boson\Shared\Infrastructure\ServiceFactory();
+            $controller = new \Boson\Blog\Application\ArticleController($factory->createTemplateEngine());
+            $output = $controller->index();
+            echo $output; // This might contain binary data!
+            return ['success' => true, 'message' => 'Home page generated'];
+            
+        default:
+            return ['success' => false, 'message' => 'Unknown test'];
+    }
+}

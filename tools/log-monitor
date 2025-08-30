@@ -1,0 +1,256 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Log Monitor Tool
+ * Real-time monitoring and analysis of application logs
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\Logger;
+use Boson\Shared\Infrastructure\PathManager;
+
+// Parse command line arguments
+$options = getopt('f:t:l:h', ['follow:', 'tail:', 'level:', 'help', 'stats', 'clean']);
+
+if (isset($options['h']) || isset($options['help'])) {
+    showHelp();
+    exit(0);
+}
+
+if (isset($options['stats'])) {
+    showStats();
+    exit(0);
+}
+
+if (isset($options['clean'])) {
+    cleanLogs();
+    exit(0);
+}
+
+$follow = isset($options['f']) || isset($options['follow']);
+$tail = $options['t'] ?? $options['tail'] ?? 10;
+$level = $options['l'] ?? $options['level'] ?? null;
+
+echo "📊 Boson PHP Log Monitor\n";
+echo "========================\n\n";
+
+$logsDir = PathManager::logs();
+$logFiles = glob($logsDir . '/*.log');
+
+if (empty($logFiles)) {
+    echo "❌ No log files found in: " . PathManager::relative($logsDir) . "\n";
+    exit(1);
+}
+
+echo "📁 Monitoring logs in: " . PathManager::relative($logsDir) . "\n";
+echo "📄 Found " . count($logFiles) . " log files\n\n";
+
+if ($follow) {
+    followLogs($logFiles, $level);
+} else {
+    tailLogs($logFiles, (int)$tail, $level);
+}
+
+function showHelp(): void
+{
+    echo "📊 Boson PHP Log Monitor\n";
+    echo "========================\n\n";
+    echo "Usage: ./tools/log-monitor [OPTIONS]\n\n";
+    echo "Options:\n";
+    echo "  -f, --follow         Follow log files in real-time\n";
+    echo "  -t, --tail N         Show last N lines (default: 10)\n";
+    echo "  -l, --level LEVEL    Filter by log level (ERROR, WARNING, INFO, etc.)\n";
+    echo "  --stats              Show log statistics\n";
+    echo "  --clean              Clean old log files (30+ days)\n";
+    echo "  -h, --help           Show this help message\n\n";
+    echo "Examples:\n";
+    echo "  ./tools/log-monitor                    # Show last 10 lines\n";
+    echo "  ./tools/log-monitor -t 50              # Show last 50 lines\n";
+    echo "  ./tools/log-monitor -f                 # Follow logs in real-time\n";
+    echo "  ./tools/log-monitor -l ERROR           # Show only ERROR level\n";
+    echo "  ./tools/log-monitor --stats            # Show statistics\n";
+    echo "  ./tools/log-monitor --clean            # Clean old logs\n";
+}
+
+function showStats(): void
+{
+    $logger = new Logger();
+    $stats = $logger->getStats();
+    
+    echo "📊 Log Statistics\n";
+    echo "=================\n\n";
+    echo "Directory: " . $stats['directory'] . "\n";
+    echo "Status: " . ($stats['enabled'] ? '✅ Enabled' : '❌ Disabled') . "\n";
+    echo "Min Level: " . $stats['min_level'] . "\n";
+    echo "Total Size: " . $stats['total_size'] . "\n\n";
+    
+    if (empty($stats['files'])) {
+        echo "❌ No log files found\n";
+        return;
+    }
+    
+    echo "📄 Log Files:\n";
+    echo str_pad("File", 25) . str_pad("Size", 10) . str_pad("Lines", 8) . "Modified\n";
+    echo str_repeat("-", 60) . "\n";
+    
+    foreach ($stats['files'] as $filename => $info) {
+        echo str_pad($filename, 25) . 
+             str_pad($info['size'], 10) . 
+             str_pad($info['lines'], 8) . 
+             $info['modified'] . "\n";
+    }
+    
+    // Show recent activity
+    echo "\n🕒 Recent Activity (last 24 hours):\n";
+    $recentLogs = getRecentActivity();
+    
+    if (empty($recentLogs)) {
+        echo "  No recent activity\n";
+    } else {
+        foreach ($recentLogs as $level => $count) {
+            echo "  $level: $count entries\n";
+        }
+    }
+}
+
+function cleanLogs(): void
+{
+    $logger = new Logger();
+    $deleted = $logger->cleanup(30);
+    
+    echo "🧹 Log Cleanup\n";
+    echo "==============\n\n";
+    
+    if ($deleted > 0) {
+        echo "✅ Deleted $deleted old log files (30+ days)\n";
+    } else {
+        echo "ℹ️  No old log files to delete\n";
+    }
+}
+
+function tailLogs(array $logFiles, int $lines, ?string $level): void
+{
+    echo "📖 Showing last $lines lines" . ($level ? " (level: $level)" : "") . ":\n";
+    echo str_repeat("-", 80) . "\n";
+    
+    $allLines = [];
+    
+    foreach ($logFiles as $logFile) {
+        $filename = basename($logFile);
+        $fileLines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        
+        if ($fileLines === false) continue;
+        
+        foreach ($fileLines as $line) {
+            if ($level && !str_contains($line, $level)) {
+                continue;
+            }
+            
+            $allLines[] = [
+                'file' => $filename,
+                'line' => $line,
+                'time' => extractTimestamp($line)
+            ];
+        }
+    }
+    
+    // Sort by timestamp
+    usort($allLines, fn($a, $b) => $a['time'] <=> $b['time']);
+    
+    // Show last N lines
+    $recentLines = array_slice($allLines, -$lines);
+    
+    foreach ($recentLines as $entry) {
+        $color = getLogLevelColor($entry['line']);
+        echo "\033[{$color}m[{$entry['file']}]\033[0m {$entry['line']}\n";
+    }
+}
+
+function followLogs(array $logFiles, ?string $level): void
+{
+    echo "👀 Following logs in real-time" . ($level ? " (level: $level)" : "") . "...\n";
+    echo "Press Ctrl+C to stop\n";
+    echo str_repeat("-", 80) . "\n";
+    
+    $filePointers = [];
+    
+    // Open all log files
+    foreach ($logFiles as $logFile) {
+        $fp = fopen($logFile, 'r');
+        if ($fp) {
+            fseek($fp, 0, SEEK_END);
+            $filePointers[basename($logFile)] = $fp;
+        }
+    }
+    
+    while (true) {
+        foreach ($filePointers as $filename => $fp) {
+            while (($line = fgets($fp)) !== false) {
+                $line = rtrim($line);
+                
+                if ($level && !str_contains($line, $level)) {
+                    continue;
+                }
+                
+                $color = getLogLevelColor($line);
+                echo "\033[{$color}m[{$filename}]\033[0m {$line}\n";
+            }
+        }
+        
+        usleep(100000); // 100ms
+    }
+}
+
+function extractTimestamp(string $line): int
+{
+    if (preg_match('/\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]/', $line, $matches)) {
+        return strtotime($matches[1]);
+    }
+    return 0;
+}
+
+function getLogLevelColor(string $line): string
+{
+    if (str_contains($line, 'EMERGENCY') || str_contains($line, 'CRITICAL')) {
+        return '1;31'; // Bright red
+    } elseif (str_contains($line, 'ERROR')) {
+        return '0;31'; // Red
+    } elseif (str_contains($line, 'WARNING')) {
+        return '0;33'; // Yellow
+    } elseif (str_contains($line, 'INFO')) {
+        return '0;32'; // Green
+    } elseif (str_contains($line, 'DEBUG')) {
+        return '0;36'; // Cyan
+    }
+    return '0;37'; // White
+}
+
+function getRecentActivity(): array
+{
+    $activity = [];
+    $cutoff = time() - (24 * 60 * 60); // 24 hours ago
+    
+    $logFiles = glob(PathManager::logs() . '/*.log');
+    
+    foreach ($logFiles as $logFile) {
+        if (filemtime($logFile) < $cutoff) continue;
+        
+        $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        if (!$lines) continue;
+        
+        foreach ($lines as $line) {
+            $timestamp = extractTimestamp($line);
+            if ($timestamp < $cutoff) continue;
+            
+            foreach (['EMERGENCY', 'ALERT', 'CRITICAL', 'ERROR', 'WARNING', 'NOTICE', 'INFO', 'DEBUG'] as $level) {
+                if (str_contains($line, $level)) {
+                    $activity[$level] = ($activity[$level] ?? 0) + 1;
+                    break;
+                }
+            }
+        }
+    }
+    
+    return $activity;
+}

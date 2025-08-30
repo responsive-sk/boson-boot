@@ -11,17 +11,24 @@
     <meta name="author" content="<?= $this->escapeHtml($author ?? 'Boson PHP Team') ?>">
 
     <!-- Resource hints for better performance -->
-    <?php if (isset($themeManager) && $themeManager->getCurrentTheme() === 'svelte'): ?>
-        <!-- Preload critical fonts -->
-        <link rel="preload" href="/assets/svelte/inter-400.woff2" as="font" type="font/woff2" crossorigin>
-        <link rel="preload" href="/assets/svelte/inter-600.woff2" as="font" type="font/woff2" crossorigin>
+    <?php if (isset($themeManager)): ?>
+        <?php $themeFonts = $themeManager->getThemeFonts(); ?>
+        <?php if (isset($themeFonts['inter-400'])): ?>
+            <!-- Preload critical fonts -->
+            <link rel="preload" href="<?= $themeManager->getFontUrl($themeFonts['inter-400']) ?>" as="font" type="font/woff2" crossorigin>
+        <?php endif; ?>
+        <?php if (isset($themeFonts['inter-600'])): ?>
+            <link rel="preload" href="<?= $themeManager->getFontUrl($themeFonts['inter-600']) ?>" as="font" type="font/woff2" crossorigin>
+        <?php endif; ?>
 
         <!-- Preload critical CSS (remove JS preload to avoid warning) -->
-        <link rel="preload" href="/assets/svelte/main.css" as="style">
+        <link rel="preload" href="<?= $themeManager->getCssUrl() ?>" as="style">
 
         <!-- DNS prefetch for external resources -->
+        <?php if ($themeManager->getCurrentTheme() === 'tailwind'): ?>
+            <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
+        <?php endif; ?>
         <link rel="dns-prefetch" href="//fonts.googleapis.com">
-        <link rel="dns-prefetch" href="//cdn.tailwindcss.com">
     <?php endif; ?>
 
     <!-- Canonical URL -->
@@ -61,12 +68,33 @@
     <?php elseif (isset($cssUrl)): ?>
         <link rel="stylesheet" href="<?= $cssUrl ?>" media="all">
     <?php else: ?>
-        <link rel="stylesheet" href="/assets/app.css" media="all">
+        <link rel="stylesheet" href="/assets/svelte/main.css" media="all">
     <?php endif; ?>
 
     <!-- Critical CSS inline for layout stability -->
     <style>
         /* Font loading optimization */
+        <?php if (isset($themeManager)): ?>
+            <?php $themeFonts = $themeManager->getThemeFonts(); ?>
+            <?php if (isset($themeFonts['inter-400'])): ?>
+        @font-face {
+            font-family: 'Inter';
+            src: url('<?= $themeManager->getFontUrl($themeFonts['inter-400']) ?>') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap; /* Prevent FOUC */
+        }
+            <?php endif; ?>
+            <?php if (isset($themeFonts['inter-600'])): ?>
+        @font-face {
+            font-family: 'Inter';
+            src: url('<?= $themeManager->getFontUrl($themeFonts['inter-600']) ?>') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap; /* Prevent FOUC */
+        }
+            <?php endif; ?>
+        <?php else: ?>
         @font-face {
             font-family: 'Inter';
             src: url('/assets/svelte/inter-400.woff2') format('woff2');
@@ -82,6 +110,7 @@
             font-style: normal;
             font-display: swap; /* Prevent FOUC */
         }
+        <?php endif; ?>
 
         /* Prevent layout shift during font loading */
         body {

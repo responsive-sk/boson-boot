@@ -2,7 +2,7 @@
 /**
  * Page Title Container Component
  * Inspired by mark.responsive.sk/blog design
- * 
+ *
  * @param string $title - Main page title
  * @param string $subtitle - Optional subtitle/description
  * @param array $breadcrumbs - Breadcrumb navigation array
@@ -57,31 +57,33 @@ $alignClass = $centered ? 'text-center' : '';
     <!-- Note: 'default' background has no dots pattern - clean white background -->
 
     <div class="container">
-        
+
         <!-- Breadcrumbs -->
         <?php if (!empty($breadcrumbs)): ?>
             <nav class="breadcrumbs" aria-label="Breadcrumb navigation">
                 <ol class="breadcrumb-list">
                     <?php foreach ($breadcrumbs as $index => $crumb): ?>
-                        <li class="breadcrumb-item">
-                            <?php if (isset($crumb['url']) && $index < count($breadcrumbs) - 1): ?>
-                                <a href="<?= htmlspecialchars($crumb['url']) ?>" class="breadcrumb-link">
-                                    <?= htmlspecialchars($crumb['label']) ?>
-                                </a>
-                            <?php else: ?>
-                                <span class="breadcrumb-current" aria-current="page">
-                                    <?= htmlspecialchars($crumb['label']) ?>
-                                </span>
-                            <?php endif; ?>
-                            
-                            <?php if ($index < count($breadcrumbs) - 1): ?>
-                                <span class="breadcrumb-separator" aria-hidden="true">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="9,18 15,12 9,6"></polyline>
-                                    </svg>
-                                </span>
-                            <?php endif; ?>
-                        </li>
+                        <?php if (isset($crumb['text'])): ?>
+                            <li class="breadcrumb-item">
+                                <?php if (isset($crumb['url']) && $index < count($breadcrumbs) - 1): ?>
+                                    <a href="<?= htmlspecialchars($crumb['url']) ?>" class="breadcrumb-link">
+                                        <?= htmlspecialchars($crumb['text']) ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="breadcrumb-current" aria-current="page">
+                                        <?= htmlspecialchars($crumb['text']) ?>
+                                    </span>
+                                <?php endif; ?>
+
+                                <?php if ($index < count($breadcrumbs) - 1): ?>
+                                    <span class="breadcrumb-separator" aria-hidden="true">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="9,18 15,12 9,6"></polyline>
+                                        </svg>
+                                    </span>
+                                <?php endif; ?>
+                            </li>
+                        <?php endif; ?>
                     <?php endforeach; ?>
                 </ol>
             </nav>
@@ -90,7 +92,7 @@ $alignClass = $centered ? 'text-center' : '';
         <!-- Main Title -->
         <div class="page-title-content">
             <h1 class="page-title"><?= htmlspecialchars($title) ?></h1>
-            
+
             <?php if ($subtitle): ?>
                 <p class="page-subtitle"><?= htmlspecialchars($subtitle) ?></p>
             <?php endif; ?>
@@ -101,7 +103,7 @@ $alignClass = $centered ? 'text-center' : '';
             <div class="page-filters">
                 <div class="filter-tags">
                     <?php foreach ($filters as $filter): ?>
-                        <a href="<?= htmlspecialchars($filter['url'] ?? '#') ?>" 
+                        <a href="<?= htmlspecialchars($filter['url'] ?? '#') ?>"
                            class="filter-tag <?= ($filter['active'] ?? false) ? 'active' : '' ?>"
                            <?= ($filter['active'] ?? false) ? 'aria-current="page"' : '' ?>>
                             <?= htmlspecialchars($filter['label']) ?>
@@ -113,7 +115,7 @@ $alignClass = $centered ? 'text-center' : '';
                 </div>
             </div>
         <?php endif; ?>
-        
+
     </div>
 </div>
 
@@ -122,7 +124,7 @@ $alignClass = $centered ? 'text-center' : '';
 .page-title-container {
     background: url('/images/icons/dots.svg') center center repeat;
     border-bottom: 1px solid var(--border);
-    padding: 0;
+    padding: 80px 0 0 0; /* Added top padding for fixed header */
     position: relative;
     overflow: hidden;
 }
@@ -365,25 +367,25 @@ $alignClass = $centered ? 'text-center' : '';
 /* Responsive Design */
 @media (max-width: 768px) {
     .page-title-container {
-        padding: 2rem 0 1.5rem;
+        padding: 70px 0 0 0; /* Smaller padding on mobile */
     }
-    
+
     .page-title {
         font-size: 2.25rem;
     }
-    
+
     .page-subtitle {
         font-size: 1rem;
     }
-    
+
     .breadcrumb-list {
         font-size: 0.8125rem;
     }
-    
+
     .filter-tags {
         gap: 0.5rem;
     }
-    
+
     .filter-tag {
         padding: 0.375rem 0.75rem;
         font-size: 0.8125rem;
@@ -394,13 +396,13 @@ $alignClass = $centered ? 'text-center' : '';
     .page-title {
         font-size: 1.875rem;
     }
-    
+
     .breadcrumb-list {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
     }
-    
+
     .breadcrumb-item {
         gap: 0.25rem;
     }
@@ -429,7 +431,7 @@ $alignClass = $centered ? 'text-center' : '';
         animation: none;
         transition: none;
     }
-    
+
     .filter-tag:hover {
         transform: none;
     }

@@ -1,3 +1,0 @@
-<div class="search-results-empty">
-    Type at least 2 characters to search...
-</div>

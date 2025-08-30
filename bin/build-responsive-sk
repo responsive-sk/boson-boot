@@ -1,0 +1,359 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Build for test.responsive.sk Production Environment
+ * Optimized for PHP 8.4.11 with specific server configuration
+ */
+
+$targetDir = $argv[1] ?? 'build-responsive-sk';
+$sourceDir = __DIR__ . '/..';
+
+echo "🚀 Building for test.responsive.sk Production\n";
+echo "============================================\n";
+echo "Target: $targetDir\n";
+echo "Environment: PHP 8.4.11 FPM/FastCGI\n\n";
+
+// Clean and create build directory
+if (is_dir($targetDir)) {
+    shell_exec("rm -rf $targetDir");
+}
+mkdir($targetDir, 0755, true);
+
+// Copy application files
+$filesToCopy = [
+    'src' => 'src',
+    'templates' => 'templates', 
+    'vendor' => 'vendor',
+    'composer.json' => 'composer.json',
+    'composer.lock' => 'composer.lock',
+    'public' => 'public',
+];
+
+foreach ($filesToCopy as $source => $dest) {
+    $sourcePath = "$sourceDir/$source";
+    $destPath = "$targetDir/$dest";
+    
+    if (file_exists($sourcePath)) {
+        if (is_dir($sourcePath)) {
+            shell_exec("cp -r '$sourcePath' '$destPath'");
+            echo "  ✅ Copied: $source -> $dest\n";
+        } else {
+            copy($sourcePath, $destPath);
+            echo "  ✅ Copied: $source -> $dest\n";
+        }
+    }
+}
+
+// Create storage directories
+$storageDirs = ['storage/cache', 'storage/logs', 'storage/sessions', 'storage/uploads'];
+foreach ($storageDirs as $dir) {
+    $fullPath = "$targetDir/$dir";
+    mkdir($fullPath, 0755, true);
+    
+    // Create .htaccess protection
+    file_put_contents("$fullPath/.htaccess", "Require all denied\n");
+    echo "  ✅ Created: $dir (protected)\n";
+}
+
+echo "\n🔧 Applying production optimizations...\n";
+
+// Create production .env
+$productionEnv = '# Production Environment for test.responsive.sk
+APP_NAME="Boson PHP"
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://test.responsive.sk
+
+# Database Configuration
+DB_HOST=localhost
+DB_NAME=test_boson
+DB_USER=test_user
+DB_PASS=your_secure_password
+DB_PORT=3306
+
+# Caching (Memcached available)
+CACHE_DRIVER=memcached
+MEMCACHED_HOST=127.0.0.1
+MEMCACHED_PORT=11211
+
+# Session Configuration
+SESSION_DRIVER=files
+SESSION_LIFETIME=120
+
+# Logging
+LOG_LEVEL=error
+LOG_CHANNEL=daily
+LOG_MAX_FILES=14
+
+# Performance
+TEMPLATE_CACHE=true
+QUERY_CACHE=true
+OPCACHE_ENABLED=true
+
+# Security
+HTTPS_ONLY=true
+SECURE_COOKIES=true
+CSRF_PROTECTION=true
+
+# Email (if needed)
+MAIL_MAILER=smtp
+MAIL_HOST=localhost
+MAIL_PORT=587
+';
+
+file_put_contents("$targetDir/.env.production", $productionEnv);
+echo "  ✅ Created production .env template\n";
+
+// Optimize index.php for production
+$productionIndex = '<?php
+/**
+ * Boson PHP - Production Entry Point
+ * Optimized for test.responsive.sk (PHP 8.4.11 FPM)
+ */
+
+// Production error handling
+error_reporting(0);
+ini_set("display_errors", 0);
+ini_set("log_errors", 1);
+ini_set("error_log", "../storage/logs/php_errors.log");
+
+// Performance optimizations
+ini_set("memory_limit", "256M");
+ini_set("max_execution_time", "30");
+ini_set("realpath_cache_size", "4096K");
+ini_set("realpath_cache_ttl", "600");
+
+// Security headers
+header("X-Content-Type-Options: nosniff");
+header("X-Frame-Options: DENY");
+header("X-XSS-Protection: 1; mode=block");
+header("Referrer-Policy: strict-origin-when-cross-origin");
+
+// HTTPS enforcement (test.responsive.sk uses HTTPS)
+if (!isset($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] !== "on") {
+    $redirectURL = "https://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+    header("Location: $redirectURL", true, 301);
+    exit();
+}
+
+// Clean output buffering
+while (ob_get_level()) {
+    ob_end_clean();
+}
+ob_start();
+
+// Bootstrap application first
+require_once __DIR__ . "/../vendor/autoload.php";
+
+// Import classes at top level
+use Boson\Shared\Infrastructure\Http\Kernel;
+
+try {
+    // Load environment
+    $envFile = __DIR__ . "/../.env";
+    if (file_exists($envFile)) {
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        foreach ($lines as $line) {
+            if (strpos($line, "=") !== false && !str_starts_with($line, "#")) {
+                list($key, $value) = explode("=", $line, 2);
+                $_ENV[trim($key)] = trim($value);
+            }
+        }
+    }
+    
+    $kernel = new Kernel();
+    $response = $kernel->handle();
+    
+    echo $response;
+    
+} catch (Throwable $e) {
+    // Production error page
+    ob_end_clean();
+    http_response_code(500);
+    
+    // Log error
+    $logDir = __DIR__ . "/../storage/logs";
+    if (!is_dir($logDir)) {
+        mkdir($logDir, 0755, true);
+    }
+    error_log(date("Y-m-d H:i:s") . " - " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    
+    // Show user-friendly error page
+    echo "<!DOCTYPE html>
+<html>
+<head>
+    <title>Service Temporarily Unavailable</title>
+    <meta charset=\"utf-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; margin: 0; padding: 40px; background: #f8f9fa; text-align: center; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .icon { font-size: 64px; margin-bottom: 20px; }
+        h1 { color: #dc3545; margin-bottom: 20px; }
+        p { color: #6c757d; line-height: 1.6; }
+        .btn { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class=\"container\">
+        <div class=\"icon\">🔧</div>
+        <h1>Service Temporarily Unavailable</h1>
+        <p>We are currently experiencing technical difficulties. Our team has been notified and is working to resolve the issue.</p>
+        <p>Please try again in a few minutes.</p>
+        <a href=\"/\" class=\"btn\">Try Again</a>
+    </div>
+</body>
+</html>";
+}
+
+// Flush output
+if (ob_get_level()) {
+    ob_end_flush();
+}
+?>';
+
+file_put_contents("$targetDir/public/index.php", $productionIndex);
+echo "  ✅ Optimized index.php for production\n";
+
+// Create production .htaccess
+$productionHtaccess = '# Production .htaccess for test.responsive.sk
+# Optimized for Apache with PHP 8.4.11 FPM
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# HTTPS enforcement
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Performance optimizations
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>
+
+# URL Rewriting
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Protect sensitive files
+<Files ".env*">
+    Require all denied
+</Files>
+
+<Files "composer.*">
+    Require all denied
+</Files>
+
+<Files "*.log">
+    Require all denied
+</Files>
+
+# Block access to storage and vendor
+RedirectMatch 403 ^/(storage|vendor)/.*$
+';
+
+file_put_contents("$targetDir/public/.htaccess", $productionHtaccess);
+echo "  ✅ Created production .htaccess\n";
+
+// Create deployment instructions
+$deploymentInstructions = '# Deployment Instructions for test.responsive.sk
+
+## Server Environment
+- **PHP:** 8.4.11 (FPM/FastCGI)
+- **Web Server:** Apache
+- **Document Root:** `/home/resp/sub/test/public/`
+- **Memory Limit:** 500M
+- **Extensions:** All required extensions available
+
+## Deployment Steps
+
+### 1. Upload Files
+Upload the entire build directory to `/home/resp/sub/test/`
+
+### 2. Set Permissions
+```bash
+chmod -R 755 storage/
+chmod 644 .env
+chmod 644 public/.htaccess
+```
+
+### 3. Configure Environment
+```bash
+cp .env.production .env
+nano .env  # Edit with your database credentials
+```
+
+### 4. Database Setup
+Create database and user:
+```sql
+CREATE DATABASE test_boson CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER "test_user"@"localhost" IDENTIFIED BY "your_secure_password";
+GRANT ALL PRIVILEGES ON test_boson.* TO "test_user"@"localhost";
+FLUSH PRIVILEGES;
+```
+
+### 5. Test Application
+Visit: https://test.responsive.sk/
+
+## Production Features
+- ✅ HTTPS enforcement
+- ✅ Security headers
+- ✅ Error logging to storage/logs/
+- ✅ Performance optimizations
+- ✅ Memcached support
+- ✅ OPcache optimization
+- ✅ Gzip compression
+- ✅ Browser caching
+
+## Monitoring
+- **Error logs:** `storage/logs/php_errors.log`
+- **Application logs:** `storage/logs/app-*.log`
+- **Access logs:** Server access logs
+
+## Maintenance
+- **Clear cache:** Delete `storage/cache/*`
+- **View logs:** `tail -f storage/logs/php_errors.log`
+- **Update:** Upload new files and clear cache
+
+Ready for production deployment! 🚀
+';
+
+file_put_contents("$targetDir/DEPLOYMENT-RESPONSIVE-SK.md", $deploymentInstructions);
+echo "  ✅ Created deployment instructions\n";
+
+echo "\n🎉 Production build completed!\n";
+echo "📦 Location: $targetDir/\n";
+echo "📋 Instructions: DEPLOYMENT-RESPONSIVE-SK.md\n";
+echo "🌐 Target: https://test.responsive.sk/\n\n";
+
+echo "📤 Next steps:\n";
+echo "1. Upload $targetDir/ to /home/resp/sub/test/\n";
+echo "2. Configure .env with database credentials\n";
+echo "3. Set proper permissions\n";
+echo "4. Test the application\n\n";
+
+echo "✨ Optimized for PHP 8.4.11 production environment! ✨\n";

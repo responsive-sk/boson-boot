@@ -6,15 +6,15 @@ namespace Boson\Blog\Application\Service;
 
 use Boson\Shared\Application\Service\QueryBusInterface;
 use Boson\Shared\Application\Service\CommandBusInterface;
-use Boson\Shared\Application\Query\Article\GetArticleQuery;
-use Boson\Shared\Application\Query\Article\GetArticleBySlugQuery;
-use Boson\Shared\Application\Query\Article\GetArticlesQuery;
-use Boson\Shared\Application\Query\Article\GetArticlesByCategoryQuery;
-use Boson\Shared\Application\Command\Article\CreateArticleCommand;
-use Boson\Shared\Application\Command\Article\UpdateArticleCommand;
-use Boson\Shared\Application\Command\Article\DeleteArticleCommand;
-use Boson\Shared\Presentation\Response\ArticleResponse;
-use Boson\Shared\Presentation\Response\ArticlesResponse;
+use Boson\Blog\Application\Query\Article\GetArticleQuery;
+use Boson\Blog\Application\Query\Article\GetArticleBySlugQuery;
+use Boson\Blog\Application\Query\Article\GetArticlesQuery;
+use Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery;
+use Boson\Blog\Application\Command\Article\CreateArticleCommand;
+use Boson\Blog\Application\Command\Article\UpdateArticleCommand;
+use Boson\Blog\Application\Command\Article\DeleteArticleCommand;
+use Boson\Blog\Presentation\Response\ArticleResponse;
+use Boson\Blog\Presentation\Response\ArticlesResponse;
 
 /**
  * Article Application Service
@@ -50,21 +50,11 @@ class ArticleApplicationService
      */
     public function getArticles(
         int $page = 1,
-        int $perPage = 10,
-        ?int $categoryId = null,
-        array $tags = [],
-        bool $publishedOnly = true,
-        string $sortBy = 'created_at',
-        string $sortDirection = 'DESC'
+        int $perPage = 10
     ): ArticlesResponse {
         $query = new GetArticlesQuery(
-            page: $page,
-            perPage: $perPage,
-            categoryId: $categoryId,
-            tags: $tags,
-            publishedOnly: $publishedOnly,
-            sortBy: $sortBy,
-            sortDirection: $sortDirection
+            $page,
+            $perPage
         );
 
         return $this->queryBus->handle($query);

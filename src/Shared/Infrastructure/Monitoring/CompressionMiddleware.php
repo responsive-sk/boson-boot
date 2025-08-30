@@ -5,111 +5,55 @@ declare(strict_types=1);
 namespace Boson\Shared\Infrastructure\Monitoring;
 
 use Boson\Shared\Infrastructure\Http\Middleware\MiddlewareInterface;
-use function count;
-use function strlen;
 
 class CompressionMiddleware implements MiddlewareInterface
 {
     private bool $enabled;
-
     private int $compressionLevel;
-
     private int $minLength;
 
     public function __construct(bool $enabled = true, int $compressionLevel = 6, int $minLength = 1024)
     {
-        $this->enabled          = $enabled;
+        $this->enabled = $enabled;
         $this->compressionLevel = max(1, min(9, $compressionLevel));
-        $this->minLength        = max(0, $minLength);
+        $this->minLength = max(0, $minLength);
     }
 
     public function handle(array $request, callable $next): array
     {
         // Process request through next middleware first
-        $request = $next($request);
+        $response = $next($request);
 
-        // If response is available, compress it
-        if (isset($request['response']) && is_string($request['response'])) {
-            $headers = [];
-
-            // Capture current headers
-            foreach (headers_list() as $header) {
-                $parts = explode(':', $header, 2);
-                if (count($parts) === 2) {
-                    $headers[trim($parts[0])] = trim($parts[1]);
-                }
-            }
-
-            $result = $this->compressContent($request['response'], $headers);
-
-            // Set new headers
-            foreach ($result['headers'] as $name => $value) {
-                header("{$name}: {$value}");
-            }
-
-            $request['response'] = $result['content'];
+        // If response is available and should be compressed
+        if (isset($response['response']) && is_string($response['response'])) {
+            $response = $this->compressResponse($response);
         }
 
-        return $request;
+        return $response;
     }
 
-    public function compressContent(string $content, array $headers = []): array
+    private function compressResponse(array $response): array
     {
+        $content = $response['response'];
+        $headers = $response['headers'] ?? [];
+
+        // Check if we should compress
         if (!$this->enabled || !$this->shouldCompress($content, $headers)) {
-            return ['content' => $content, 'headers' => $headers];
+            return $response;
         }
 
         $acceptEncoding = $_SERVER['HTTP_ACCEPT_ENCODING'] ?? '';
 
+        // Compress based on client support
         if (strpos($acceptEncoding, 'gzip') !== false) {
-            return $this->compressGzip($content, $headers);
+            return $this->compressGzip($response, $content, $headers);
         }
 
         if (strpos($acceptEncoding, 'deflate') !== false) {
-            return $this->compressDeflate($content, $headers);
+            return $this->compressDeflate($response, $content, $headers);
         }
 
-        return ['content' => $content, 'headers' => $headers];
-    }
-
-    public static function enable(): void
-    {
-        if (!headers_sent()) {
-            $middleware = new self();
-
-            ob_start(static function ($content) use ($middleware) {
-                $headers = [];
-
-                // Capture current headers
-                foreach (headers_list() as $header) {
-                    $parts = explode(':', $header, 2);
-                    if (count($parts) === 2) {
-                        $headers[trim($parts[0])] = trim($parts[1]);
-                    }
-                }
-
-                $result = $middleware->compressContent($content, $headers);
-
-                // Set new headers
-                foreach ($result['headers'] as $name => $value) {
-                    header("{$name}: {$value}");
-                }
-
-                return $result['content'];
-            });
-        }
-    }
-
-    public function getCompressionRatio(string $original, string $compressed): float
-    {
-        $originalSize   = strlen($original);
-        $compressedSize = strlen($compressed);
-
-        if ($originalSize === 0) {
-            return 0.0;
-        }
-
-        return round((1 - ($compressedSize / $originalSize)) * 100, 2);
+        return $response;
     }
 
     private function shouldCompress(string $content, array $headers): bool
@@ -128,17 +72,9 @@ class CompressionMiddleware implements MiddlewareInterface
         $contentType = $headers['Content-Type'] ?? 'text/html';
 
         $compressibleTypes = [
-            'text/html',
-            'text/css',
-            'text/javascript',
-            'text/plain',
-            'text/xml',
-            'application/javascript',
-            'application/json',
-            'application/xml',
-            'application/rss+xml',
-            'application/atom+xml',
-            'image/svg+xml',
+            'text/html', 'text/css', 'text/javascript', 'text/plain', 'text/xml',
+            'application/javascript', 'application/json', 'application/xml',
+            'application/rss+xml', 'application/atom+xml', 'image/svg+xml',
         ];
 
         foreach ($compressibleTypes as $type) {
@@ -150,37 +86,60 @@ class CompressionMiddleware implements MiddlewareInterface
         return false;
     }
 
-    private function compressGzip(string $content, array $headers): array
+    private function compressGzip(array $response, string $content, array $headers): array
     {
         $compressed = gzencode($content, $this->compressionLevel);
 
         if ($compressed === false) {
-            return ['content' => $content, 'headers' => $headers];
+            return $response;
         }
 
-        $headers['Content-Encoding'] = 'gzip';
-        $headers['Content-Length']   = (string) strlen($compressed);
-        $headers['Vary']             = isset($headers['Vary'])
-            ? $headers['Vary'] . ', Accept-Encoding'
-            : 'Accept-Encoding';
+        // Update response with compressed content and headers
+        $response['response'] = $compressed;
+        $response['headers'] = array_merge($headers, [
+            'Content-Encoding' => 'gzip',
+            'Content-Length' => (string) strlen($compressed),
+            'Vary' => isset($headers['Vary']) ? $headers['Vary'] . ', Accept-Encoding' : 'Accept-Encoding'
+        ]);
 
-        return ['content' => $compressed, 'headers' => $headers];
+        return $response;
     }
 
-    private function compressDeflate(string $content, array $headers): array
+    private function compressDeflate(array $response, string $content, array $headers): array
     {
         $compressed = gzdeflate($content, $this->compressionLevel);
 
         if ($compressed === false) {
-            return ['content' => $content, 'headers' => $headers];
+            return $response;
         }
 
-        $headers['Content-Encoding'] = 'deflate';
-        $headers['Content-Length']   = (string) strlen($compressed);
-        $headers['Vary']             = isset($headers['Vary'])
-            ? $headers['Vary'] . ', Accept-Encoding'
-            : 'Accept-Encoding';
+        // Update response with compressed content and headers
+        $response['response'] = $compressed;
+        $response['headers'] = array_merge($headers, [
+            'Content-Encoding' => 'deflate',
+            'Content-Length' => (string) strlen($compressed),
+            'Vary' => isset($headers['Vary']) ? $headers['Vary'] . ', Accept-Encoding' : 'Accept-Encoding'
+        ]);
 
-        return ['content' => $compressed, 'headers' => $headers];
+        return $response;
+    }
+
+    public static function enable(): void
+    {
+        // This static method is problematic - consider removing or refactoring
+        // Output buffering should be handled at the application level, not in middleware
+        error_log("CompressionMiddleware::enable() is deprecated. Use middleware instead.");
+    }
+
+    public function getCompressionRatio(string $original, string $compressed): float
+    {
+        $originalSize = strlen($original);
+        $compressedSize = strlen($compressed);
+
+        if ($originalSize === 0) {
+            return 0.0;
+        }
+
+        return round((1 - ($compressedSize / $originalSize)) * 100, 2);
     }
 }

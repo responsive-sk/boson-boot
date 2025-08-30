@@ -71,9 +71,9 @@
         <!-- Load More Button -->
         <?php if ($hasMore ?? false): ?>
             <div class="load-more-container" id="load-more-container">
-                <button 
+                <button
                     class="btn btn-outline load-more-btn"
-                    hx-get="/api/articles/load-more?page=<?= ($currentPage ?? 1) + 1 ?>"
+                    hx-get="/api/articles/load-more?page=<?= ($currentPage ?? 1) + 1 ?><?= isset($categoryId) ? '&categoryId=' . $categoryId : '' ?>"
                     hx-target="#articles-container"
                     hx-swap="beforeend"
                     hx-indicator="#loading-indicator"

@@ -11,91 +11,118 @@
 
 <?php $this->start('main') ?>
 
-<article class="article-page">
-    <div class="container">
-        <!-- Article Header -->
-        <header class="article-header">
-            <?php if ($article->getFeaturedImage()): ?>
-                <div class="article-featured-image">
-                    <img src="<?= $this->escapeHtml($article->getFeaturedImage()) ?>" 
-                         alt="<?= $this->escapeHtml($article->getTitle()) ?>">
-                </div>
-            <?php endif; ?>
-            
-            <div class="article-meta">
-                <time datetime="<?= $article->getPublishedAt()?->format('Y-m-d') ?>">
-                    <?= $article->getPublishedAt()?->format('F j, Y') ?>
-                </time>
-                <span class="reading-time">5 min read</span>
-            </div>
-            
-            <h1 class="article-title"><?= $this->escapeHtml($article->getTitle()) ?></h1>
-            
-            <?php if ($article->getExcerpt()): ?>
-                <div class="article-excerpt">
-                    <?= $this->escapeHtml($article->getExcerpt()) ?>
-                </div>
-            <?php endif; ?>
-        </header>
+<?php if (isset($themeManager) && $themeManager->getCurrentTheme() === 'svelte'): ?>
+  <div id="svelte-article-detail" data-article='<?= json_encode([
+      'id' => $article->getId(),
+      'title' => $article->getTitle(),
+      'slug' => $article->getSlug(),
+      'excerpt' => $article->getExcerpt(),
+      'content' => $article->getContent(),
+      'featuredImage' => $article->getFeaturedImage(),
+      'publishedAt' => $article->getPublishedAt()?->format('Y-m-d'),
+      'publishedAtFormatted' => $article->getPublishedAt()?->format('F j, Y'),
+      'author' => $article->getAuthorId() ? [
+          'id' => $article->getAuthorId(),
+          'name' => 'Author Name' // This would need to be fetched from user data
+      ] : null,
+      'category' => $article->getCategoryId() ? [
+          'id' => $article->getCategoryId(),
+          'name' => 'Category Name' // This would need to be fetched from category data
+      ] : null,
+      'tags' => [], // Article domain doesn't have tags yet
+      'status' => $article->getStatus(),
+      'createdAt' => $article->getCreatedAt()?->format('Y-m-d H:i:s'),
+      'updatedAt' => $article->getUpdatedAt()?->format('Y-m-d H:i:s'),
+      'publishedAt' => $article->getPublishedAt()?->format('Y-m-d H:i:s')
+  ]) ?>'></div>
+  <script type="module" src="<?= $themeManager->getJsUrl() ?>"></script>
+<?php else: ?>
+  <article class="article-page">
+      <div class="container">
+          <!-- Article Header -->
+          <header class="article-header">
+              <?php if ($article->getFeaturedImage()): ?>
+                  <div class="article-featured-image">
+                      <img src="<?= $this->escapeHtml($article->getFeaturedImage()) ?>" 
+                           alt="<?= $this->escapeHtml($article->getTitle()) ?>">
+                  </div>
+              <?php endif; ?>
+              
+              <div class="article-meta">
+                  <time datetime="<?= $article->getPublishedAt()?->format('Y-m-d') ?>">
+                      <?= $article->getPublishedAt()?->format('F j, Y') ?>
+                  </time>
+                  <span class="reading-time">5 min read</span>
+              </div>
+              
+              <h1 class="article-title"><?= $this->escapeHtml($article->getTitle()) ?></h1>
+              
+              <?php if ($article->getExcerpt()): ?>
+                  <div class="article-excerpt">
+                      <?= $this->escapeHtml($article->getExcerpt()) ?>
+                  </div>
+              <?php endif; ?>
+          </header>
 
-        <!-- Article Content -->
-        <div class="article-content">
-            <?= $article->getContent() ?>
-        </div>
+          <!-- Article Content -->
+          <div class="article-content">
+              <?= $article->getContent() ?>
+          </div>
 
-        <!-- Article Footer -->
-        <footer class="article-footer">
-            <div class="article-actions">
-                <button class="btn btn-outline" onclick="window.history.back()">
-                    ← Back to Articles
-                </button>
-                
-                <div class="share-buttons">
-                    <span>Share:</span>
-                    <a href="#" class="share-btn" data-share="twitter">Twitter</a>
-                    <a href="#" class="share-btn" data-share="linkedin">LinkedIn</a>
-                    <a href="#" class="share-btn" data-share="copy">Copy Link</a>
-                </div>
-            </div>
-        </footer>
+          <!-- Article Footer -->
+          <footer class="article-footer">
+              <div class="article-actions">
+                  <button class="btn btn-outline" onclick="window.history.back()">
+                      ← Back to Articles
+                  </button>
+                  
+                  <div class="share-buttons">
+                      <span>Share:</span>
+                      <a href="#" class="share-btn" data-share="twitter">Twitter</a>
+                      <a href="#" class="share-btn" data-share="linkedin">LinkedIn</a>
+                      <a href="#" class="share-btn" data-share="copy">Copy Link</a>
+                  </div>
+              </div>
+          </footer>
 
-        <!-- Related Articles -->
-        <?php if (!empty($relatedArticles)): ?>
-            <section class="related-articles">
-                <h2>Related Articles</h2>
-                <div class="related-grid">
-                    <?php foreach ($relatedArticles as $related): ?>
-                        <article class="related-card">
-                            <?php if ($related->getFeaturedImage()): ?>
-                                <div class="related-image">
-                                    <img src="<?= $this->escapeHtml($related->getFeaturedImage()) ?>" 
-                                         alt="<?= $this->escapeHtml($related->getTitle()) ?>" 
-                                         loading="lazy">
-                                </div>
-                            <?php endif; ?>
-                            
-                            <div class="related-content">
-                                <time datetime="<?= $related->getPublishedAt()?->format('Y-m-d') ?>">
-                                    <?= $related->getPublishedAt()?->format('M j, Y') ?>
-                                </time>
-                                
-                                <h3>
-                                    <a href="/articles/<?= $related->getSlug() ?>">
-                                        <?= $this->escapeHtml($related->getTitle()) ?>
-                                    </a>
-                                </h3>
-                                
-                                <p>
-                                    <?= $this->escapeHtml($this->truncate(strip_tags($related->getContent()), 100)) ?>
-                                </p>
-                            </div>
-                        </article>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-        <?php endif; ?>
-    </div>
-</article>
+          <!-- Related Articles -->
+          <?php if (!empty($relatedArticles)): ?>
+              <section class="related-articles">
+                  <h2>Related Articles</h2>
+                  <div class="related-grid">
+                      <?php foreach ($relatedArticles as $related): ?>
+                          <article class="related-card">
+                              <?php if ($related->getFeaturedImage()): ?>
+                                  <div class="related-image">
+                                      <img src="<?= $this->escapeHtml($related->getFeaturedImage()) ?>" 
+                                           alt="<?= $this->escapeHtml($related->getTitle()) ?>" 
+                                           loading="lazy">
+                                  </div>
+                              <?php endif; ?>
+                              
+                              <div class="related-content">
+                                  <time datetime="<?= $related->getPublishedAt()?->format('Y-m-d') ?>">
+                                      <?= $related->getPublishedAt()?->format('M j, Y') ?>
+                                  </time>
+                                  
+                                  <h3>
+                                      <a href="/articles/<?= $related->getSlug() ?>">
+                                          <?= $this->escapeHtml($related->getTitle()) ?>
+                                      </a>
+                                  </h3>
+                                  
+                                  <p>
+                                      <?= $this->escapeHtml($this->truncate(strip_tags($related->getContent()), 100)) ?>
+                                  </p>
+                              </div>
+                          </article>
+                      <?php endforeach; ?>
+                  </div>
+              </section>
+          <?php endif; ?>
+      </div>
+  </article>
+<?php endif; ?>
 
 <style>
 .article-page {

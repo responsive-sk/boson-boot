@@ -7,6 +7,7 @@ namespace Boson\Shared\Infrastructure\Persistence;
 use Boson\Shared\Infrastructure\Caching\FileCache;
 use Boson\Shared\Infrastructure\Caching\QueryCache;
 use Boson\Shared\Infrastructure\Config;
+use Boson\Shared\Infrastructure\PathManager;
 use PDO;
 use PDOException;
 use RuntimeException;
@@ -38,7 +39,7 @@ class Database
     public function getQueryCache(): QueryCache
     {
         if ($this->queryCache === null) {
-            $cache            = new FileCache(__DIR__ . '/../../../storage/cache/queries');
+            $cache            = new FileCache(PathManager::cache('queries'));
             $this->queryCache = new QueryCache($this->getConnection(), $cache);
         }
 

@@ -135,8 +135,8 @@ class LoggingMiddleware implements MiddlewareInterface
      */
     private function getDefaultLogFile(): string
     {
-        $logDir = dirname(__DIR__, 4) . '/storage/logs';
-        return $logDir . '/app-' . date('Y-m-d') . '.log';
+        // Use PathManager for correct path resolution
+        return \Boson\Shared\Infrastructure\PathManager::logs('app-' . date('Y-m-d') . '.log');
     }
 
     /**

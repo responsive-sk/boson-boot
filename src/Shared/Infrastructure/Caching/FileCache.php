@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Boson\Shared\Infrastructure\Caching;
 
+use Boson\Shared\Infrastructure\PathManager;
+
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -16,7 +18,7 @@ class FileCache implements CacheInterface
 
     public function __construct(?string $cacheDir = null)
     {
-        $this->cacheDir = $cacheDir ?? __DIR__ . '/../../../../storage/cache';
+        $this->cacheDir = $cacheDir ?? PathManager::cache();
 
         if (!is_dir($this->cacheDir)) {
             mkdir($this->cacheDir, 0o755, true);

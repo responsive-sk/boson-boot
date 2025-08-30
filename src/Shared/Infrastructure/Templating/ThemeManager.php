@@ -111,6 +111,49 @@ class ThemeManager
         return $assets['js'];
     }
 
+    public function getFontUrl(string $fontName, ?string $theme = null): string
+    {
+        $theme = $theme ?? $this->currentTheme;
+        return "/assets/{$theme}/{$fontName}";
+    }
+
+    public function getThemeFonts(?string $theme = null): array
+    {
+        $theme = $theme ?? $this->currentTheme;
+
+        $fontConfigs = [
+            'svelte' => [
+                'inter-400' => 'inter-400.woff2',
+                'inter-600' => 'inter-600.woff2',
+                'inter-700' => 'inter-700.woff2',
+                'jetbrains-400' => 'jetbrains-mono-400.woff2',
+                'jetbrains-500' => 'jetbrains-mono-500.woff2',
+                'roboto-400' => 'roboto-condensed-400.woff2',
+                'roboto-500' => 'roboto-condensed-500.woff2',
+                'roboto-600' => 'roboto-condensed-600.woff2',
+                'roboto-700' => 'roboto-condensed-700.woff2'
+            ],
+            'tailwind' => [
+                'inter-400' => 'inter-400.woff2',
+                'inter-500' => 'inter-500.woff2',
+                'inter-600' => 'inter-600.woff2',
+                'inter-700' => 'inter-700.woff2',
+                'jetbrains-400' => 'jetbrains-mono-400.woff2',
+                'jetbrains-500' => 'jetbrains-mono-500.woff2'
+            ],
+            'bootstrap' => [
+                'inter-400' => 'inter-400.woff2',
+                'inter-500' => 'inter-500.woff2',
+                'inter-600' => 'inter-600.woff2',
+                'inter-700' => 'inter-700.woff2',
+                'jetbrains-400' => 'jetbrains-mono-400.woff2',
+                'jetbrains-500' => 'jetbrains-mono-500.woff2'
+            ]
+        ];
+
+        return $fontConfigs[$theme] ?? [];
+    }
+
     public function getFramework(?string $theme = null): string
     {
         $assets = $this->getThemeAssets($theme);

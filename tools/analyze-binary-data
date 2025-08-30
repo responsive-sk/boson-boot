@@ -1,0 +1,186 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Binary Data Analyzer
+ * Analyzes logs to find source of binary data
+ */
+
+echo "🔍 Binary Data Analyzer\n";
+echo "=======================\n\n";
+
+$logFiles = [
+    'binary_debug.log' => 'Binary data detection log',
+    'execution_trace.log' => 'Step-by-step execution trace',
+    'debug.log' => 'PHP error log',
+    'emergency.log' => 'Emergency error log',
+];
+
+$logsDir = __DIR__ . '/../storage/logs';
+
+echo "📁 Analyzing logs in: $logsDir\n\n";
+
+foreach ($logFiles as $filename => $description) {
+    $filepath = "$logsDir/$filename";
+    
+    echo "📄 $filename ($description):\n";
+    
+    if (!file_exists($filepath)) {
+        echo "  ❌ File not found\n\n";
+        continue;
+    }
+    
+    $size = filesize($filepath);
+    $modified = date('Y-m-d H:i:s', filemtime($filepath));
+    
+    echo "  📊 Size: " . formatBytes($size) . "\n";
+    echo "  🕒 Modified: $modified\n";
+    
+    if ($size > 0) {
+        echo "  📖 Recent entries:\n";
+        
+        if ($filename === 'binary_debug.log') {
+            analyzeBinaryLog($filepath);
+        } elseif ($filename === 'execution_trace.log') {
+            analyzeExecutionTrace($filepath);
+        } else {
+            showRecentLines($filepath, 5);
+        }
+    } else {
+        echo "  ℹ️  File is empty\n";
+    }
+    
+    echo "\n";
+}
+
+// Check for patterns in binary data
+echo "🔍 Binary Data Pattern Analysis:\n";
+$binaryLogPath = "$logsDir/binary_debug.log";
+if (file_exists($binaryLogPath)) {
+    analyzePatterns($binaryLogPath);
+} else {
+    echo "  ❌ No binary debug log found\n";
+}
+
+echo "\n💡 Debugging Steps:\n";
+echo "1. Access: https://test.responsive.sk/index-debug.php\n";
+echo "2. Check logs: tail -f storage/logs/binary_debug.log\n";
+echo "3. Compare hex patterns to identify source\n";
+echo "4. Use execution trace to pinpoint exact location\n\n";
+
+echo "🔧 Common Binary Data Sources:\n";
+echo "• Compressed output (gzip/deflate)\n";
+echo "• Image data in templates\n";
+echo "• Corrupted cache files\n";
+echo "• Binary characters in database\n";
+echo "• Malformed JSON/serialized data\n";
+echo "• Debug output with binary content\n";
+
+function formatBytes($bytes) {
+    $units = ['B', 'KB', 'MB', 'GB'];
+    $bytes = max($bytes, 0);
+    $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+    $pow = min($pow, count($units) - 1);
+    $bytes /= pow(1024, $pow);
+    return round($bytes, 2) . ' ' . $units[$pow];
+}
+
+function analyzeBinaryLog($filepath) {
+    $content = file_get_contents($filepath);
+    $entries = explode(str_repeat("=", 80), $content);
+    
+    $binaryCount = 0;
+    $cleanCount = 0;
+    $patterns = [];
+    
+    foreach ($entries as $entry) {
+        if (trim($entry)) {
+            $data = json_decode(trim($entry), true);
+            if ($data) {
+                if ($data['binary_detected'] ?? false) {
+                    $binaryCount++;
+                    $hex = $data['hex_sample'] ?? '';
+                    if ($hex) {
+                        $pattern = substr($hex, 0, 20); // First 10 bytes
+                        $patterns[$pattern] = ($patterns[$pattern] ?? 0) + 1;
+                    }
+                    
+                    echo "    🚨 Binary detected: " . ($data['timestamp'] ?? 'unknown') . "\n";
+                    echo "       URI: " . ($data['request_uri'] ?? 'unknown') . "\n";
+                    echo "       Length: " . ($data['output_length'] ?? 0) . " bytes\n";
+                    echo "       Hex: " . substr($hex, 0, 40) . "...\n";
+                } else {
+                    $cleanCount++;
+                }
+            }
+        }
+    }
+    
+    echo "  📊 Summary: $binaryCount binary, $cleanCount clean\n";
+    
+    if (!empty($patterns)) {
+        echo "  🔍 Common patterns:\n";
+        arsort($patterns);
+        foreach (array_slice($patterns, 0, 3, true) as $pattern => $count) {
+            echo "    $pattern (×$count)\n";
+        }
+    }
+}
+
+function analyzeExecutionTrace($filepath) {
+    $lines = file($filepath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $recentLines = array_slice($lines, -10);
+    
+    foreach ($recentLines as $line) {
+        $data = json_decode($line, true);
+        if ($data) {
+            $step = $data['step'] ?? 'unknown';
+            $message = $data['message'] ?? '';
+            $memory = formatBytes($data['memory'] ?? 0);
+            echo "    ⏱️  $step: $message (Memory: $memory)\n";
+        }
+    }
+}
+
+function showRecentLines($filepath, $count) {
+    $lines = file($filepath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $recentLines = array_slice($lines, -$count);
+    
+    foreach ($recentLines as $line) {
+        echo "    " . substr($line, 0, 100) . (strlen($line) > 100 ? '...' : '') . "\n";
+    }
+}
+
+function analyzePatterns($filepath) {
+    $content = file_get_contents($filepath);
+    
+    // Common binary patterns
+    $knownPatterns = [
+        '1f8b08' => 'GZIP compressed data',
+        '789c' => 'zlib compressed data',
+        'ffd8ff' => 'JPEG image data',
+        '89504e47' => 'PNG image data',
+        '474946' => 'GIF image data',
+        '504b03' => 'ZIP archive data',
+        '7f454c46' => 'ELF executable',
+        '25504446' => 'PDF document',
+    ];
+    
+    foreach ($knownPatterns as $pattern => $description) {
+        if (stripos($content, $pattern) !== false) {
+            echo "  🎯 Found pattern: $pattern ($description)\n";
+        }
+    }
+    
+    // Look for compression signatures
+    if (preg_match_all('/"hex_sample":"([^"]+)"/', $content, $matches)) {
+        $hexSamples = array_unique($matches[1]);
+        echo "  📊 Found " . count($hexSamples) . " unique hex patterns\n";
+        
+        foreach (array_slice($hexSamples, 0, 5) as $hex) {
+            $binary = hex2bin($hex);
+            $printable = preg_replace('/[^\x20-\x7E]/', '.', $binary);
+            echo "    Hex: " . substr($hex, 0, 40) . "...\n";
+            echo "    ASCII: " . substr($printable, 0, 20) . "...\n";
+        }
+    }
+}

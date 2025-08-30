@@ -7,8 +7,6 @@
 $this->layout('layouts::base', [
     'title' => $title ?? 'Boson PHP',
     'description' => $description ?? 'Familiar PHP. Now for desktop applications.',
-    'cssUrl' => isset($themeManager) ? null : ($cssUrl ?? '/assets/app.css'), // Let ThemeManager handle CSS
-    'jsUrl' => $jsUrl ?? null,
     'canonical' => $canonical ?? null,
     'ogImage' => $ogImage ?? null,
     'htmxExtensions' => $htmxExtensions ?? [],
@@ -70,5 +68,22 @@ $this->layout('layouts::base', [
 <?php $this->stop() ?>
 
 <?php $this->start('head') ?>
-<!-- Landing layout styles are now handled by themes -->
+<style>
+.landing-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-content {
+    flex: 1;
+    padding-top: 80px; /* Account for fixed header */
+}
+
+@media (max-width: 768px) {
+    .landing-content {
+        padding-top: 70px; /* Smaller padding on mobile */
+    }
+}
+</style>
 <?php $this->stop() ?>

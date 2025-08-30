@@ -9,7 +9,7 @@ use Boson\Shared\Infrastructure\Http\Middleware\SecurityHeadersMiddleware;
 use Boson\Shared\Infrastructure\Http\Middleware\RateLimitMiddleware;
 use Boson\Shared\Infrastructure\Http\Middleware\RequestHandlerMiddleware;
 use Boson\Shared\Infrastructure\Http\Middleware\LoggingMiddleware;
-use Boson\Shared\Infrastructure\Monitoring\CompressionMiddleware;
+// use Boson\Shared\Infrastructure\Monitoring\CompressionMiddleware;
 use Exception;
 use Boson\Shared\Infrastructure\Environment;
 use Boson\Shared\Infrastructure\ErrorHandler;
@@ -90,13 +90,13 @@ class Kernel
         // Security headers first
         $this->middlewareStack->add(new SecurityHeadersMiddleware());
 
-        // Logging (only in development or if explicitly enabled)
+        // Logging - DISABLED to prevent headers already sent error
         if (Environment::isDevelopment() || Environment::getBool('ENABLE_LOGGING', false)) {
             $this->middlewareStack->add(new LoggingMiddleware());
         }
 
-        // Performance optimization
-        $this->middlewareStack->add(new CompressionMiddleware());
+        // Performance optimization - DISABLED to prevent headers already sent error
+        // $this->middlewareStack->add(new CompressionMiddleware());
 
         // Rate limiting (only in production or if explicitly enabled)
         if (Environment::isProduction() || Environment::getBool('ENABLE_RATE_LIMITING', false)) {
@@ -177,21 +177,35 @@ class Kernel
             http_response_code($processedRequest['status']);
         }
 
-        // Set custom headers (with binary data protection)
-        if (isset($processedRequest['headers'])) {
+        // Set custom headers (with binary data protection and validation)
+        if (isset($processedRequest['headers']) && !headers_sent()) {
             foreach ($processedRequest['headers'] as $header) {
                 if (is_array($header)) {
                     // Sanitize header values to prevent binary data
                     $name = preg_replace('/[^\x20-\x7E]/', '', (string)$header['name']);
                     $value = preg_replace('/[^\x20-\x7E]/', '', (string)$header['value']);
-                    if ($name && $value) {
+                    
+                    // Validate header name format
+                    if ($name && $value && preg_match('/^[a-zA-Z0-9\-]+$/', $name) && !headers_sent()) {
                         header($name . ': ' . $value);
                     }
                 } else {
-                    // Sanitize simple header strings
+                    // Sanitize and validate simple header strings
                     $cleanHeader = preg_replace('/[^\x20-\x7E]/', '', (string)$header);
-                    if ($cleanHeader) {
-                        header($cleanHeader);
+                    
+                    if ($cleanHeader && strpos($cleanHeader, ':') !== false) {
+                        list($headerName, $headerValue) = explode(':', $cleanHeader, 2);
+                        $headerName = trim($headerName);
+                        $headerValue = trim($headerValue);
+                        
+                        // Validate header name according to RFC 7230
+                        if (preg_match('/^[a-zA-Z0-9\-]+$/', $headerName) && !headers_sent()) {
+                            header("{$headerName}: {$headerValue}");
+                        } else {
+                            error_log("Skipping invalid header name: " . substr($headerName, 0, 50));
+                        }
+                    } else {
+                        error_log("Skipping malformed header: " . substr($cleanHeader, 0, 50));
                     }
                 }
             }

@@ -1,0 +1,117 @@
+#!/usr/bin/env php
+<?php
+/**
+ * PHPStan Progress Tracker
+ * Tracks PHPStan improvements over time
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+echo "📊 PHPStan Progress Tracker\n";
+echo "===========================\n\n";
+
+$levels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 'max'];
+$results = [];
+
+foreach ($levels as $level) {
+    echo "🔍 Testing level $level...\n";
+    
+    // Update phpstan.neon temporarily
+    $configContent = file_get_contents('phpstan.neon');
+    $originalLevel = null;
+    
+    if (preg_match('/level:\s*(\w+)/', $configContent, $matches)) {
+        $originalLevel = $matches[1];
+    }
+    
+    $newConfig = preg_replace('/level:\s*\w+/', "level: $level", $configContent);
+    file_put_contents('phpstan.neon', $newConfig);
+    
+    // Run PHPStan
+    $output = shell_exec('./vendor/bin/phpstan analyse --memory-limit=1G 2>/dev/null');
+    
+    // Extract error count
+    $errorCount = 0;
+    if (preg_match('/Found (\d+) errors/', $output, $matches)) {
+        $errorCount = (int)$matches[1];
+    } elseif (strpos($output, 'No errors') !== false) {
+        $errorCount = 0;
+    }
+    
+    $results[$level] = $errorCount;
+    echo "  Level $level: $errorCount errors\n";
+    
+    // Restore original config
+    if ($originalLevel) {
+        $restoredConfig = preg_replace('/level:\s*\w+/', "level: $originalLevel", $newConfig);
+        file_put_contents('phpstan.neon', $restoredConfig);
+    }
+}
+
+echo "\n📈 PHPStan Progress Summary:\n";
+echo str_pad("Level", 8) . str_pad("Errors", 10) . "Progress\n";
+echo str_repeat("-", 30) . "\n";
+
+$maxErrors = max($results);
+
+foreach ($results as $level => $errors) {
+    $progress = $maxErrors > 0 ? round((($maxErrors - $errors) / $maxErrors) * 100, 1) : 100;
+    $progressBar = str_repeat("█", (int)($progress / 5)) . str_repeat("░", 20 - (int)($progress / 5));
+    
+    echo str_pad("$level", 8) . 
+         str_pad("$errors", 10) . 
+         "$progressBar {$progress}%\n";
+}
+
+echo "\n🎯 Recommendations:\n";
+
+$currentLevel = null;
+if (preg_match('/level:\s*(\w+)/', file_get_contents('phpstan.neon'), $matches)) {
+    $currentLevel = $matches[1];
+}
+
+$currentErrors = $results[$currentLevel] ?? 0;
+
+if ($currentErrors === 0) {
+    echo "  🎉 Perfect! No errors at current level ($currentLevel)\n";
+    echo "  💡 Consider increasing to next level\n";
+} elseif ($currentErrors < 50) {
+    echo "  ✅ Good progress! Only $currentErrors errors remaining\n";
+    echo "  💡 Focus on fixing these remaining issues\n";
+} elseif ($currentErrors < 200) {
+    echo "  📈 Making progress! $currentErrors errors to fix\n";
+    echo "  💡 Consider systematic fixes by category\n";
+} else {
+    echo "  🔧 Many errors ($currentErrors) - consider lowering level temporarily\n";
+    echo "  💡 Focus on critical issues first\n";
+}
+
+// Show most common error types
+echo "\n🔍 Error Analysis:\n";
+$fullOutput = shell_exec('./vendor/bin/phpstan analyse --memory-limit=1G 2>/dev/null');
+
+$errorTypes = [
+    'array_types' => 'no value type specified in iterable type array',
+    'boolean_conditions' => 'Only booleans are allowed',
+    'missing_types' => 'has no type specified',
+    'mixed_types' => 'mixed given',
+    'undefined' => 'undefined',
+];
+
+foreach ($errorTypes as $type => $pattern) {
+    $count = substr_count($fullOutput, $pattern);
+    if ($count > 0) {
+        echo "  $type: $count occurrences\n";
+    }
+}
+
+echo "\n💡 Next Steps:\n";
+echo "1. Fix most common error types first\n";
+echo "2. Use ./tools/phpstan-fix for automated fixes\n";
+echo "3. Gradually increase level as errors decrease\n";
+echo "4. Run this tracker regularly to monitor progress\n";
+
+echo "\n📊 Current Status:\n";
+echo "  Level: $currentLevel\n";
+echo "  Errors: $currentErrors\n";
+echo "  Progress: " . ($maxErrors > 0 ? round((($maxErrors - $currentErrors) / $maxErrors) * 100, 1) : 100) . "%\n";

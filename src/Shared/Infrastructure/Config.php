@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Boson\Shared\Infrastructure;
 
 use RuntimeException;
+use Boson\Shared\Infrastructure\PathManager;
 
 class Config
 {
@@ -69,7 +70,7 @@ class Config
         $path = $this->get('DB_DATABASE', './database/blog.sqlite');
         // Convert relative path to absolute path
         if (strpos($path, './') === 0) {
-            $path = __DIR__ . '/../../../' . substr($path, 2);
+            $path = PathManager::root(substr($path, 2));
         }
 
         return $path;
@@ -118,11 +119,12 @@ class Config
             return;
         }
 
-        $envFile = __DIR__ . '/../../../.env';
+        $envFile = PathManager::root('.env');
         if (!file_exists($envFile)) {
             throw new RuntimeException('.env file not found. Copy .env.example to .env and configure it.');
         }
 
+        // Load .env variables into $_ENV and putenv
         $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($lines as $line) {
             if (strpos(trim($line), '#') === 0) {
@@ -142,6 +144,19 @@ class Config
                 $this->config[$key] = $value;
                 $_ENV[$key]         = $value;
                 putenv("{$key}={$value}");
+            }
+        }
+
+        // Load config files from config directory
+        $configPath = PathManager::root('config');
+        if (is_dir($configPath)) {
+            $configFiles = glob($configPath . '/*.php');
+            foreach ($configFiles as $file) {
+                $configKey = basename($file, '.php');
+                $configData = include $file;
+                if (is_array($configData)) {
+                    $this->config[$configKey] = $configData;
+                }
             }
         }
 

@@ -1,0 +1,242 @@
+#!/usr/bin/env php
+<?php
+/**
+ * PHPStan Fix Tool
+ * Automatically fixes common PHPStan issues
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+echo "🔧 PHPStan Fix Tool\n";
+echo "===================\n\n";
+
+$fixes = [
+    'array_types' => 'Fix array type hints',
+    'boolean_conditions' => 'Fix boolean conditions',
+    'return_types' => 'Add missing return types',
+    'parameter_types' => 'Add missing parameter types',
+    'strict_comparisons' => 'Fix loose comparisons',
+];
+
+$options = getopt('t:a', ['type:', 'all', 'dry-run', 'help']);
+
+if (isset($options['help'])) {
+    showHelp($fixes);
+    exit(0);
+}
+
+$dryRun = isset($options['dry-run']);
+$fixAll = isset($options['a']) || isset($options['all']);
+$fixType = $options['t'] ?? $options['type'] ?? null;
+
+if (!$fixAll && !$fixType) {
+    echo "❌ Please specify fix type or use --all\n";
+    showHelp($fixes);
+    exit(1);
+}
+
+echo "🔍 Scanning PHP files...\n";
+$phpFiles = getPhpFiles('src/');
+echo "📁 Found " . count($phpFiles) . " PHP files\n\n";
+
+$totalFixed = 0;
+
+if ($fixAll || $fixType === 'array_types') {
+    echo "🔧 Fixing array type hints...\n";
+    $fixed = fixArrayTypes($phpFiles, $dryRun);
+    $totalFixed += $fixed;
+    echo "  ✅ Fixed $fixed array type issues\n\n";
+}
+
+if ($fixAll || $fixType === 'boolean_conditions') {
+    echo "🔧 Fixing boolean conditions...\n";
+    $fixed = fixBooleanConditions($phpFiles, $dryRun);
+    $totalFixed += $fixed;
+    echo "  ✅ Fixed $fixed boolean condition issues\n\n";
+}
+
+if ($fixAll || $fixType === 'return_types') {
+    echo "🔧 Adding missing return types...\n";
+    $fixed = fixReturnTypes($phpFiles, $dryRun);
+    $totalFixed += $fixed;
+    echo "  ✅ Added $fixed return types\n\n";
+}
+
+if ($fixAll || $fixType === 'strict_comparisons') {
+    echo "🔧 Fixing loose comparisons...\n";
+    $fixed = fixStrictComparisons($phpFiles, $dryRun);
+    $totalFixed += $fixed;
+    echo "  ✅ Fixed $fixed loose comparisons\n\n";
+}
+
+echo "🎉 Total fixes applied: $totalFixed\n";
+
+if ($dryRun) {
+    echo "💡 This was a dry run. Use without --dry-run to apply fixes.\n";
+} else {
+    echo "💡 Run PHPStan again to see remaining issues:\n";
+    echo "   ./vendor/bin/phpstan analyse\n";
+}
+
+function showHelp(array $fixes): void
+{
+    echo "Usage: ./tools/phpstan-fix [OPTIONS]\n\n";
+    echo "Options:\n";
+    echo "  -t, --type TYPE    Fix specific type of issues\n";
+    echo "  -a, --all          Fix all supported issues\n";
+    echo "  --dry-run          Show what would be fixed without making changes\n";
+    echo "  --help             Show this help message\n\n";
+    echo "Available fix types:\n";
+    foreach ($fixes as $type => $description) {
+        echo "  $type: $description\n";
+    }
+    echo "\nExamples:\n";
+    echo "  ./tools/phpstan-fix --all                    # Fix all issues\n";
+    echo "  ./tools/phpstan-fix -t array_types           # Fix only array types\n";
+    echo "  ./tools/phpstan-fix --all --dry-run          # Preview all fixes\n";
+}
+
+function getPhpFiles(string $directory): array
+{
+    $files = [];
+    $iterator = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($directory)
+    );
+    
+    foreach ($iterator as $file) {
+        if ($file->isFile() && $file->getExtension() === 'php') {
+            $files[] = $file->getPathname();
+        }
+    }
+    
+    return $files;
+}
+
+function fixArrayTypes(array $files, bool $dryRun): int
+{
+    $fixed = 0;
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $originalContent = $content;
+        
+        // Fix array parameter types
+        $content = preg_replace(
+            '/(\s+)(array)\s+(\$\w+)/',
+            '$1array<string, mixed> $3',
+            $content
+        );
+        
+        // Fix array return types
+        $content = preg_replace(
+            '/:\s*array\s*$/',
+            ': array<string, mixed>',
+            $content
+        );
+        
+        if ($content !== $originalContent) {
+            if (!$dryRun) {
+                file_put_contents($file, $content);
+            }
+            $fixed++;
+            echo "    📝 " . basename($file) . "\n";
+        }
+    }
+    
+    return $fixed;
+}
+
+function fixBooleanConditions(array $files, bool $dryRun): int
+{
+    $fixed = 0;
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $originalContent = $content;
+        
+        // Fix !$variable to $variable !== null
+        $content = preg_replace(
+            '/if\s*\(\s*!\s*(\$\w+)\s*\)/',
+            'if ($1 === null)',
+            $content
+        );
+        
+        // Fix ternary conditions
+        $content = preg_replace(
+            '/(\$\w+)\s*\?\s*/',
+            '$1 !== null ? ',
+            $content
+        );
+        
+        if ($content !== $originalContent) {
+            if (!$dryRun) {
+                file_put_contents($file, $content);
+            }
+            $fixed++;
+            echo "    📝 " . basename($file) . "\n";
+        }
+    }
+    
+    return $fixed;
+}
+
+function fixReturnTypes(array $files, bool $dryRun): int
+{
+    $fixed = 0;
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $originalContent = $content;
+        
+        // Add void return type to methods without return
+        $content = preg_replace(
+            '/(public|private|protected)\s+function\s+(\w+)\s*\([^)]*\)\s*\{/',
+            '$1 function $2($3): void {',
+            $content
+        );
+        
+        if ($content !== $originalContent) {
+            if (!$dryRun) {
+                file_put_contents($file, $content);
+            }
+            $fixed++;
+            echo "    📝 " . basename($file) . "\n";
+        }
+    }
+    
+    return $fixed;
+}
+
+function fixStrictComparisons(array $files, bool $dryRun): int
+{
+    $fixed = 0;
+    
+    foreach ($files as $file) {
+        $content = file_get_contents($file);
+        $originalContent = $content;
+        
+        // Fix == to ===
+        $content = preg_replace(
+            '/(\s+)(\$\w+|\w+)\s*==\s*(\$\w+|\w+|\'[^\']*\'|"[^"]*"|\d+)/',
+            '$1$2 === $3',
+            $content
+        );
+        
+        // Fix != to !==
+        $content = preg_replace(
+            '/(\s+)(\$\w+|\w+)\s*!=\s*(\$\w+|\w+|\'[^\']*\'|"[^"]*"|\d+)/',
+            '$1$2 !== $3',
+            $content
+        );
+        
+        if ($content !== $originalContent) {
+            if (!$dryRun) {
+                file_put_contents($file, $content);
+            }
+            $fixed++;
+            echo "    📝 " . basename($file) . "\n";
+        }
+    }
+    
+    return $fixed;
+}

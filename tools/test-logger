@@ -1,0 +1,138 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Test Logger System
+ * Tests centralized logging functionality
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\Logger;
+use Boson\Shared\Infrastructure\PathManager;
+
+echo "🧪 Testing Logger System\n";
+echo "========================\n\n";
+
+// Create logger instance
+$logger = new Logger();
+
+echo "📁 Log directory: " . PathManager::relative(PathManager::logs()) . "\n\n";
+
+// Test all log levels
+echo "🔍 Testing log levels:\n";
+
+$testMessages = [
+    Logger::EMERGENCY => 'System is unusable - critical failure',
+    Logger::ALERT => 'Action must be taken immediately',
+    Logger::CRITICAL => 'Critical conditions detected',
+    Logger::ERROR => 'Runtime error occurred',
+    Logger::WARNING => 'Warning condition detected',
+    Logger::NOTICE => 'Normal but significant condition',
+    Logger::INFO => 'Informational message',
+    Logger::DEBUG => 'Debug information',
+];
+
+foreach ($testMessages as $level => $message) {
+    $logger->log($level, $message, [
+        'test_id' => uniqid(),
+        'timestamp' => time(),
+        'user_id' => 123,
+    ]);
+    
+    $levelName = ['EMERGENCY', 'ALERT', 'CRITICAL', 'ERROR', 'WARNING', 'NOTICE', 'INFO', 'DEBUG'][$level];
+    echo "  ✅ $levelName: $message\n";
+}
+
+// Test convenience methods
+echo "\n🔧 Testing convenience methods:\n";
+
+$logger->info('Application started', ['version' => '1.0.0']);
+echo "  ✅ info() method\n";
+
+$logger->error('Database connection failed', ['host' => 'localhost', 'port' => 3306]);
+echo "  ✅ error() method\n";
+
+$logger->debug('Query executed', ['sql' => 'SELECT * FROM users', 'time' => '2.5ms']);
+echo "  ✅ debug() method\n";
+
+// Test exception logging
+echo "\n🚨 Testing exception logging:\n";
+
+try {
+    throw new RuntimeException('Test exception for logging', 500);
+} catch (Exception $e) {
+    $logger->exception($e);
+    echo "  ✅ Exception logged with full stack trace\n";
+}
+
+// Test custom context
+echo "\n📊 Testing context logging:\n";
+
+$logger->info('User action performed', [
+    'user_id' => 456,
+    'action' => 'login',
+    'ip_address' => '192.168.1.100',
+    'user_agent' => 'Mozilla/5.0...',
+    'session_id' => 'sess_abc123',
+    'metadata' => ['source' => 'web', 'device' => 'desktop']
+]);
+echo "  ✅ Rich context data logged\n";
+
+// Get and display statistics
+echo "\n📈 Logger Statistics:\n";
+$stats = $logger->getStats();
+
+echo "  Directory: " . $stats['directory'] . "\n";
+echo "  Enabled: " . ($stats['enabled'] ? 'Yes' : 'No') . "\n";
+echo "  Min Level: " . $stats['min_level'] . "\n";
+echo "  Total Size: " . $stats['total_size'] . "\n";
+echo "  Log Files:\n";
+
+foreach ($stats['files'] as $filename => $info) {
+    echo "    📄 $filename:\n";
+    echo "       Size: " . $info['size'] . "\n";
+    echo "       Lines: " . $info['lines'] . "\n";
+    echo "       Modified: " . $info['modified'] . "\n";
+}
+
+// Test log file contents
+echo "\n📖 Sample log entries:\n";
+
+$logFiles = glob(PathManager::logs() . '/*.log');
+foreach (array_slice($logFiles, 0, 3) as $logFile) {
+    $filename = basename($logFile);
+    echo "  📄 $filename (last 2 lines):\n";
+    
+    $lines = file($logFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $lastLines = array_slice($lines, -2);
+    
+    foreach ($lastLines as $line) {
+        echo "    " . substr($line, 0, 100) . (strlen($line) > 100 ? '...' : '') . "\n";
+    }
+    echo "\n";
+}
+
+// Performance test
+echo "⚡ Performance test:\n";
+$startTime = microtime(true);
+$startMemory = memory_get_usage(true);
+
+for ($i = 0; $i < 100; $i++) {
+    $logger->info("Performance test message #$i", ['iteration' => $i]);
+}
+
+$endTime = microtime(true);
+$endMemory = memory_get_usage(true);
+
+$executionTime = round(($endTime - $startTime) * 1000, 2);
+$memoryUsed = $endMemory - $startMemory;
+
+echo "  ✅ 100 log entries in {$executionTime}ms\n";
+echo "  ✅ Memory used: " . round($memoryUsed / 1024, 2) . " KB\n";
+
+echo "\n🎉 Logger system test completed!\n";
+echo "\n💡 Usage examples:\n";
+echo "  \$logger->info('User logged in', ['user_id' => 123]);\n";
+echo "  \$logger->error('Database error', ['query' => \$sql]);\n";
+echo "  \$logger->exception(\$exception);\n";
+echo "  \$logger->debug('Debug info', ['data' => \$array]);\n";

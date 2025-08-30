@@ -1,5 +1,22 @@
 .
-├── data
+├── bin
+│   ├── build-responsive-sk
+│   ├── cache-cleanup
+│   └── migrate
+├── config
+│   ├── app.php
+│   ├── auth.php
+│   ├── blog.php
+│   ├── cache.php
+│   ├── cors.php
+│   ├── database.php
+│   ├── filesystems.php
+│   ├── hashing.php
+│   ├── logging.php
+│   ├── queue.php
+│   ├── services.php
+│   ├── session.php
+│   └── view.php
 ├── database
 │   ├── migrations
 │   │   └── 002_rename_blog_posts_to_articles.sql
@@ -19,24 +36,6 @@
 ├── src
 │   ├── Blog
 │   │   ├── Application
-│   │   │   ├── Service
-│   │   │   │   └── ArticleApplicationService.php
-│   │   │   ├── ArticleController.php
-│   │   │   ├── ArticleService.php
-│   │   │   ├── DocsController.php
-│   │   │   ├── HomeController.php
-│   │   │   ├── PageController.php
-│   │   │   └── SearchController.php
-│   │   ├── Domain
-│   │   │   ├── Article.php
-│   │   │   ├── ArticleRepository.php
-│   │   │   ├── ArticleStatus.php
-│   │   │   └── Author.php
-│   │   └── Infrastructure
-│   │       ├── AuthorRepository.php
-│   │       └── SqliteArticleRepository.php
-│   ├── Shared
-│   │   ├── Application
 │   │   │   ├── Command
 │   │   │   │   ├── Article
 │   │   │   │   │   ├── CreateArticleCommand.php
@@ -44,117 +43,150 @@
 │   │   │   │   │   └── UpdateArticleCommand.php
 │   │   │   │   └── Search
 │   │   │   │       └── SearchArticlesCommand.php
-│   │   │   ├── Controller
-│   │   │   │   └── AbstractController.php
 │   │   │   ├── Query
 │   │   │   │   ├── Article
 │   │   │   │   │   ├── GetArticleBySlugQuery.php
 │   │   │   │   │   ├── GetArticleQuery.php
 │   │   │   │   │   ├── GetArticlesByCategoryQuery.php
 │   │   │   │   │   └── GetArticlesQuery.php
-│   │   │   │   ├── Docs
 │   │   │   │   └── Handler
 │   │   │   │       ├── GetArticleBySlugQueryHandler.php
 │   │   │   │       ├── GetArticlesByCategoryQueryHandler.php
 │   │   │   │       └── GetArticlesQueryHandler.php
 │   │   │   ├── Service
-│   │   │   │   ├── CommandBusInterface.php
-│   │   │   │   ├── QueryBusInterface.php
-│   │   │   │   ├── SimpleCommandBus.php
-│   │   │   │   └── SimpleQueryBus.php
-│   │   │   └── Traits
-│   │   │       ├── HasDatabase.php
-│   │   │       └── HasValidation.php
+│   │   │   │   └── ArticleApplicationService.php
+│   │   │   ├── ArticleController.php
+│   │   │   ├── ArticleService.php
+│   │   │   └── SearchController.php
 │   │   ├── Domain
-│   │   │   ├── Event
-│   │   │   ├── Exception
-│   │   │   └── ValueObject
-│   │   │       ├── ArticleContent.php
-│   │   │       ├── ArticleId.php
-│   │   │       ├── ArticleStatus.php
-│   │   │       ├── ArticleTitle.php
-│   │   │       └── ValueObject.php
+│   │   │   ├── ValueObject
+│   │   │   │   ├── ArticleContent.php
+│   │   │   │   ├── ArticleId.php
+│   │   │   │   ├── ArticleStatus.php
+│   │   │   │   └── ArticleTitle.php
+│   │   │   ├── Article.php
+│   │   │   ├── ArticleRepository.php
+│   │   │   ├── ArticleStatus.php
+│   │   │   └── Author.php
 │   │   ├── Infrastructure
-│   │   │   ├── Caching
-│   │   │   │   ├── CacheInterface.php
-│   │   │   │   ├── FileCache.php
-│   │   │   │   └── QueryCache.php
-│   │   │   ├── Http
-│   │   │   │   ├── Middleware
-│   │   │   │   │   ├── CorsMiddleware.php
-│   │   │   │   │   ├── CsrfMiddleware.php
-│   │   │   │   │   ├── JsonMiddleware.php
-│   │   │   │   │   ├── LoggingMiddleware.php
-│   │   │   │   │   ├── MiddlewareInterface.php
-│   │   │   │   │   ├── MiddlewareStack.php
-│   │   │   │   │   ├── RateLimitMiddleware.php
-│   │   │   │   │   ├── RequestHandlerMiddleware.php
-│   │   │   │   │   └── SecurityHeadersMiddleware.php
-│   │   │   │   ├── ApiKernel.php
-│   │   │   │   ├── Kernel.php
-│   │   │   │   ├── RequestHandler.php
-│   │   │   │   ├── Router.php
-│   │   │   │   └── RouterWithMiddleware.php
-│   │   │   ├── Monitoring
-│   │   │   │   ├── CompressionMiddleware.php
-│   │   │   │   └── PerformanceMonitor.php
-│   │   │   ├── Persistence
-│   │   │   │   └── Database.php
-│   │   │   ├── Security
-│   │   │   │   ├── CsrfProtection.php
-│   │   │   │   ├── InputValidator.php
-│   │   │   │   ├── RateLimiter.php
-│   │   │   │   └── SessionManager.php
-│   │   │   ├── Templating
-│   │   │   │   ├── Assets
-│   │   │   │   │   └── AssetManager.php
-│   │   │   │   ├── TemplateEngine.php
-│   │   │   │   ├── TemplateEngineWithCache.php
-│   │   │   │   └── ThemeManager.php
-│   │   │   ├── Application.php
-│   │   │   ├── Config.php
-│   │   │   ├── Environment.php
-│   │   │   ├── ErrorHandler.php
-│   │   │   └── ServiceFactory.php
+│   │   │   ├── AuthorRepository.php
+│   │   │   └── SqliteArticleRepository.php
 │   │   └── Presentation
 │   │       ├── Request
-│   │       │   ├── ArticleRequest.php
-│   │       │   └── PaginationRequest.php
-│   │       ├── Response
-│   │       │   ├── ArticleResponse.php
-│   │       │   └── ArticlesResponse.php
-│   │       └── Transformer
-│   └── storage
-│       └── logs
-│           └── app-2025-08-27.log
+│   │       │   └── ArticleRequest.php
+│   │       └── Response
+│   │           ├── ArticleResponse.php
+│   │           └── ArticlesResponse.php
+│   └── Shared
+│       ├── Application
+│       │   ├── Command
+│       │   │   └── Search
+│       │   ├── Controller
+│       │   │   └── AbstractController.php
+│       │   ├── Query
+│       │   │   └── Docs
+│       │   ├── Service
+│       │   │   ├── CommandBusInterface.php
+│       │   │   ├── QueryBusInterface.php
+│       │   │   ├── SimpleCommandBus.php
+│       │   │   └── SimpleQueryBus.php
+│       │   ├── Traits
+│       │   │   ├── HasDatabase.php
+│       │   │   └── HasValidation.php
+│       │   ├── DocsController.php
+│       │   ├── HomeController.php
+│       │   └── PageController.php
+│       ├── Domain
+│       │   ├── Event
+│       │   ├── Exception
+│       │   └── ValueObject
+│       │       └── ValueObject.php
+│       ├── Infrastructure
+│       │   ├── Caching
+│       │   │   ├── CacheInterface.php
+│       │   │   ├── FileCache.php
+│       │   │   └── QueryCache.php
+│       │   ├── Exception
+│       │   │   └── ServiceNotFoundException.php
+│       │   ├── Http
+│       │   │   ├── Middleware
+│       │   │   │   ├── CorsMiddleware.php
+│       │   │   │   ├── CsrfMiddleware.php
+│       │   │   │   ├── JsonMiddleware.php
+│       │   │   │   ├── LoggingMiddleware.php
+│       │   │   │   ├── MiddlewareInterface.php
+│       │   │   │   ├── MiddlewareStack.php
+│       │   │   │   ├── RateLimitMiddleware.php
+│       │   │   │   ├── RequestHandlerMiddleware.php
+│       │   │   │   └── SecurityHeadersMiddleware.php
+│       │   │   ├── ApiKernel.php
+│       │   │   ├── Kernel.php
+│       │   │   ├── RequestHandler.php
+│       │   │   ├── Router.php
+│       │   │   └── RouterWithMiddleware.php
+│       │   ├── Monitoring
+│       │   │   ├── CompressionMiddleware.php
+│       │   │   └── PerformanceMonitor.php
+│       │   ├── Path
+│       │   │   ├── FilePathCache.php
+│       │   │   ├── PathCacheInterface.php
+│       │   │   ├── PathEventInterface.php
+│       │   │   ├── PathEvent.php
+│       │   │   └── PathResolverInterface.php
+│       │   ├── Persistence
+│       │   │   └── Database.php
+│       │   ├── Security
+│       │   │   ├── CsrfProtection.php
+│       │   │   ├── InputValidator.php
+│       │   │   ├── RateLimiter.php
+│       │   │   └── SessionManager.php
+│       │   ├── Templating
+│       │   │   ├── Assets
+│       │   │   │   └── AssetManager.php
+│       │   │   ├── TemplateEngine.php
+│       │   │   ├── TemplateEngineWithCache.php
+│       │   │   └── ThemeManager.php
+│       │   ├── Application.php
+│       │   ├── Config.php
+│       │   ├── ContainerInterface.php
+│       │   ├── Environment.php
+│       │   ├── ErrorHandler.php
+│       │   ├── Logger.php
+│       │   ├── PathManager.php
+│       │   ├── ServiceFactory.php
+│       │   └── ServiceProviderInterface.php
+│       └── Presentation
+│           ├── Request
+│           │   └── PaginationRequest.php
+│           ├── Response
+│           └── Transformer
 ├── storage
 │   ├── cache
+│   │   ├── paths
+│   │   │   ├── 0258c044d15034b87fde0eedf6919b34.cache
+│   │   │   ├── 51b8ba2e36e4f9a355f397909c254059.cache
+│   │   │   ├── 56a20ff12f65c8998612e83965ed063f.cache
+│   │   │   ├── 5d572f49ff2b6481b2637ab9e62673d9.cache
+│   │   │   ├── 939504227cfe61e0d5f0313e47af45d5.cache
+│   │   │   ├── b17e52dc3a248085ddc7552a3209077e.cache
+│   │   │   ├── c5efdbc48a89eaf18bea8a214234616e.cache
+│   │   │   ├── f8c6ad96ccf030cec75e013a91b50551.cache
+│   │   │   └── fd793a7c61e372c29a3b9bbf36065a8c.cache
+│   │   ├── queries
 │   │   ├── templates
-│   │   │   ├── 0b53efcafffe4d5572c87f91b65f805e.cache
-│   │   │   ├── 1132e21aeebb2b41598f894928df7ef7.cache
-│   │   │   ├── 1dea64464a1790d26679e41a00acda89.cache
-│   │   │   ├── 20ae964011582a916fef2659807a16b2.cache
-│   │   │   ├── 2f7e108c855d6f7394c0fb7d855cecf6.cache
-│   │   │   ├── 4983666ef318da968cb3ac23294139c7.cache
-│   │   │   ├── 6bf62a4320bfc0eb905358c3d0f12504.cache
-│   │   │   ├── 6fd8a79df848b8d94ec1fe37cb09880d.cache
-│   │   │   ├── 74c9bd5ec83d90b29efb93a936ea2928.cache
-│   │   │   ├── 945b278125a693a4c15f6f30982efb15.cache
-│   │   │   ├── c2503bf8fb1501484f7fe39ea5a579c1.cache
-│   │   │   └── e57ce58ebebbb768eee022fec0b679bd.cache
+│   │   ├── test
 │   │   └── .gitkeep
 │   ├── logs
 │   │   ├── test
-│   │   ├── app-2025-08-27.log
+│   │   ├── app-2025-08-30.log
 │   │   ├── error.log
 │   │   └── .gitkeep
 │   ├── phpstan
 │   ├── phpunit
 │   │   └── test-results
-│   ├── sessions
-│   │   ├── test
-│   │   └── .gitkeep
-│   └── templates
+│   └── sessions
+│       ├── test
+│       └── .gitkeep
 ├── templates
 │   ├── assets
 │   │   ├── bootstrap
@@ -372,8 +404,14 @@
 │   │   ├── landing.php
 │   │   └── test.php
 │   ├── pages
+│   │   ├── 400.php
+│   │   ├── 401.php
+│   │   ├── 403.php
 │   │   ├── 404.php
 │   │   ├── 405.php
+│   │   ├── 429.php
+│   │   ├── 502.php
+│   │   ├── 503.php
 │   │   ├── about.php
 │   │   ├── article.php
 │   │   ├── articles.php
@@ -415,27 +453,45 @@
 │   │   │       └── ArticleTest.php
 │   │   └── Shared
 │   │       └── Infrastructure
-│   │           └── Security
-│   │               └── InputValidatorTest.php
+│   │           ├── Security
+│   │           │   └── InputValidatorTest.php
+│   │           └── PathManagerTest.php
 │   └── bootstrap.php
+├── tools
+│   ├── analyze-binary-data
+│   ├── cache-manager
+│   ├── check-headers
+│   ├── debug-headers
+│   ├── log-monitor
+│   ├── phpstan-fix
+│   ├── phpstan-progress
+│   ├── README.md
+│   ├── test-components
+│   ├── test-error-pages
+│   ├── test-htmx
+│   ├── test-logger
+│   ├── test-paths
+│   └── test-production
 ├── behat.yml
 ├── build-themes.js
-├── cache-cleanup.php
-├── cache-manager.php
 ├── COMMIT_MESSAGE.md
 ├── composer.json
 ├── composer.lock
 ├── directory_tree.md
+├── EMERGENCY-RESPONSE.md
 ├── .env
+├── .env (copy 1)
 ├── .env.example
 ├── .envH
+├── .envS
 ├── .gitignore
 ├── .htaccess
-├── migrate.php
 ├── .php-cs-fixer.cache
 ├── .php-cs-fixer.php
 ├── phpstan.neon
 ├── phpunit.xml
-└── test_htmx_conversion.php
+├── TODO.md
+├── TROUBLESHOOTING.md
+└── UPLOAD-INSTRUCTIONS.txt
 
-111 directories, 328 files
+122 directories, 373 files

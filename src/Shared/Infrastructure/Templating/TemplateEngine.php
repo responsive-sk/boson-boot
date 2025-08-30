@@ -6,6 +6,7 @@ namespace Boson\Shared\Infrastructure\Templating;
 
 use Boson\Shared\Infrastructure\Caching\CacheInterface;
 use Boson\Shared\Infrastructure\Caching\FileCache;
+use Boson\Shared\Infrastructure\PathManager;
 use DateTime;
 use League\Plates\Engine;
 
@@ -22,9 +23,9 @@ class TemplateEngine
 
     public function __construct(?string $templatesPath = null, ?CacheInterface $cache = null, bool $cacheEnabled = true)
     {
-        $templatesPath ??= __DIR__ . '/../../../templates';
+        $templatesPath ??= PathManager::templates();
         $this->plates       = new Engine($templatesPath);
-        $this->cache        = $cache ?? new FileCache(__DIR__ . '/../../../storage/templates');
+        $this->cache        = $cache ?? new FileCache(PathManager::storage('templates'));
         $this->cacheEnabled = $cacheEnabled;
 
         // Register template folders

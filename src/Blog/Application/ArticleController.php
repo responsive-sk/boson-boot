@@ -17,6 +17,9 @@ class ArticleController extends AbstractController
         $this->articleApplicationService = $articleApplicationService;
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function index(array $params = []): string
     {
         $paginationRequest = PaginationRequest::fromGlobals();
@@ -61,7 +64,7 @@ class ArticleController extends AbstractController
 
         $articleResponse = $this->articleApplicationService->getArticleBySlug($slug);
 
-        if (!$articleResponse) {
+        if ($articleResponse === null) {
             return $this->notFound('Article Not Found');
         }
 
@@ -85,6 +88,7 @@ class ArticleController extends AbstractController
             'description' => $articleResponse->getExcerpt() ?? substr(strip_tags($articleResponse->getContent()), 0, 160),
             'article' => $articleResponse,
             'relatedArticles' => $relatedArticles,
+            'themeManager' => $this->themeManager,
         ]);
     }
 
@@ -92,37 +96,73 @@ class ArticleController extends AbstractController
     {
         $page = $this->getParam('page', 2, 'int');
         $perPage = 6;
+        $categoryId = $this->getParam('categoryId', null, 'int');
 
-        $articlesResponse = $this->articleApplicationService->getArticles(
-            page: $page,
-            perPage: $perPage
-        );
+        if ($categoryId !== null) {
+            // Handle category-specific articles
+            $articles = $this->articleApplicationService->getArticlesByCategory(
+                categoryId: $categoryId,
+                limit: $perPage,
+                offset: ($page - 1) * $perPage
+            );
 
-        if (empty($articlesResponse->getArticles())) {
-            return '<div class="no-more-articles">No more articles to load.</div>';
-        }
+            if (empty($articles)) {
+                return '<div class="no-more-articles">No more articles to load.</div>';
+            }
 
-        $html = '';
-        foreach ($articlesResponse->getArticles() as $article) {
-            $html .= $this->renderArticleCard($article);
-        }
+            $isSvelteTheme = $this->themeManager->getCurrentTheme() === 'svelte';
 
-        // Add load more button if there are more articles
-        if ($articlesResponse->hasMore()) {
-            $nextPage = $page + 1;
-            $html .= '
-                <div class="load-more-container" id="load-more-container">
-                    <button
-                        class="btn btn-outline load-more-btn"
-                        hx-get="/api/articles/load-more?page=' . $nextPage . '"
-                        hx-target="#articles-container"
-                        hx-swap="beforeend"
-                        hx-indicator="#loading-indicator"
-                    >
-                        Load More Articles
-                    </button>
-                </div>
-            ';
+            $html = '';
+            foreach ($articles as $article) {
+                $html .= $this->renderTemplate('partials/article-card.php', [
+                    'article' => $article,
+                    'isSvelteTheme' => $isSvelteTheme
+                ]);
+            }
+
+            // Check if there are more articles by trying to fetch one more
+            $nextArticles = $this->articleApplicationService->getArticlesByCategory(
+                categoryId: $categoryId,
+                limit: 1,
+                offset: $page * $perPage
+            );
+
+            if (!empty($nextArticles)) {
+                $nextPage = $page + 1;
+                $html .= $this->renderTemplate('partials/load-more-button.php', [
+                    'nextPage' => $nextPage,
+                    'categoryId' => $categoryId
+                ]);
+            }
+        } else {
+            // Handle general articles
+            $articlesResponse = $this->articleApplicationService->getArticles(
+                page: $page,
+                perPage: $perPage
+            );
+
+            if (empty($articlesResponse->getArticles())) {
+                return '<div class="no-more-articles">No more articles to load.</div>';
+            }
+
+            $isSvelteTheme = $this->themeManager->getCurrentTheme() === 'svelte';
+
+            $html = '';
+            foreach ($articlesResponse->getArticles() as $article) {
+                $html .= $this->renderTemplate('partials/article-card.php', [
+                    'article' => $article,
+                    'isSvelteTheme' => $isSvelteTheme
+                ]);
+            }
+
+            // Add load more button if there are more articles
+            if ($articlesResponse->hasMore()) {
+                $nextPage = $page + 1;
+                $html .= $this->renderTemplate('partials/load-more-button.php', [
+                    'nextPage' => $nextPage,
+                    'categoryId' => null
+                ]);
+            }
         }
 
         return $html;
@@ -162,13 +202,13 @@ class ArticleController extends AbstractController
     {
         $publishedDate = $article->getPublishedAt()?->format('M j, Y') ?? '';
         $excerpt = $article->getExcerpt() ?? substr(strip_tags($article->getContent()), 0, 150) . '...';
-        
+
         return '
             <article class="article-card" data-article-id="' . $article->getId() . '">
-                ' . ($article->getFeaturedImage() ? 
+                ' . ($article->getFeaturedImage() ?
                     '<div class="article-image">
-                        <img src="' . htmlspecialchars($article->getFeaturedImage()) . '" 
-                             alt="' . htmlspecialchars($article->getTitle()) . '" 
+                        <img src="' . htmlspecialchars($article->getFeaturedImage()) . '"
+                             alt="' . htmlspecialchars($article->getTitle()) . '"
                              loading="lazy">
                     </div>' : '') . '
                 <div class="article-content">
@@ -183,6 +223,23 @@ class ArticleController extends AbstractController
                 </div>
             </article>
         ';
+    }
+
+    private function renderSvelteArticleCard($article): string
+    {
+        $articleData = [
+            'id' => $article->getId(),
+            'title' => $article->getTitle(),
+            'slug' => $article->getSlug(),
+            'excerpt' => $article->getExcerpt() ?? substr(strip_tags($article->getContent()), 0, 150),
+            'content' => strip_tags($article->getContent()), // Remove HTML for JSON safety
+            'image' => $article->getFeaturedImage(),
+            'author' => 'Boson Team', // TODO: Load from authors table
+            'category' => 'General', // TODO: Load from categories table
+            'published_at' => $article->getPublishedAt()?->format('Y-m-d H:i:s')
+        ];
+
+        return '<div class="svelte-article-card" data-article="' . htmlspecialchars(json_encode($articleData), ENT_QUOTES, 'UTF-8') . '"></div>';
     }
 
     private function getCategoryName(int $categoryId): string

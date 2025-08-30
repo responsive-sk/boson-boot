@@ -1,0 +1,126 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Test Error Pages
+ * Tests all error page templates for syntax and completeness
+ */
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\PathManager;
+
+echo "🧪 Testing Error Pages\n";
+echo "=====================\n\n";
+
+// List of error pages to test
+$errorPages = [
+    '400' => 'Bad Request',
+    '401' => 'Unauthorized', 
+    '403' => 'Forbidden',
+    '404' => 'Not Found',
+    '405' => 'Method Not Allowed',
+    '429' => 'Too Many Requests',
+    'error' => 'Internal Server Error (500)',
+    '502' => 'Bad Gateway',
+    '503' => 'Service Unavailable',
+    'debug-error' => 'Debug Error Page'
+];
+
+$templatesPath = PathManager::templates('pages');
+$passed = 0;
+$failed = 0;
+
+echo "📁 Templates directory: " . PathManager::relative($templatesPath) . "\n\n";
+
+foreach ($errorPages as $code => $description) {
+    // Map error codes to actual filenames
+    if ($code === 'error') {
+        $filename = 'error.php';
+    } else {
+        $filename = "$code.php";
+    }
+
+    $filepath = "$templatesPath/$filename";
+
+    echo "Testing $code ($description) - File: $filename:\n";
+    
+    // Check if file exists
+    if (!file_exists($filepath)) {
+        echo "  ❌ File not found: $filename\n";
+        $failed++;
+        continue;
+    }
+    
+    // Check PHP syntax
+    $syntaxCheck = shell_exec("php -l '$filepath' 2>&1");
+    if (strpos($syntaxCheck, 'No syntax errors') === false) {
+        echo "  ❌ Syntax error in $filename\n";
+        echo "     " . trim($syntaxCheck) . "\n";
+        $failed++;
+        continue;
+    }
+    
+    // Check file content
+    $content = file_get_contents($filepath);
+    
+    $checks = [
+        'layout' => strpos($content, 'layout(') !== false,
+        'title' => strpos($content, 'title') !== false,
+        'error_code' => strpos($content, $code) !== false || $code === 'debug-error' || $code === 'error',
+        'actions' => strpos($content, 'href=') !== false || strpos($content, 'onclick=') !== false,
+        'description' => strlen($content) > 500 // Has substantial content
+    ];
+    
+    $allPassed = true;
+    foreach ($checks as $check => $result) {
+        $status = $result ? '✅' : '❌';
+        echo "  $status " . ucfirst(str_replace('_', ' ', $check)) . "\n";
+        if (!$result) $allPassed = false;
+    }
+    
+    if ($allPassed) {
+        echo "  ✅ Overall: PASSED\n";
+        $passed++;
+    } else {
+        echo "  ❌ Overall: FAILED\n";
+        $failed++;
+    }
+    
+    echo "\n";
+}
+
+// Test ErrorHandler integration
+echo "🔧 Testing ErrorHandler Integration:\n";
+
+$errorHandlerPath = PathManager::src('Shared/Infrastructure/ErrorHandler.php');
+if (file_exists($errorHandlerPath)) {
+    $errorHandlerContent = file_get_contents($errorHandlerPath);
+    
+    $handlerChecks = [
+        'handles_404' => strpos($errorHandlerContent, '404 =>') !== false,
+        'handles_405' => strpos($errorHandlerContent, '405 =>') !== false,
+        'handles_500' => strpos($errorHandlerContent, "default => 'pages::error'") !== false,
+        'debug_mode' => strpos($errorHandlerContent, 'debug-error') !== false,
+        'template_engine' => strpos($errorHandlerContent, 'TemplateEngine') !== false
+    ];
+    
+    foreach ($handlerChecks as $check => $result) {
+        $status = $result ? '✅' : '❌';
+        echo "  $status " . ucfirst(str_replace('_', ' ', $check)) . "\n";
+    }
+} else {
+    echo "  ❌ ErrorHandler.php not found\n";
+}
+
+echo "\n📊 Summary:\n";
+echo "  ✅ Passed: $passed\n";
+echo "  ❌ Failed: $failed\n";
+echo "  📁 Total: " . count($errorPages) . "\n\n";
+
+if ($failed === 0) {
+    echo "🎉 All error pages are working correctly!\n";
+    exit(0);
+} else {
+    echo "⚠️  Some error pages need attention.\n";
+    exit(1);
+}
