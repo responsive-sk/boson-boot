@@ -5,9 +5,40 @@ declare(strict_types=1);
 namespace Boson\Blog\Domain\ValueObject;
 
 use Boson\Shared\Domain\ValueObject\ValueObject;
+use Boson\Shared\Infrastructure\Security\InputValidator;
 
 /**
  * Article Status Value Object
+ *
+ * Represents validated article publication status with predefined values.
+ * Supports draft, published, and archived states with case-insensitive input.
+ *
+ * @example
+ * // Valid usage
+ * $status = ArticleStatus::fromString('draft');
+ * echo $status->value(); // "draft"
+ * echo $status; // "draft" (via __toString)
+ *
+ * // Status checks
+ * $status->isDraft(); // true
+ * $status->isPublished(); // false
+ * $status->isArchived(); // false
+ *
+ * // Case insensitive
+ * $status = ArticleStatus::fromString('PUBLISHED');
+ * echo $status->value(); // "published"
+ *
+ * // Comparison
+ * $status1 = ArticleStatus::fromString('draft');
+ * $status2 = ArticleStatus::fromString('draft');
+ * $status1->equals($status2); // true
+ *
+ * // Constants
+ * ArticleStatus::DRAFT; // "draft"
+ * ArticleStatus::PUBLISHED; // "published"
+ * ArticleStatus::ARCHIVED; // "archived"
+ *
+ * @throws \InvalidArgumentException When status is invalid
  */
 final class ArticleStatus implements ValueObject
 {
@@ -26,17 +57,22 @@ final class ArticleStatus implements ValueObject
     public static function fromString(string $value): self
     {
         $normalized = strtolower(trim($value));
-        
-        if (!in_array($normalized, self::VALID_STATUSES, true)) {
-            throw new \InvalidArgumentException(
-                sprintf('Invalid article status: %s. Valid statuses: %s',
-                    $value,
-                    implode(', ', self::VALID_STATUSES)
-                )
-            );
+
+        $validator = new InputValidator();
+        $rules = [
+            'status' => ['required', 'string', ['in', ...self::VALID_STATUSES]]
+        ];
+
+        if (!$validator->validate(['status' => $normalized], $rules)) {
+            throw new \InvalidArgumentException($validator->getFirstError() ?? 'Invalid status');
         }
 
         return new self($normalized);
+    }
+
+    public function value(): string
+    {
+        return $this->value;
     }
 
     public function toString(): string
@@ -44,8 +80,11 @@ final class ArticleStatus implements ValueObject
         return $this->value;
     }
 
-    public function equals(ValueObject $other): bool
+    public function equals(?ValueObject $other): bool
     {
+        if ($other === null) {
+            return false;
+        }
         return $other instanceof self && $this->value === $other->value;
     }
 
