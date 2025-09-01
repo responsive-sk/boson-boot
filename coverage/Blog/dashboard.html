@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>Dashboard for /home/dan/Desktop/08/apache-htmx/src/Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../_css/bootstrap.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/nv.d3.min.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/style.css?v=10.1.16" rel="stylesheet" type="text/css">
+  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
+  <header>
+   <div class="container-fluid">
+    <div class="row">
+     <div class="col-md-12">
+      <nav aria-label="breadcrumb">
+       <ol class="breadcrumb">
+         <li class="breadcrumb-item"><a href="../index.html">/home/dan/Desktop/08/apache-htmx/src</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Blog</a></li>
+         <li class="breadcrumb-item active">(Dashboard)</li>
+
+       </ol>
+      </nav>
+     </div>
+    </div>
+   </div>
+  </header>
+  <div class="container-fluid">
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Classes</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="classCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="classComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/ArticleController.php.html#11">Boson\Blog\Application\ArticleController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#11">Boson\Blog\Application\ArticleService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#14">Boson\Blog\Application\Command\Article\CreateArticleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/DeleteArticleCommand.php.html#12">Boson\Blog\Application\Command\Article\DeleteArticleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#15">Boson\Blog\Application\Command\Article\UpdateArticleCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Search/SearchArticlesCommand.php.html#10">Boson\Blog\Application\Command\Search\SearchArticlesCommand</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#10">Boson\Blog\Application\Query\Article\GetArticleBySlugQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#12">Boson\Blog\Application\Query\Article\GetArticleQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#10">Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#10">Boson\Blog\Application\Query\Article\GetArticlesQuery</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticleBySlugQueryHandler.php.html#14">Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesByCategoryQueryHandler.php.html#14">Boson\Blog\Application\Query\Handler\GetArticlesByCategoryQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesQueryHandler.php.html#15">Boson\Blog\Application\Query\Handler\GetArticlesQueryHandler</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#16">Boson\Blog\Application\SearchController</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#23">Boson\Blog\Application\Service\ArticleApplicationService</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#10">Boson\Blog\Domain\Article</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#9">Boson\Blog\Domain\Author</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#12">Boson\Blog\Domain\ValueObject\ArticleContent</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#12">Boson\Blog\Domain\ValueObject\ArticleId</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#12">Boson\Blog\Domain\ValueObject\ArticleStatus</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#12">Boson\Blog\Domain\ValueObject\ArticleTitle</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#11">Boson\Blog\Infrastructure\AuthorRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#13">Boson\Blog\Infrastructure\SqliteArticleRepository</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#10">Boson\Blog\Presentation\Request\ArticleRequest</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#12">Boson\Blog\Presentation\Response\ArticleResponse</a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#10">Boson\Blog\Presentation\Response\ArticlesResponse</a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Class</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Domain/Article.php.html#10">Boson\Blog\Domain\Article</a></td><td class="text-right">1332</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#16">Boson\Blog\Application\SearchController</a></td><td class="text-right">1260</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#11">Boson\Blog\Application\ArticleService</a></td><td class="text-right">600</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#11">Boson\Blog\Application\ArticleController</a></td><td class="text-right">506</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#13">Boson\Blog\Infrastructure\SqliteArticleRepository</a></td><td class="text-right">272</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#23">Boson\Blog\Application\Service\ArticleApplicationService</a></td><td class="text-right">182</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#14">Boson\Blog\Application\Command\Article\CreateArticleCommand</a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#10">Boson\Blog\Presentation\Request\ArticleRequest</a></td><td class="text-right">156</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#15">Boson\Blog\Application\Command\Article\UpdateArticleCommand</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#10">Boson\Blog\Presentation\Response\ArticlesResponse</a></td><td class="text-right">132</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#12">Boson\Blog\Domain\ValueObject\ArticleId</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#12">Boson\Blog\Domain\ValueObject\ArticleStatus</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#11">Boson\Blog\Infrastructure\AuthorRepository</a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#12">Boson\Blog\Domain\ValueObject\ArticleContent</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#12">Boson\Blog\Domain\ValueObject\ArticleTitle</a></td><td class="text-right">90</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticleBySlugQueryHandler.php.html#14">Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler</a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#10">Boson\Blog\Application\Query\Article\GetArticleBySlugQuery</a></td><td class="text-right">20</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-12">
+     <h2>Methods</h2>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Coverage Distribution</h3>
+     <div id="methodCoverageDistribution" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Complexity</h3>
+     <div id="methodComplexity" style="height: 300px;">
+       <svg></svg>
+     </div>
+    </div>
+   </div>
+   <div class="row">
+    <div class="col-md-6">
+     <h3>Insufficient Coverage</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right">Coverage</th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Application/ArticleController.php.html#15"><abbr title="Boson\Blog\Application\ArticleController::setArticleApplicationService">setArticleApplicationService</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#23"><abbr title="Boson\Blog\Application\ArticleController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#60"><abbr title="Boson\Blog\Application\ArticleController::show">show</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#101"><abbr title="Boson\Blog\Application\ArticleController::loadMore">loadMore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#180"><abbr title="Boson\Blog\Application\ArticleController::category">category</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#210"><abbr title="Boson\Blog\Application\ArticleController::renderArticleCard">renderArticleCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#240"><abbr title="Boson\Blog\Application\ArticleController::renderSvelteArticleCard">renderSvelteArticleCard</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#258"><abbr title="Boson\Blog\Application\ArticleController::getCategoryName">getCategoryName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#15"><abbr title="Boson\Blog\Application\ArticleService::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#20"><abbr title="Boson\Blog\Application\ArticleService::createArticle">createArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#43"><abbr title="Boson\Blog\Application\ArticleService::updateArticle">updateArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#68"><abbr title="Boson\Blog\Application\ArticleService::publishArticle">publishArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#81"><abbr title="Boson\Blog\Application\ArticleService::unpublishArticle">unpublishArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#94"><abbr title="Boson\Blog\Application\ArticleService::archiveArticle">archiveArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#107"><abbr title="Boson\Blog\Application\ArticleService::deleteArticle">deleteArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#112"><abbr title="Boson\Blog\Application\ArticleService::getArticleById">getArticleById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#117"><abbr title="Boson\Blog\Application\ArticleService::getArticleBySlug">getArticleBySlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#125"><abbr title="Boson\Blog\Application\ArticleService::getPublishedArticles">getPublishedArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#133"><abbr title="Boson\Blog\Application\ArticleService::getArticlesByStatus">getArticlesByStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#141"><abbr title="Boson\Blog\Application\ArticleService::getArticlesByCategory">getArticlesByCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#149"><abbr title="Boson\Blog\Application\ArticleService::searchArticles">searchArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#154"><abbr title="Boson\Blog\Application\ArticleService::getArticleCount">getArticleCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#159"><abbr title="Boson\Blog\Application\ArticleService::getPublishedArticleCount">getPublishedArticleCount</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#167"><abbr title="Boson\Blog\Application\ArticleService::getPaginatedArticles">getPaginatedArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#189"><abbr title="Boson\Blog\Application\ArticleService::generateUniqueSlug">generateUniqueSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#203"><abbr title="Boson\Blog\Application\ArticleService::generateSlugFromTitle">generateSlugFromTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#16"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#27"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#32"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#37"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#42"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getExcerpt">getExcerpt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#47"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#52"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getFeaturedImage">getFeaturedImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#57"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#62"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::getAuthorId">getAuthorId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#67"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/DeleteArticleCommand.php.html#14"><abbr title="Boson\Blog\Application\Command\Article\DeleteArticleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/DeleteArticleCommand.php.html#16"><abbr title="Boson\Blog\Application\Command\Article\DeleteArticleCommand::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/DeleteArticleCommand.php.html#21"><abbr title="Boson\Blog\Application\Command\Article\DeleteArticleCommand::fromInt">fromInt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/DeleteArticleCommand.php.html#26"><abbr title="Boson\Blog\Application\Command\Article\DeleteArticleCommand::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#17"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#28"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#33"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#38"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#43"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#48"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getExcerpt">getExcerpt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#53"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#58"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getFeaturedImage">getFeaturedImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#63"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#68"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Search/SearchArticlesCommand.php.html#12"><abbr title="Boson\Blog\Application\Command\Search\SearchArticlesCommand::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Search/SearchArticlesCommand.php.html#17"><abbr title="Boson\Blog\Application\Command\Search\SearchArticlesCommand::getQuery">getQuery</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Command/Search/SearchArticlesCommand.php.html#22"><abbr title="Boson\Blog\Application\Command\Search\SearchArticlesCommand::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#12"><abbr title="Boson\Blog\Application\Query\Article\GetArticleBySlugQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#21"><abbr title="Boson\Blog\Application\Query\Article\GetArticleBySlugQuery::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#26"><abbr title="Boson\Blog\Application\Query\Article\GetArticleBySlugQuery::isPublishedOnly">isPublishedOnly</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#14"><abbr title="Boson\Blog\Application\Query\Article\GetArticleQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#19"><abbr title="Boson\Blog\Application\Query\Article\GetArticleQuery::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#24"><abbr title="Boson\Blog\Application\Query\Article\GetArticleQuery::isPublishedOnly">isPublishedOnly</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#29"><abbr title="Boson\Blog\Application\Query\Article\GetArticleQuery::fromInt">fromInt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleQuery.php.html#34"><abbr title="Boson\Blog\Application\Query\Article\GetArticleQuery::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#12"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#19"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#24"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery::getLimit">getLimit</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#29"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery::getOffset">getOffset</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesByCategoryQuery.php.html#34"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesByCategoryQuery::isPublishedOnly">isPublishedOnly</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#12"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#19"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::getPage">getPage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#24"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::getPerPage">getPerPage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#29"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::getSortBy">getSortBy</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#34"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::getSortDirection">getSortDirection</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticlesQuery.php.html#39"><abbr title="Boson\Blog\Application\Query\Article\GetArticlesQuery::getOffset">getOffset</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticleBySlugQueryHandler.php.html#16"><abbr title="Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticleBySlugQueryHandler.php.html#18"><abbr title="Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesByCategoryQueryHandler.php.html#16"><abbr title="Boson\Blog\Application\Query\Handler\GetArticlesByCategoryQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesByCategoryQueryHandler.php.html#18"><abbr title="Boson\Blog\Application\Query\Handler\GetArticlesByCategoryQueryHandler::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesQueryHandler.php.html#17"><abbr title="Boson\Blog\Application\Query\Handler\GetArticlesQueryHandler::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesQueryHandler.php.html#19"><abbr title="Boson\Blog\Application\Query\Handler\GetArticlesQueryHandler::handle">handle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticlesQueryHandler.php.html#41"><abbr title="Boson\Blog\Application\Query\Handler\GetArticlesQueryHandler::convertToArticleResponse">convertToArticleResponse</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#20"><abbr title="Boson\Blog\Application\SearchController::index">index</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#40"><abbr title="Boson\Blog\Application\SearchController::search">search</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#47"><abbr title="Boson\Blog\Application\SearchController::apiSearch">apiSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#79"><abbr title="Boson\Blog\Application\SearchController::performSearch">performSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#110"><abbr title="Boson\Blog\Application\SearchController::searchArticles">searchArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#136"><abbr title="Boson\Blog\Application\SearchController::fallbackArticleSearch">fallbackArticleSearch</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#157"><abbr title="Boson\Blog\Application\SearchController::searchDocumentation">searchDocumentation</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#195"><abbr title="Boson\Blog\Application\SearchController::highlightSearchTerms">highlightSearchTerms</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#215"><abbr title="Boson\Blog\Application\SearchController::renderSearchResults">renderSearchResults</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#239"><abbr title="Boson\Blog\Application\SearchController::renderSearchResultsHtml">renderSearchResultsHtml</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#25"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#33"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticle">getArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#43"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticleBySlug">getArticleBySlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#53"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticles">getArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#70"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticlesByCategory">getArticlesByCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#91"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::createArticle">createArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#105"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::updateArticle">updateArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#118"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::deleteArticle">deleteArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#129"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getPaginatedArticles">getPaginatedArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#25"><abbr title="Boson\Blog\Domain\Article::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#47"><abbr title="Boson\Blog\Domain\Article::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#67"><abbr title="Boson\Blog\Domain\Article::publish">publish</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#78"><abbr title="Boson\Blog\Domain\Article::unpublish">unpublish</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#88"><abbr title="Boson\Blog\Domain\Article::archive">archive</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#94"><abbr title="Boson\Blog\Domain\Article::updateContent">updateContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#109"><abbr title="Boson\Blog\Domain\Article::generateSlug">generateSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#118"><abbr title="Boson\Blog\Domain\Article::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#123"><abbr title="Boson\Blog\Domain\Article::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#128"><abbr title="Boson\Blog\Domain\Article::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#133"><abbr title="Boson\Blog\Domain\Article::getExcerpt">getExcerpt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#138"><abbr title="Boson\Blog\Domain\Article::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#143"><abbr title="Boson\Blog\Domain\Article::getFeaturedImage">getFeaturedImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#148"><abbr title="Boson\Blog\Domain\Article::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#153"><abbr title="Boson\Blog\Domain\Article::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#158"><abbr title="Boson\Blog\Domain\Article::getAuthorId">getAuthorId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#163"><abbr title="Boson\Blog\Domain\Article::getPublishedAt">getPublishedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#168"><abbr title="Boson\Blog\Domain\Article::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#173"><abbr title="Boson\Blog\Domain\Article::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#179"><abbr title="Boson\Blog\Domain\Article::isPublished">isPublished</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#184"><abbr title="Boson\Blog\Domain\Article::isDraft">isDraft</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#189"><abbr title="Boson\Blog\Domain\Article::isArchived">isArchived</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#198"><abbr title="Boson\Blog\Domain\Article::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#219"><abbr title="Boson\Blog\Domain\Article::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Article.php.html#253"><abbr title="Boson\Blog\Domain\Article::setId">setId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#19"><abbr title="Boson\Blog\Domain\Author::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#33"><abbr title="Boson\Blog\Domain\Author::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#47"><abbr title="Boson\Blog\Domain\Author::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#52"><abbr title="Boson\Blog\Domain\Author::getName">getName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#57"><abbr title="Boson\Blog\Domain\Author::getEmail">getEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#62"><abbr title="Boson\Blog\Domain\Author::getBio">getBio</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#67"><abbr title="Boson\Blog\Domain\Author::getAvatar">getAvatar</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#72"><abbr title="Boson\Blog\Domain\Author::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#77"><abbr title="Boson\Blog\Domain\Author::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#82"><abbr title="Boson\Blog\Domain\Author::updateProfile">updateProfile</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#90"><abbr title="Boson\Blog\Domain\Author::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/Author.php.html#103"><abbr title="Boson\Blog\Domain\Author::fromArray">fromArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#17"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#19"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#41"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#46"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#51"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#14"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#16"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::fromInt">fromInt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#25"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#35"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::toInt">toInt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#40"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#45"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#50"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#24"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#26"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#42"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#47"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#52"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#57"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::isDraft">isDraft</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#62"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::isPublished">isPublished</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#67"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::isArchived">isArchived</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#17"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#19"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::fromString">fromString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#41"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::toString">toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#46"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::equals">equals</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#51"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::__toString">__toString</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#15"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#20"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#31"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::findByEmail">findByEmail</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#42"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::findAll">findAll</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#53"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#84"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#17"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#22"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::save">save</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#70"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findById">findById</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#81"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findBySlug">findBySlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#92"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findPublished">findPublished</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#105"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findByStatus">findByStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#118"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findByCategory">findByCategory</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#139"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::search">search</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#154"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::countByStatus">countByStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#163"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::delete">delete</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#171"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::slugExists">slugExists</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#12"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#16"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#21"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#26"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getExcerpt">getExcerpt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#31"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#36"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getFeaturedImage">getFeaturedImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#41"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#46"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#51"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getAuthorId">getAuthorId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#56"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#14"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#35"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::fromArticle">fromArticle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#55"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getId">getId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#60"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getTitle">getTitle</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#65"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getContent">getContent</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#70"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getStatus">getStatus</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#75"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getExcerpt">getExcerpt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#80"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getSlug">getSlug</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#85"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getFeaturedImage">getFeaturedImage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#90"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#95"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getCategoryName">getCategoryName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#100"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getAuthorId">getAuthorId</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#105"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getAuthorName">getAuthorName</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#110"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getTags">getTags</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#115"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getCreatedAt">getCreatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#120"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getUpdatedAt">getUpdatedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticleResponse.php.html#125"><abbr title="Boson\Blog\Presentation\Response\ArticleResponse::getPublishedAt">getPublishedAt</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#12"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::__construct">__construct</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#19"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::getArticles">getArticles</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#24"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::getTotal">getTotal</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#29"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::getCurrentPage">getCurrentPage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#34"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::getPerPage">getPerPage</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#39"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::getTotalPages">getTotalPages</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#44"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::hasMore">hasMore</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#49"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::hasPrevious">hasPrevious</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#57"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::create">create</abbr></a></td><td class="text-right">0%</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#71"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::toArray">toArray</abbr></a></td><td class="text-right">0%</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+    <div class="col-md-6">
+     <h3>Project Risks</h3>
+     <div class="scrollbox">
+      <table class="table">
+       <thead>
+        <tr>
+         <th>Method</th>
+         <th class="text-right"><abbr title="Change Risk Anti-Patterns (CRAP) Index">CRAP</abbr></th>
+        </tr>
+       </thead>
+       <tbody>
+       <tr><td><a href="Domain/Article.php.html#219"><abbr title="Boson\Blog\Domain\Article::fromArray">fromArray</abbr></a></td><td class="text-right">110</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#101"><abbr title="Boson\Blog\Application\ArticleController::loadMore">loadMore</abbr></a></td><td class="text-right">72</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#215"><abbr title="Boson\Blog\Application\SearchController::renderSearchResults">renderSearchResults</abbr></a></td><td class="text-right">42</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#60"><abbr title="Boson\Blog\Application\ArticleController::show">show</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#20"><abbr title="Boson\Blog\Application\SearchController::index">index</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#157"><abbr title="Boson\Blog\Application\SearchController::searchDocumentation">searchDocumentation</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#195"><abbr title="Boson\Blog\Application\SearchController::highlightSearchTerms">highlightSearchTerms</abbr></a></td><td class="text-right">30</td></tr>
+       <tr><td><a href="Application/Query/Handler/GetArticleBySlugQueryHandler.php.html#18"><abbr title="Boson\Blog\Application\Query\Handler\GetArticleBySlugQueryHandler::handle">handle</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#47"><abbr title="Boson\Blog\Application\SearchController::apiSearch">apiSearch</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#79"><abbr title="Boson\Blog\Application\SearchController::performSearch">performSearch</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#19"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::fromString">fromString</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#19"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::fromString">fromString</abbr></a></td><td class="text-right">20</td></tr>
+       <tr><td><a href="Application/Command/Article/CreateArticleCommand.php.html#67"><abbr title="Boson\Blog\Application\Command\Article\CreateArticleCommand::fromArray">fromArray</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#53"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::save">save</abbr></a></td><td class="text-right">12</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#180"><abbr title="Boson\Blog\Application\ArticleController::category">category</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#210"><abbr title="Boson\Blog\Application\ArticleController::renderArticleCard">renderArticleCard</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleController.php.html#240"><abbr title="Boson\Blog\Application\ArticleController::renderSvelteArticleCard">renderSvelteArticleCard</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#43"><abbr title="Boson\Blog\Application\ArticleService::updateArticle">updateArticle</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#68"><abbr title="Boson\Blog\Application\ArticleService::publishArticle">publishArticle</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#81"><abbr title="Boson\Blog\Application\ArticleService::unpublishArticle">unpublishArticle</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#94"><abbr title="Boson\Blog\Application\ArticleService::archiveArticle">archiveArticle</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#167"><abbr title="Boson\Blog\Application\ArticleService::getPaginatedArticles">getPaginatedArticles</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/ArticleService.php.html#189"><abbr title="Boson\Blog\Application\ArticleService::generateUniqueSlug">generateUniqueSlug</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Command/Article/UpdateArticleCommand.php.html#68"><abbr title="Boson\Blog\Application\Command\Article\UpdateArticleCommand::fromArray">fromArray</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Query/Article/GetArticleBySlugQuery.php.html#12"><abbr title="Boson\Blog\Application\Query\Article\GetArticleBySlugQuery::__construct">__construct</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#110"><abbr title="Boson\Blog\Application\SearchController::searchArticles">searchArticles</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/SearchController.php.html#239"><abbr title="Boson\Blog\Application\SearchController::renderSearchResultsHtml">renderSearchResultsHtml</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#33"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticle">getArticle</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#43"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticleBySlug">getArticleBySlug</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#53"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticles">getArticles</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Application/Service/ArticleApplicationService.php.html#70"><abbr title="Boson\Blog\Application\Service\ArticleApplicationService::getArticlesByCategory">getArticlesByCategory</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Article.php.html#67"><abbr title="Boson\Blog\Domain\Article::publish">publish</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/Article.php.html#78"><abbr title="Boson\Blog\Domain\Article::unpublish">unpublish</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleContent.php.html#46"><abbr title="Boson\Blog\Domain\ValueObject\ArticleContent::equals">equals</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#16"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::fromInt">fromInt</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#25"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::fromString">fromString</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleId.php.html#45"><abbr title="Boson\Blog\Domain\ValueObject\ArticleId::equals">equals</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#26"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::fromString">fromString</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleStatus.php.html#47"><abbr title="Boson\Blog\Domain\ValueObject\ArticleStatus::equals">equals</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Domain/ValueObject/ArticleTitle.php.html#46"><abbr title="Boson\Blog\Domain\ValueObject\ArticleTitle::equals">equals</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#20"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::findById">findById</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/AuthorRepository.php.html#31"><abbr title="Boson\Blog\Infrastructure\AuthorRepository::findByEmail">findByEmail</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#22"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::save">save</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#70"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findById">findById</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#81"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findBySlug">findBySlug</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#118"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::findByCategory">findByCategory</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Infrastructure/SqliteArticleRepository.php.html#171"><abbr title="Boson\Blog\Infrastructure\SqliteArticleRepository::slugExists">slugExists</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#46"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getCategoryId">getCategoryId</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Request/ArticleRequest.php.html#51"><abbr title="Boson\Blog\Presentation\Request\ArticleRequest::getAuthorId">getAuthorId</abbr></a></td><td class="text-right">6</td></tr>
+       <tr><td><a href="Presentation/Response/ArticlesResponse.php.html#71"><abbr title="Boson\Blog\Presentation\Response\ArticlesResponse::toArray">toArray</abbr></a></td><td class="text-right">6</td></tr>
+
+       </tbody>
+      </table>
+     </div>
+    </div>
+   </div>
+   <footer>
+    <hr/>
+    <p>
+     <small>Generated by <a href="https://github.com/sebastianbergmann/php-code-coverage" target="_top">php-code-coverage 10.1.16</a> using <a href="https://www.php.net/" target="_top">PHP 8.4.11</a> and <a href="https://phpunit.de/">PHPUnit 10.5.53</a> at Mon Sep 1 11:11:50 UTC 2025.</small>
+    </p>
+   </footer>
+  </div>
+  <script src="../_js/jquery.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script src="../_js/nv.d3.min.js?v=10.1.16" type="text/javascript"></script>
+  <script type="text/javascript">
+$(document).ready(function() {
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#classCoverageDistribution svg')
+      .datum(getCoverageDistributionData([26,0,0,0,0,0,0,0,0,0,0,0], "Class Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.multiBarChart();
+    chart.tooltips(false)
+      .showControls(false)
+      .showLegend(false)
+      .reduceXTicks(false)
+      .staggerLabels(true)
+      .yAxis.tickFormat(d3.format('d'));
+
+    d3.select('#methodCoverageDistribution svg')
+      .datum(getCoverageDistributionData([214,0,0,0,0,0,0,0,0,0,0,0], "Method Coverage"))
+      .transition().duration(500).call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getCoverageDistributionData(data, label) {
+    var labels = [
+      '0%',
+      '0-10%',
+      '10-20%',
+      '20-30%',
+      '30-40%',
+      '40-50%',
+      '50-60%',
+      '60-70%',
+      '70-80%',
+      '80-90%',
+      '90-100%',
+      '100%'
+    ];
+    var values = [];
+    $.each(labels, function(key) {
+      values.push({x: labels[key], y: data[key]});
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Cyclomatic Complexity');
+
+    d3.select('#classComplexity svg')
+      .datum(getComplexityData([[0,22,"<a href=\"Application\/ArticleController.php.html#11\">Boson\\Blog\\Application\\ArticleController<\/a>"],[0,24,"<a href=\"Application\/ArticleService.php.html#11\">Boson\\Blog\\Application\\ArticleService<\/a>"],[0,12,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#14\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand<\/a>"],[0,4,"<a href=\"Application\/Command\/Article\/DeleteArticleCommand.php.html#12\">Boson\\Blog\\Application\\Command\\Article\\DeleteArticleCommand<\/a>"],[0,11,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#15\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand<\/a>"],[0,3,"<a href=\"Application\/Command\/Search\/SearchArticlesCommand.php.html#10\">Boson\\Blog\\Application\\Command\\Search\\SearchArticlesCommand<\/a>"],[0,4,"<a href=\"Application\/Query\/Article\/GetArticleBySlugQuery.php.html#10\">Boson\\Blog\\Application\\Query\\Article\\GetArticleBySlugQuery<\/a>"],[0,5,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#12\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery<\/a>"],[0,5,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#10\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery<\/a>"],[0,6,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#10\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery<\/a>"],[0,5,"<a href=\"Application\/Query\/Handler\/GetArticleBySlugQueryHandler.php.html#14\">Boson\\Blog\\Application\\Query\\Handler\\GetArticleBySlugQueryHandler<\/a>"],[0,2,"<a href=\"Application\/Query\/Handler\/GetArticlesByCategoryQueryHandler.php.html#14\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesByCategoryQueryHandler<\/a>"],[0,3,"<a href=\"Application\/Query\/Handler\/GetArticlesQueryHandler.php.html#15\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesQueryHandler<\/a>"],[0,35,"<a href=\"Application\/SearchController.php.html#16\">Boson\\Blog\\Application\\SearchController<\/a>"],[0,13,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#23\">Boson\\Blog\\Application\\Service\\ArticleApplicationService<\/a>"],[0,36,"<a href=\"Domain\/Article.php.html#10\">Boson\\Blog\\Domain\\Article<\/a>"],[0,12,"<a href=\"Domain\/Author.php.html#9\">Boson\\Blog\\Domain\\Author<\/a>"],[0,9,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#12\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent<\/a>"],[0,10,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#12\">Boson\\Blog\\Domain\\ValueObject\\ArticleId<\/a>"],[0,10,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#12\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus<\/a>"],[0,9,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#12\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle<\/a>"],[0,10,"<a href=\"Infrastructure\/AuthorRepository.php.html#11\">Boson\\Blog\\Infrastructure\\AuthorRepository<\/a>"],[0,16,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#13\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository<\/a>"],[0,12,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#10\">Boson\\Blog\\Presentation\\Request\\ArticleRequest<\/a>"],[0,17,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#12\">Boson\\Blog\\Presentation\\Response\\ArticleResponse<\/a>"],[0,11,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#10\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse<\/a>"]], 'Class Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  nv.addGraph(function() {
+    var chart = nv.models.scatterChart()
+      .showDistX(true)
+      .showDistY(true)
+      .showLegend(false)
+      .forceX([0, 100]);
+    chart.tooltipContent(function(graph) {
+      return '<p>' + graph.point.class + '</p>';
+    });
+
+    chart.xAxis.axisLabel('Code Coverage (in percent)');
+    chart.yAxis.axisLabel('Method Complexity');
+
+    d3.select('#methodComplexity svg')
+      .datum(getComplexityData([[0,1,"<a href=\"Application\/ArticleController.php.html#15\">Boson\\Blog\\Application\\ArticleController::setArticleApplicationService<\/a>"],[0,1,"<a href=\"Application\/ArticleController.php.html#23\">Boson\\Blog\\Application\\ArticleController::index<\/a>"],[0,5,"<a href=\"Application\/ArticleController.php.html#60\">Boson\\Blog\\Application\\ArticleController::show<\/a>"],[0,8,"<a href=\"Application\/ArticleController.php.html#101\">Boson\\Blog\\Application\\ArticleController::loadMore<\/a>"],[0,2,"<a href=\"Application\/ArticleController.php.html#180\">Boson\\Blog\\Application\\ArticleController::category<\/a>"],[0,2,"<a href=\"Application\/ArticleController.php.html#210\">Boson\\Blog\\Application\\ArticleController::renderArticleCard<\/a>"],[0,2,"<a href=\"Application\/ArticleController.php.html#240\">Boson\\Blog\\Application\\ArticleController::renderSvelteArticleCard<\/a>"],[0,1,"<a href=\"Application\/ArticleController.php.html#258\">Boson\\Blog\\Application\\ArticleController::getCategoryName<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#15\">Boson\\Blog\\Application\\ArticleService::__construct<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#20\">Boson\\Blog\\Application\\ArticleService::createArticle<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#43\">Boson\\Blog\\Application\\ArticleService::updateArticle<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#68\">Boson\\Blog\\Application\\ArticleService::publishArticle<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#81\">Boson\\Blog\\Application\\ArticleService::unpublishArticle<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#94\">Boson\\Blog\\Application\\ArticleService::archiveArticle<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#107\">Boson\\Blog\\Application\\ArticleService::deleteArticle<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#112\">Boson\\Blog\\Application\\ArticleService::getArticleById<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#117\">Boson\\Blog\\Application\\ArticleService::getArticleBySlug<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#125\">Boson\\Blog\\Application\\ArticleService::getPublishedArticles<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#133\">Boson\\Blog\\Application\\ArticleService::getArticlesByStatus<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#141\">Boson\\Blog\\Application\\ArticleService::getArticlesByCategory<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#149\">Boson\\Blog\\Application\\ArticleService::searchArticles<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#154\">Boson\\Blog\\Application\\ArticleService::getArticleCount<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#159\">Boson\\Blog\\Application\\ArticleService::getPublishedArticleCount<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#167\">Boson\\Blog\\Application\\ArticleService::getPaginatedArticles<\/a>"],[0,2,"<a href=\"Application\/ArticleService.php.html#189\">Boson\\Blog\\Application\\ArticleService::generateUniqueSlug<\/a>"],[0,1,"<a href=\"Application\/ArticleService.php.html#203\">Boson\\Blog\\Application\\ArticleService::generateSlugFromTitle<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#16\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::__construct<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#27\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getTitle<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#32\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getContent<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#37\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getStatus<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#42\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getExcerpt<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#47\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getSlug<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#52\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getFeaturedImage<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#57\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getCategoryId<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#62\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::getAuthorId<\/a>"],[0,3,"<a href=\"Application\/Command\/Article\/CreateArticleCommand.php.html#67\">Boson\\Blog\\Application\\Command\\Article\\CreateArticleCommand::fromArray<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/DeleteArticleCommand.php.html#14\">Boson\\Blog\\Application\\Command\\Article\\DeleteArticleCommand::__construct<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/DeleteArticleCommand.php.html#16\">Boson\\Blog\\Application\\Command\\Article\\DeleteArticleCommand::getId<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/DeleteArticleCommand.php.html#21\">Boson\\Blog\\Application\\Command\\Article\\DeleteArticleCommand::fromInt<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/DeleteArticleCommand.php.html#26\">Boson\\Blog\\Application\\Command\\Article\\DeleteArticleCommand::fromString<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#17\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::__construct<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#28\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getId<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#33\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getTitle<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#38\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getContent<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#43\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getStatus<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#48\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getExcerpt<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#53\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getSlug<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#58\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getFeaturedImage<\/a>"],[0,1,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#63\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::getCategoryId<\/a>"],[0,2,"<a href=\"Application\/Command\/Article\/UpdateArticleCommand.php.html#68\">Boson\\Blog\\Application\\Command\\Article\\UpdateArticleCommand::fromArray<\/a>"],[0,1,"<a href=\"Application\/Command\/Search\/SearchArticlesCommand.php.html#12\">Boson\\Blog\\Application\\Command\\Search\\SearchArticlesCommand::__construct<\/a>"],[0,1,"<a href=\"Application\/Command\/Search\/SearchArticlesCommand.php.html#17\">Boson\\Blog\\Application\\Command\\Search\\SearchArticlesCommand::getQuery<\/a>"],[0,1,"<a href=\"Application\/Command\/Search\/SearchArticlesCommand.php.html#22\">Boson\\Blog\\Application\\Command\\Search\\SearchArticlesCommand::getLimit<\/a>"],[0,2,"<a href=\"Application\/Query\/Article\/GetArticleBySlugQuery.php.html#12\">Boson\\Blog\\Application\\Query\\Article\\GetArticleBySlugQuery::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleBySlugQuery.php.html#21\">Boson\\Blog\\Application\\Query\\Article\\GetArticleBySlugQuery::getSlug<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleBySlugQuery.php.html#26\">Boson\\Blog\\Application\\Query\\Article\\GetArticleBySlugQuery::isPublishedOnly<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#14\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#19\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery::getId<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#24\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery::isPublishedOnly<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#29\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery::fromInt<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticleQuery.php.html#34\">Boson\\Blog\\Application\\Query\\Article\\GetArticleQuery::fromString<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#12\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#19\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery::getCategoryId<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#24\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery::getLimit<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#29\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery::getOffset<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesByCategoryQuery.php.html#34\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesByCategoryQuery::isPublishedOnly<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#12\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#19\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::getPage<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#24\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::getPerPage<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#29\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::getSortBy<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#34\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::getSortDirection<\/a>"],[0,1,"<a href=\"Application\/Query\/Article\/GetArticlesQuery.php.html#39\">Boson\\Blog\\Application\\Query\\Article\\GetArticlesQuery::getOffset<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticleBySlugQueryHandler.php.html#16\">Boson\\Blog\\Application\\Query\\Handler\\GetArticleBySlugQueryHandler::__construct<\/a>"],[0,4,"<a href=\"Application\/Query\/Handler\/GetArticleBySlugQueryHandler.php.html#18\">Boson\\Blog\\Application\\Query\\Handler\\GetArticleBySlugQueryHandler::handle<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticlesByCategoryQueryHandler.php.html#16\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesByCategoryQueryHandler::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticlesByCategoryQueryHandler.php.html#18\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesByCategoryQueryHandler::handle<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticlesQueryHandler.php.html#17\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesQueryHandler::__construct<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticlesQueryHandler.php.html#19\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesQueryHandler::handle<\/a>"],[0,1,"<a href=\"Application\/Query\/Handler\/GetArticlesQueryHandler.php.html#41\">Boson\\Blog\\Application\\Query\\Handler\\GetArticlesQueryHandler::convertToArticleResponse<\/a>"],[0,5,"<a href=\"Application\/SearchController.php.html#20\">Boson\\Blog\\Application\\SearchController::index<\/a>"],[0,1,"<a href=\"Application\/SearchController.php.html#40\">Boson\\Blog\\Application\\SearchController::search<\/a>"],[0,4,"<a href=\"Application\/SearchController.php.html#47\">Boson\\Blog\\Application\\SearchController::apiSearch<\/a>"],[0,4,"<a href=\"Application\/SearchController.php.html#79\">Boson\\Blog\\Application\\SearchController::performSearch<\/a>"],[0,2,"<a href=\"Application\/SearchController.php.html#110\">Boson\\Blog\\Application\\SearchController::searchArticles<\/a>"],[0,1,"<a href=\"Application\/SearchController.php.html#136\">Boson\\Blog\\Application\\SearchController::fallbackArticleSearch<\/a>"],[0,5,"<a href=\"Application\/SearchController.php.html#157\">Boson\\Blog\\Application\\SearchController::searchDocumentation<\/a>"],[0,5,"<a href=\"Application\/SearchController.php.html#195\">Boson\\Blog\\Application\\SearchController::highlightSearchTerms<\/a>"],[0,6,"<a href=\"Application\/SearchController.php.html#215\">Boson\\Blog\\Application\\SearchController::renderSearchResults<\/a>"],[0,2,"<a href=\"Application\/SearchController.php.html#239\">Boson\\Blog\\Application\\SearchController::renderSearchResultsHtml<\/a>"],[0,1,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#25\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::__construct<\/a>"],[0,2,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#33\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::getArticle<\/a>"],[0,2,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#43\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::getArticleBySlug<\/a>"],[0,2,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#53\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::getArticles<\/a>"],[0,2,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#70\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::getArticlesByCategory<\/a>"],[0,1,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#91\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::createArticle<\/a>"],[0,1,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#105\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::updateArticle<\/a>"],[0,1,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#118\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::deleteArticle<\/a>"],[0,1,"<a href=\"Application\/Service\/ArticleApplicationService.php.html#129\">Boson\\Blog\\Application\\Service\\ArticleApplicationService::getPaginatedArticles<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#25\">Boson\\Blog\\Domain\\Article::__construct<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#47\">Boson\\Blog\\Domain\\Article::create<\/a>"],[0,2,"<a href=\"Domain\/Article.php.html#67\">Boson\\Blog\\Domain\\Article::publish<\/a>"],[0,2,"<a href=\"Domain\/Article.php.html#78\">Boson\\Blog\\Domain\\Article::unpublish<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#88\">Boson\\Blog\\Domain\\Article::archive<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#94\">Boson\\Blog\\Domain\\Article::updateContent<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#109\">Boson\\Blog\\Domain\\Article::generateSlug<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#118\">Boson\\Blog\\Domain\\Article::getId<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#123\">Boson\\Blog\\Domain\\Article::getTitle<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#128\">Boson\\Blog\\Domain\\Article::getSlug<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#133\">Boson\\Blog\\Domain\\Article::getExcerpt<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#138\">Boson\\Blog\\Domain\\Article::getContent<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#143\">Boson\\Blog\\Domain\\Article::getFeaturedImage<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#148\">Boson\\Blog\\Domain\\Article::getStatus<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#153\">Boson\\Blog\\Domain\\Article::getCategoryId<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#158\">Boson\\Blog\\Domain\\Article::getAuthorId<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#163\">Boson\\Blog\\Domain\\Article::getPublishedAt<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#168\">Boson\\Blog\\Domain\\Article::getCreatedAt<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#173\">Boson\\Blog\\Domain\\Article::getUpdatedAt<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#179\">Boson\\Blog\\Domain\\Article::isPublished<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#184\">Boson\\Blog\\Domain\\Article::isDraft<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#189\">Boson\\Blog\\Domain\\Article::isArchived<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#198\">Boson\\Blog\\Domain\\Article::toArray<\/a>"],[0,10,"<a href=\"Domain\/Article.php.html#219\">Boson\\Blog\\Domain\\Article::fromArray<\/a>"],[0,1,"<a href=\"Domain\/Article.php.html#253\">Boson\\Blog\\Domain\\Article::setId<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#19\">Boson\\Blog\\Domain\\Author::__construct<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#33\">Boson\\Blog\\Domain\\Author::create<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#47\">Boson\\Blog\\Domain\\Author::getId<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#52\">Boson\\Blog\\Domain\\Author::getName<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#57\">Boson\\Blog\\Domain\\Author::getEmail<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#62\">Boson\\Blog\\Domain\\Author::getBio<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#67\">Boson\\Blog\\Domain\\Author::getAvatar<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#72\">Boson\\Blog\\Domain\\Author::getCreatedAt<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#77\">Boson\\Blog\\Domain\\Author::getUpdatedAt<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#82\">Boson\\Blog\\Domain\\Author::updateProfile<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#90\">Boson\\Blog\\Domain\\Author::toArray<\/a>"],[0,1,"<a href=\"Domain\/Author.php.html#103\">Boson\\Blog\\Domain\\Author::fromArray<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#17\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent::__construct<\/a>"],[0,4,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#19\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent::fromString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#41\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent::toString<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#46\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent::equals<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleContent.php.html#51\">Boson\\Blog\\Domain\\ValueObject\\ArticleContent::__toString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#14\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::__construct<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#16\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::fromInt<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#25\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::fromString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#35\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::toInt<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#40\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::toString<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#45\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::equals<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleId.php.html#50\">Boson\\Blog\\Domain\\ValueObject\\ArticleId::__toString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#24\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::__construct<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#26\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::fromString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#42\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::toString<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#47\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::equals<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#52\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::__toString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#57\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::isDraft<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#62\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::isPublished<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleStatus.php.html#67\">Boson\\Blog\\Domain\\ValueObject\\ArticleStatus::isArchived<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#17\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle::__construct<\/a>"],[0,4,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#19\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle::fromString<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#41\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle::toString<\/a>"],[0,2,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#46\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle::equals<\/a>"],[0,1,"<a href=\"Domain\/ValueObject\/ArticleTitle.php.html#51\">Boson\\Blog\\Domain\\ValueObject\\ArticleTitle::__toString<\/a>"],[0,1,"<a href=\"Infrastructure\/AuthorRepository.php.html#15\">Boson\\Blog\\Infrastructure\\AuthorRepository::__construct<\/a>"],[0,2,"<a href=\"Infrastructure\/AuthorRepository.php.html#20\">Boson\\Blog\\Infrastructure\\AuthorRepository::findById<\/a>"],[0,2,"<a href=\"Infrastructure\/AuthorRepository.php.html#31\">Boson\\Blog\\Infrastructure\\AuthorRepository::findByEmail<\/a>"],[0,1,"<a href=\"Infrastructure\/AuthorRepository.php.html#42\">Boson\\Blog\\Infrastructure\\AuthorRepository::findAll<\/a>"],[0,3,"<a href=\"Infrastructure\/AuthorRepository.php.html#53\">Boson\\Blog\\Infrastructure\\AuthorRepository::save<\/a>"],[0,1,"<a href=\"Infrastructure\/AuthorRepository.php.html#84\">Boson\\Blog\\Infrastructure\\AuthorRepository::delete<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#17\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::__construct<\/a>"],[0,2,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#22\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::save<\/a>"],[0,2,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#70\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::findById<\/a>"],[0,2,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#81\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::findBySlug<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#92\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::findPublished<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#105\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::findByStatus<\/a>"],[0,2,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#118\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::findByCategory<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#139\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::search<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#154\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::countByStatus<\/a>"],[0,1,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#163\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::delete<\/a>"],[0,2,"<a href=\"Infrastructure\/SqliteArticleRepository.php.html#171\">Boson\\Blog\\Infrastructure\\SqliteArticleRepository::slugExists<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#12\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::__construct<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#16\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getTitle<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#21\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getContent<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#26\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getExcerpt<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#31\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getSlug<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#36\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getFeaturedImage<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#41\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getStatus<\/a>"],[0,2,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#46\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getCategoryId<\/a>"],[0,2,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#51\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::getAuthorId<\/a>"],[0,1,"<a href=\"Presentation\/Request\/ArticleRequest.php.html#56\">Boson\\Blog\\Presentation\\Request\\ArticleRequest::toArray<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#14\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::__construct<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#35\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::fromArticle<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#55\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getId<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#60\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getTitle<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#65\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getContent<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#70\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getStatus<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#75\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getExcerpt<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#80\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getSlug<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#85\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getFeaturedImage<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#90\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getCategoryId<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#95\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getCategoryName<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#100\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getAuthorId<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#105\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getAuthorName<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#110\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getTags<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#115\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getCreatedAt<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#120\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getUpdatedAt<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticleResponse.php.html#125\">Boson\\Blog\\Presentation\\Response\\ArticleResponse::getPublishedAt<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#12\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::__construct<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#19\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::getArticles<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#24\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::getTotal<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#29\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::getCurrentPage<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#34\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::getPerPage<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#39\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::getTotalPages<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#44\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::hasMore<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#49\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::hasPrevious<\/a>"],[0,1,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#57\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::create<\/a>"],[0,2,"<a href=\"Presentation\/Response\/ArticlesResponse.php.html#71\">Boson\\Blog\\Presentation\\Response\\ArticlesResponse::toArray<\/a>"]], 'Method Complexity'))
+      .transition()
+      .duration(500)
+      .call(chart);
+
+    nv.utils.windowResize(chart.update);
+
+    return chart;
+  });
+
+  function getComplexityData(data, label) {
+    var values = [];
+    $.each(data, function(key) {
+      var value = Math.round(data[key][0]*100) / 100;
+      values.push({
+        x: value,
+        y: data[key][1],
+        class: data[key][2],
+        size: 0.05,
+        shape: 'diamond'
+      });
+    });
+
+    return [
+      {
+        key: label,
+        values: values,
+        color: "#4572A7"
+      }
+    ];
+  }
+});
+  </script>
+ </body>
+</html>

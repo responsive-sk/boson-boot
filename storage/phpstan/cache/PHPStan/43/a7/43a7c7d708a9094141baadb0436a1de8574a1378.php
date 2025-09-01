@@ -1,0 +1,7 @@
+<?php declare(strict_types = 1);
+
+// variadic-method-League\Plates\Engine-make-/home/dan/Desktop/08/apache-htmx/vendor/composer/../league/plates/src/Engine.php
+return \PHPStan\Cache\CacheItem::__set_state(array(
+   'variableKey' => '1730559815-v4',
+   'data' => false,
+));

@@ -1,0 +1,7 @@
+<?php declare(strict_types = 1);
+
+// variadic-method-Boson\Shared\Infrastructure\Config-get-/home/dan/Desktop/08/apache-htmx/src/Shared/Infrastructure/Config.php
+return \PHPStan\Cache\CacheItem::__set_state(array(
+   'variableKey' => '1756551349-v4',
+   'data' => false,
+));
