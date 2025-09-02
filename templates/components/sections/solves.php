@@ -110,7 +110,7 @@
 }
 
 .solves-section .layer.php {
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #b02425);
     color: white;
 }
 

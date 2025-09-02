@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Boson\Shared\Infrastructure\Templating;
 
 use Boson\Shared\Infrastructure\Templating\Assets\AssetManager;
+use Boson\Shared\Infrastructure\PathManager;
+use InvalidArgumentException;
 
 class ThemeManager
 {
@@ -19,33 +21,56 @@ class ThemeManager
         string $publicAssetsPath = '/assets',
         string $version = '1.0.0'
     ) {
+        $this->validateTheme($currentTheme);
+        $this->validatePublicAssetsPath($publicAssetsPath);
+        $this->validateVersion($version);
+
         $this->currentTheme = $currentTheme;
-        $this->publicAssetsPath = $publicAssetsPath;
+        $this->publicAssetsPath = rtrim($publicAssetsPath, '/');
         $this->version = $version;
         $this->assetManager = new AssetManager($currentTheme, $publicAssetsPath, $version);
+        $this->initializeAvailableThemes();
+    }
+
+    /**
+     * Initialize available themes with validation
+     */
+    private function initializeAvailableThemes(): void
+    {
         $this->availableThemes = [
             'svelte' => [
                 'name' => 'Svelte Components',
                 'description' => 'Modern reactive components with Svelte',
-                'css' => "/assets/svelte/main.css?v={$this->version}",
-                'js' => "/assets/svelte/main.js?v={$this->version}",
+                'css' => $this->buildAssetUrl('svelte', 'main.css'),
+                'js' => $this->buildAssetUrl('svelte', 'main.js'),
                 'framework' => 'svelte'
             ],
             'tailwind' => [
                 'name' => 'Tailwind CSS',
                 'description' => 'Utility-first CSS framework',
-                'css' => "/assets/tailwind/main.css?v={$this->version}",
-                'js' => "/assets/tailwind/main.js?v={$this->version}",
+                'css' => $this->buildAssetUrl('tailwind', 'main.css'),
+                'js' => $this->buildAssetUrl('tailwind', 'main.js'),
                 'framework' => 'tailwind'
             ],
             'bootstrap' => [
                 'name' => 'Bootstrap 5',
                 'description' => 'Popular CSS framework',
-                'css' => "/assets/bootstrap/main.css?v={$this->version}",
-                'js' => "/assets/bootstrap/main.js?v={$this->version}",
+                'css' => $this->buildAssetUrl('bootstrap', 'main.css'),
+                'js' => $this->buildAssetUrl('bootstrap', 'main.js'),
                 'framework' => 'bootstrap'
             ]
         ];
+    }
+
+    /**
+     * Build secure asset URL
+     */
+    private function buildAssetUrl(string $theme, string $filename): string
+    {
+        $this->validateTheme($theme);
+        $this->validateFilename($filename);
+
+        return $this->publicAssetsPath . '/' . $theme . '/' . $filename . '?v=' . urlencode($this->version);
     }
 
     public function getCurrentTheme(): string
@@ -60,11 +85,14 @@ class ThemeManager
 
     public function setCurrentTheme(string $theme): void
     {
+        $this->validateTheme($theme);
+
         if (!$this->isValidTheme($theme)) {
-            throw new \InvalidArgumentException("Invalid theme: {$theme}");
+            throw new InvalidArgumentException("Invalid theme: {$theme}");
         }
         
         $this->currentTheme = $theme;
+        $this->assetManager->setTheme($theme);
     }
 
     public function isValidTheme(string $theme): bool
@@ -82,7 +110,7 @@ class ThemeManager
         $theme = $theme ?? $this->currentTheme;
         
         if (!$this->isValidTheme($theme)) {
-            throw new \InvalidArgumentException("Invalid theme: {$theme}");
+            throw new InvalidArgumentException("Invalid theme: {$theme}");
         }
         
         return $this->availableThemes[$theme];
@@ -113,8 +141,11 @@ class ThemeManager
 
     public function getFontUrl(string $fontName, ?string $theme = null): string
     {
-        $theme = $theme ?? $this->currentTheme;
-        return "/assets/{$theme}/{$fontName}";
+        $this->validateFilename($fontName);
+
+        // Fonts are shared across themes, not theme-specific
+        // Add /assets prefix to font URLs to match public path
+        return $this->publicAssetsPath . '/fonts/' . $fontName;
     }
 
     public function getThemeFonts(?string $theme = null): array
@@ -172,18 +203,38 @@ class ThemeManager
 
     private function resolveHashedAsset(string $path): string
     {
-        // Look for manifest.json or similar to resolve hashed filenames
-        $manifestPath = dirname($_SERVER['DOCUMENT_ROOT'] . $path) . '/manifest.json';
-        
-        if (file_exists($manifestPath)) {
-            $manifest = json_decode(file_get_contents($manifestPath), true);
-            $filename = basename($path);
-            
-            if (isset($manifest[$filename])) {
-                return dirname($path) . '/' . $manifest[$filename];
+        // Strip query string from path
+        $pathWithoutQuery = parse_url($path, PHP_URL_PATH);
+        if ($pathWithoutQuery === false) {
+            return $path;
+        }
+
+        // Validate path for security
+        $this->validateAssetPath($pathWithoutQuery);
+
+        // Get filesystem path to manifest
+        try {
+            $publicPath = PathManager::public();
+            $relativeDir = dirname($pathWithoutQuery);
+            $manifestPath = $publicPath . $relativeDir . '/manifest.json';
+        } catch (\Exception $e) {
+            // Fallback to original path if PathManager fails
+            return $path;
+        }
+
+        if (file_exists($manifestPath) && is_readable($manifestPath)) {
+            $manifestContent = file_get_contents($manifestPath);
+            if ($manifestContent !== false) {
+                $manifest = json_decode($manifestContent, true);
+                if (is_array($manifest)) {
+                    $filename = basename($pathWithoutQuery);
+                    if (isset($manifest[$filename])) {
+                        return $relativeDir . '/' . $manifest[$filename] . (parse_url($path, PHP_URL_QUERY) ? '?' . parse_url($path, PHP_URL_QUERY) : '');
+                    }
+                }
             }
         }
-        
+
         return $path;
     }
 
@@ -263,5 +314,117 @@ class ThemeManager
     public function image(string $path, string $fallback = 'placeholder.jpg'): string
     {
         return $this->assetManager->imageWithFallback($path, $fallback);
+    }
+
+    /**
+     * Validate asset path for security
+     */
+    private function validateAssetPath(string $path): void
+    {
+        if (empty($path)) {
+            throw new InvalidArgumentException('Asset path cannot be empty');
+        }
+
+        // Check for path traversal attempts
+        if (strpos($path, '..') !== false || strpos($path, '\\') !== false) {
+            throw new InvalidArgumentException('Asset path contains invalid characters');
+        }
+
+        // Ensure path starts with /assets
+        if (!str_starts_with($path, $this->publicAssetsPath)) {
+            throw new InvalidArgumentException('Asset path must be within public assets directory');
+        }
+
+        // Validate path length
+        if (strlen($path) > 255) {
+            throw new InvalidArgumentException('Asset path is too long');
+        }
+
+        // Validate filename characters
+        if (!preg_match('#^[a-zA-Z0-9._/-]+$#', $path)) {
+            throw new InvalidArgumentException('Asset path contains invalid characters');
+        }
+    }
+
+    /**
+     * Validate public assets path
+     */
+    private function validatePublicAssetsPath(string $path): void
+    {
+        if (empty($path)) {
+            throw new InvalidArgumentException('Public assets path cannot be empty');
+        }
+
+        if (!str_starts_with($path, '/')) {
+            throw new InvalidArgumentException('Public assets path must start with /');
+        }
+
+        if (strlen($path) > 100) {
+            throw new InvalidArgumentException('Public assets path is too long');
+        }
+
+        if (!preg_match('#^/[a-zA-Z0-9._/-]*$#', $path)) {
+            throw new InvalidArgumentException('Public assets path contains invalid characters');
+        }
+    }
+
+    /**
+     * Validate theme name
+     */
+    private function validateTheme(string $theme): void
+    {
+        if (empty($theme)) {
+            throw new InvalidArgumentException('Theme name cannot be empty');
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $theme)) {
+            throw new InvalidArgumentException('Theme name contains invalid characters');
+        }
+
+        if (strlen($theme) > 50) {
+            throw new InvalidArgumentException('Theme name is too long');
+        }
+    }
+
+    /**
+     * Validate filename
+     */
+    private function validateFilename(string $filename): void
+    {
+        if (empty($filename)) {
+            throw new InvalidArgumentException('Filename cannot be empty');
+        }
+
+        // Check for path traversal
+        if (strpos($filename, '..') !== false || strpos($filename, '/') !== false || strpos($filename, '\\') !== false) {
+            throw new InvalidArgumentException('Filename contains invalid characters');
+        }
+
+        // Validate filename characters
+        if (!preg_match('/^[a-zA-Z0-9._-]+$/', $filename)) {
+            throw new InvalidArgumentException('Filename contains invalid characters');
+        }
+
+        if (strlen($filename) > 100) {
+            throw new InvalidArgumentException('Filename is too long');
+        }
+    }
+
+    /**
+     * Validate version string
+     */
+    private function validateVersion(string $version): void
+    {
+        if (empty($version)) {
+            throw new InvalidArgumentException('Version cannot be empty');
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9._-]+$/', $version)) {
+            throw new InvalidArgumentException('Version contains invalid characters');
+        }
+
+        if (strlen($version) > 20) {
+            throw new InvalidArgumentException('Version is too long');
+        }
     }
 }

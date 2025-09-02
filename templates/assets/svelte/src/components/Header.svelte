@@ -62,7 +62,7 @@
 <!--     <div class="logo-container">
       <a href="/" class="logo-link">
         <svg class="logo-svg" viewBox="0 0 255 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="10" y="20" width="60" height="60" fill="#F93904" rx="8"/>
+          <rect x="10" y="20" width="60" height="60" fill="#b02425" rx="8"/>
           <text x="80" y="45" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600">
             Boson
           </text>
@@ -220,7 +220,7 @@
   
   .nav-link:hover,
   .nav-link.active {
-    color: var(--primary);
+    color: #ffffff;
   }
   
   .nav-link.active::after {
@@ -230,7 +230,7 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--primary);
+    background: #ffffff;
     border-radius: 1px;
   }
   
@@ -251,7 +251,7 @@
   }
   
   .btn-ghost:hover {
-    color: var(--primary);
+    color: #ffffff;
     background: rgba(255, 255, 255, 0.1);
   }
   
@@ -290,7 +290,7 @@
   
   .mobile-nav-link:hover,
   .mobile-nav-link.active {
-    color: var(--primary);
+    color: #ffffff;
   }
   
   .search-overlay {

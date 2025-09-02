@@ -26,9 +26,12 @@ class GetArticlesQueryHandler
 
         // Convert legacy format to new response format
         $articleResponses = array_map(
-            fn($article) => $this->convertToArticleResponse($article),
+            fn($article) => $article !== null ? $this->convertToArticleResponse($article) : null,
             $result['articles']
         );
+
+        // Filter out any null responses
+        $articleResponses = array_filter($articleResponses, fn($ar) => $ar !== null);
 
         return ArticlesResponse::create(
             articles: $articleResponses,

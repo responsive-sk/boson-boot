@@ -119,7 +119,7 @@
 }
 
 .nativeness-section .php-logo {
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #7a1a1a);
     color: white;
     padding: 1rem 2rem;
     border-radius: 8px;
@@ -162,7 +162,7 @@
 }
 
 .nativeness-section .platform-icon {
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
 }
 
 .nativeness-section .platform span {

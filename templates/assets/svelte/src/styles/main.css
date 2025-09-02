@@ -51,10 +51,10 @@
 
 :root {
   /* Brand Colors */
-  --primary: #f93904;
-  --primary-dark: #d63031;
-  --primary-light: #ff6b47;
-  --primary-glow: rgba(249, 57, 4, 0.2);
+  --primary: #d63031;
+  --primary-dark: #b02425;
+  --primary-light: #e85a4f;
+  --primary-glow: rgba(214, 48, 49, 0.2);
 
   /* Semantic Colors */
   --secondary: #6366f1;
@@ -637,15 +637,15 @@ header {
 
 .btn-outline {
   background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  color: var(--primary-dark);
+  border: 2px solid var(--primary-dark);
   backdrop-filter: blur(10px);
 }
 
 .btn-outline:hover {
-  background: var(--primary);
+  background: var(--primary-dark);
   color: var(--text-inverse);
-  border-color: var(--primary);
+  border-color: var(--primary-dark);
   box-shadow: var(--shadow-lg), var(--shadow-glow);
 }
 

@@ -11,7 +11,7 @@
  * @param string $className - Additional CSS class name
  */
 
-$color = $color ?? 'F93904';
+$color = $color ?? 'd63031';
 $size = $size ?? 2;
 $spacing = $spacing ?? 8;
 $opacity = $opacity ?? 0.05;
@@ -130,7 +130,7 @@ $uniqueId = 'dots-pattern-' . uniqid();
 
 /* Color variants */
 .svg-dots-pattern.variant-primary {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='<?= $spacing ?>' height='<?= $spacing ?>' viewBox='0 0 <?= $spacing ?> <?= $spacing ?>'%3E%3Crect width='<?= $size ?>' height='<?= $size ?>' x='<?= $center ?>' y='<?= $center ?>' fill='%23F93904'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='<?= $spacing ?>' height='<?= $spacing ?>' viewBox='0 0 <?= $spacing ?> <?= $spacing ?>'%3E%3Crect width='<?= $size ?>' height='<?= $size ?>' x='<?= $center ?>' y='<?= $center ?>' fill='%23d63031'/%3E%3C/svg%3E");
 }
 
 .svg-dots-pattern.variant-secondary {

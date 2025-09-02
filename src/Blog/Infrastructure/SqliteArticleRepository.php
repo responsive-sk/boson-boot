@@ -104,14 +104,14 @@ class SqliteArticleRepository implements ArticleRepository
 
     public function findByStatus(ArticleStatus $status, int $limit = 10, int $offset = 0): array
     {
-        $sql = "SELECT * FROM articles WHERE status = ? 
+        $sql = "SELECT * FROM articles WHERE status = ?
                 ORDER BY created_at DESC LIMIT ? OFFSET ?";
-        
+
         $stmt = $this->database->getConnection()->prepare($sql);
         $stmt->execute([$status->value, $limit, $offset]);
-        
+
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
+
         return array_map(fn($data) => Article::fromArray($data), $results);
     }
 
@@ -156,7 +156,7 @@ class SqliteArticleRepository implements ArticleRepository
         $sql = "SELECT COUNT(*) FROM articles WHERE status = ?";
         $stmt = $this->database->getConnection()->prepare($sql);
         $stmt->execute([$status->value]);
-        
+
         return (int) $stmt->fetchColumn();
     }
 

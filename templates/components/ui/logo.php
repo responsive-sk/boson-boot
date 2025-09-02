@@ -39,7 +39,7 @@ $size = $size ?? 'default'; // default, small, large
     <!-- Main logo SVG -->
     <svg class="logo-svg" viewBox="0 0 255 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <!-- Boson logo with proper colors -->
-        <rect x="10" y="20" width="60" height="60" fill="#F93904" rx="8"/>
+        <rect x="10" y="20" width="60" height="60" fill="#b02425" rx="8"/>
         <text x="80" y="45" fill="#ffffff" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600">
             Boson
         </text>

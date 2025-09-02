@@ -361,7 +361,7 @@ $alignClass = $centered ? 'text-center' : '';
 .bg-gradient .filter-tag.active {
     background: white;
     border-color: white;
-    color: var(--primary, #F93904);
+    color: var(--primary, #b02425);
 }
 
 /* Responsive Design */

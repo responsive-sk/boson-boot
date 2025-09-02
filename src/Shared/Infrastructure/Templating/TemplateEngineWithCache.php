@@ -8,6 +8,8 @@ use DateTime;
 use Exception;
 use League\Plates\Engine;
 use Boson\Shared\Infrastructure\PathManager;
+use Boson\Shared\Infrastructure\Templating\TemplateHelper;
+use InvalidArgumentException;
 
 use function count;
 use function dirname;
@@ -28,19 +30,16 @@ class TemplateEngineWithCache extends Engine
         bool $cacheEnabled = false,
         int $cacheTtl = 3600,
     ) {
+        $this->validateDirectory($directory);
+
         parent::__construct($directory);
         $this->cachePath    = $cachePath ?? PathManager::cache('templates');
         $this->cacheEnabled = $cacheEnabled;
         $this->cacheTtl     = $cacheTtl;
 
-        // Register template folders
-        $this->addFolder('layouts', $directory . '/layouts');
-        $this->addFolder('pages', $directory . '/pages');
-        $this->addFolder('partials', $directory . '/partials');
-        $this->addFolder('components', $directory . '/components');
-
-        // Register helper functions
-        $this->registerHelpers();
+        // Register template folders and helpers using common helper
+        CommonTemplateHelper::registerFolders($this, $directory);
+        CommonTemplateHelper::registerHelpers($this);
 
         if ($cacheEnabled && !is_dir($this->cachePath)) {
             mkdir($this->cachePath, 0o755, true);
@@ -49,23 +48,35 @@ class TemplateEngineWithCache extends Engine
 
     public function render($name, array $data = []): string
     {
-        if (!$this->cacheEnabled) {
-            return parent::render($name, $data);
+        $this->validateTemplateName($name);
+
+        try {
+            if (!$this->cacheEnabled) {
+                return parent::render($name, $data);
+            }
+
+            $cacheKey  = $this->generateCacheKey($name, $data);
+            $cacheFile = $this->cachePath . '/' . $cacheKey . '.cache';
+
+            // Check if cache exists and is valid
+            if ($this->isCacheValid($cacheFile)) {
+                $content = file_get_contents($cacheFile);
+                if ($content === false) {
+                    throw new \RuntimeException("Failed to read cache file: {$cacheFile}");
+                }
+                return $content;
+            }
+
+            // Render template and cache it
+            $content = parent::render($name, $data);
+            $this->cacheContent($cacheFile, $content);
+
+            return $content;
+        } catch (\League\Plates\Exception\TemplateNotFound $e) {
+            throw new \RuntimeException("Template '{$name}' not found in templates directory", 0, $e);
+        } catch (\Throwable $e) {
+            throw new \RuntimeException("Error rendering template '{$name}': " . $e->getMessage(), 0, $e);
         }
-
-        $cacheKey  = $this->generateCacheKey($name, $data);
-        $cacheFile = $this->cachePath . '/' . $cacheKey . '.cache';
-
-        // Check if cache exists and is valid
-        if ($this->isCacheValid($cacheFile)) {
-            return file_get_contents($cacheFile);
-        }
-
-        // Render template and cache it
-        $content = parent::render($name, $data);
-        $this->cacheContent($cacheFile, $content);
-
-        return $content;
     }
 
     public function clearCache(): bool
@@ -164,39 +175,28 @@ class TemplateEngineWithCache extends Engine
     private function registerHelpers(): void
     {
         // HTML escaping helper
-        $this->registerFunction('escapeHtml', static function ($text) {
-            return htmlspecialchars($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        });
+        $this->registerFunction('escapeHtml', [TemplateHelper::class, 'escapeHtml']);
 
-        // URL helper
-        $this->registerFunction('url', static function ($path = '') {
-            $baseUrl = $_SERVER['REQUEST_SCHEME'] ?? 'http';
-            $baseUrl .= '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
-
-            return rtrim($baseUrl, '/') . '/' . ltrim($path, '/');
-        });
+        // URL helper - use secure version without $_SERVER
+        $this->registerFunction('url', [TemplateHelper::class, 'url']);
 
         // Asset helper
-        $this->registerFunction('asset', static function ($path) {
-            return '/assets/' . ltrim($path, '/');
-        });
+        $this->registerFunction('asset', [TemplateHelper::class, 'asset']);
 
         // Date formatting helper
-        $this->registerFunction('formatDate', static function ($date, $format = 'Y-m-d H:i:s') {
-            if (is_string($date)) {
-                $date = new DateTime($date);
-            }
-
-            return $date instanceof DateTime ? $date->format($format) : '';
-        });
+        $this->registerFunction('formatDate', [TemplateHelper::class, 'formatDate']);
 
         // Truncate text helper
-        $this->registerFunction('truncate', static function ($text, $length = 100, $suffix = '...') {
-            if (strlen($text) <= $length) {
-                return $text;
-            }
+        $this->registerFunction('truncate', [TemplateHelper::class, 'truncate']);
+    }
 
-            return substr($text, 0, $length) . $suffix;
-        });
+    private function validateDirectory(string $directory): void
+    {
+        CommonTemplateHelper::validateTemplatesPath($directory);
+    }
+
+    private function validateTemplateName(string $name): void
+    {
+        CommonTemplateHelper::validateTemplateName($name);
     }
 }

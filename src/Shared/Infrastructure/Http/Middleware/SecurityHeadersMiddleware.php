@@ -21,11 +21,13 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
 
     public function handle(array $request, callable $next): array
     {
-        // Set security headers
-        if (!headers_sent()) {
-            foreach ($this->headers as $name => $value) {
-                header("{$name}: {$value}");
-            }
+        // Add security headers to request for later processing
+        if (!isset($request['headers'])) {
+            $request['headers'] = [];
+        }
+
+        foreach ($this->headers as $name => $value) {
+            $request['headers'][] = "{$name}: {$value}";
         }
 
         return $next($request);

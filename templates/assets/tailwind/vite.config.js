@@ -7,6 +7,7 @@ import autoprefixer from 'autoprefixer'
 const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 export default defineConfig({
+  publicDir: 'fonts',
   build: {
     outDir: '../../../public/assets/tailwind',
     emptyOutDir: true,

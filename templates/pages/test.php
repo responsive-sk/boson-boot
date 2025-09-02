@@ -197,7 +197,7 @@ $this->layout('layouts::app', [
                         include __DIR__ . '/../components/ui/svg-dots-pattern.php';
                         ?>
                     </div>
-                    <small>2x2px dots, 8px spacing, #F93904</small>
+                    <small>2x2px dots, 8px spacing, #b02425</small>
                 </div>
 
                 <!-- Dark Pattern -->
@@ -371,7 +371,7 @@ $this->layout('layouts::app', [
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, #F93904, transparent);
+    background: linear-gradient(90deg, transparent, #b02425, transparent);
     transform: scaleX(0);
     transform-origin: center;
     transition: transform 0.8s ease;
@@ -390,7 +390,7 @@ $this->layout('layouts::app', [
 
 /* Color themes */
 .color-primary {
-    color: #F93904;
+    color: #b02425;
 }
 
 .color-secondary {
@@ -398,7 +398,7 @@ $this->layout('layouts::app', [
 }
 
 .color-gradient {
-    background: linear-gradient(135deg, #F93904, #6366f1);
+    background: linear-gradient(135deg, #b02425, #6366f1);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -425,7 +425,7 @@ $this->layout('layouts::app', [
 
 .animation-typewriter .headline-text {
     overflow: hidden;
-    border-right: 2px solid #F93904;
+    border-right: 2px solid #b02425;
     white-space: nowrap;
     animation: typewriter 2s steps(40) 1s both, cursor-blink 1s infinite;
 }
@@ -472,7 +472,7 @@ $this->layout('layouts::app', [
 
 @keyframes cursor-blink {
     0%, 50% {
-        border-color: #F93904;
+        border-color: #b02425;
     }
     51%, 100% {
         border-color: transparent;

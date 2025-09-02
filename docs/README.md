@@ -43,7 +43,7 @@ A modern PHP application demonstrating Domain-Driven Design with HTMX, built wit
 
 4. **Setup database**
    ```bash
-   php migrate.php
+   ./bin/migrate
    ```
 
 5. **Start development server**
@@ -94,31 +94,29 @@ THEME=tailwind  # Available: svelte, tailwind, bootstrap
 
 ```bash
 # Database operations
-php migrate.php                    # Setup database and seed data
+./bin/migrate                      # Setup database and seed data
 
 # Cache management
-php cache-manager.php stats        # Show cache statistics
-php cache-manager.php clear        # Clear all caches
-php cache-manager.php warmup       # Warm up template cache
-php cache-manager.php cleanup      # Clean expired entries
+./bin/cache-cleanup                # Clean expired cache entries
 ```
 
 ### Theme Development
 
 ```bash
-# Install theme dependencies
-npm run install:themes
+# Install dependencies for each theme individually
+cd templates/assets/svelte && pnpm install
+cd templates/assets/tailwind && pnpm install  
+cd templates/assets/bootstrap && pnpm install
 
-# Build all themes for production
-npm run build:themes
+# Build themes for production (individually)
+cd templates/assets/svelte && pnpm run build
+cd templates/assets/tailwind && pnpm run build
+cd templates/assets/bootstrap && pnpm run build
 
 # Development mode with hot reload
-npm run dev:themes
-
-# Individual theme development
-npm run dev:svelte     # Port 5173
-npm run dev:tailwind   # Port 5174
-npm run dev:bootstrap  # Port 5175
+cd templates/assets/svelte && pnpm run dev      # Port 5173
+cd templates/assets/tailwind && pnpm run dev    # Port 5174
+cd templates/assets/bootstrap && pnpm run dev   # Port 5175
 ```
 
 ## Architecture
@@ -263,7 +261,7 @@ composer quality
 
 ### Code Style
 
-- PHP 8.1+ with strict typing
+- PHP 8.4+ with strict typing
 - PSR-4 autoloading
 - Domain-driven design principles
 - Repository pattern for data access
@@ -280,7 +278,7 @@ The application uses a modern kernel-based architecture with environment-driven 
 declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Boson\Shared\Infrastructure\Kernel;
+use Boson\Shared\Infrastructure\Http\Kernel;
 
 $kernel = new Kernel();
 $kernel->run();
@@ -398,7 +396,7 @@ $themeManager->setCurrentTheme('bootstrap');
 
 1. Set `APP_ENV=production` in `.env`
 2. Set `APP_DEBUG=false`
-3. Build theme assets: `npm run build:themes`
+3. Build theme assets: `cd templates/assets/[theme] && pnpm run build`
 4. Configure web server with proper .htaccess rules
 5. Set up HTTPS
 6. Configure proper file permissions

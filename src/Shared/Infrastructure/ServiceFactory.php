@@ -244,7 +244,17 @@ class ServiceFactory implements ContainerInterface
     public function createThemeManager(): ThemeManager
     {
         if ($this->themeManager === null) {
-            $currentTheme = $_ENV['THEME'] ?? 'tailwind';
+            $currentTheme = $this->createConfig()->get('THEME', 'tailwind');
+
+            // Sanitize theme name to allow only valid characters (a-z, A-Z, 0-9, _, -)
+            $currentTheme = preg_replace('/[^a-zA-Z0-9_-]/', '', $currentTheme);
+
+            // Validate theme and fallback to default if invalid
+            $validThemes = ['svelte', 'tailwind', 'bootstrap'];
+            if (!in_array($currentTheme, $validThemes)) {
+                $currentTheme = 'tailwind';
+            }
+
             $version = $_ENV['VERSION'] ?? '1.0.0';
             $this->themeManager = new ThemeManager($currentTheme, '/assets', $version);
         }

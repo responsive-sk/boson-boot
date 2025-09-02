@@ -38,7 +38,7 @@ class ArticleController extends AbstractController
             ['label' => 'Testing', 'url' => '/articles?category=testing', 'count' => 1]
         ];
 
-        return $this->render('pages::articles', [
+        return $this->render('pages/articles', [
             'title' => 'Articles - Boson PHP',
             'description' => 'Read the latest articles about Boson PHP development',
             'pageTitle' => 'Blog',
@@ -54,11 +54,14 @@ class ArticleController extends AbstractController
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function show(array $params = []): string
     {
         $slug = $params['slug'] ?? '';
 
-        if (empty($slug)) {
+        if (!is_string($slug) || empty($slug)) {
             return $this->notFound('Article Not Found');
         }
 
@@ -83,7 +86,7 @@ class ArticleController extends AbstractController
             $relatedArticles = array_slice($relatedArticles, 0, 3);
         }
 
-        return $this->render('pages::article', [
+        return $this->render('pages/article', [
             'title' => $articleResponse->getTitle() . ' - Boson PHP',
             'description' => $articleResponse->getExcerpt() ?? substr(strip_tags($articleResponse->getContent()), 0, 160),
             'article' => $articleResponse,
@@ -92,6 +95,9 @@ class ArticleController extends AbstractController
         ]);
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function loadMore(array $params = []): string
     {
         $page = $this->getParam('page', 2, 'int');
@@ -168,6 +174,9 @@ class ArticleController extends AbstractController
         return $html;
     }
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function category(array $params = []): string
     {
         $categoryId = (int) ($params['id'] ?? 0);
@@ -187,7 +196,7 @@ class ArticleController extends AbstractController
         // Get category name (simplified - in real app you'd have a CategoryService)
         $categoryName = $this->getCategoryName($categoryId);
 
-        return $this->render('pages::articles', [
+        return $this->render('pages/articles', [
             'title' => $categoryName . ' Articles - Boson PHP',
             'description' => 'Articles in the ' . $categoryName . ' category',
             'articles' => $articlesResponse->getArticles(),
@@ -198,17 +207,20 @@ class ArticleController extends AbstractController
         ]);
     }
 
-    private function renderArticleCard($article): string
+    private function renderArticleCard(mixed $article): string
     {
         $publishedDate = $article->getPublishedAt()?->format('M j, Y') ?? '';
         $excerpt = $article->getExcerpt() ?? substr(strip_tags($article->getContent()), 0, 150) . '...';
 
+        $featuredImage = $article->getFeaturedImage();
+        $title = $article->getTitle();
+
         return '
             <article class="article-card" data-article-id="' . $article->getId() . '">
-                ' . ($article->getFeaturedImage() ?
+                ' . ($featuredImage ?
                     '<div class="article-image">
-                        <img src="' . htmlspecialchars($article->getFeaturedImage()) . '"
-                             alt="' . htmlspecialchars($article->getTitle()) . '"
+                        <img src="' . htmlspecialchars((string) $featuredImage) . '"
+                             alt="' . htmlspecialchars((string) $title) . '"
                              loading="lazy">
                     </div>' : '') . '
                 <div class="article-content">
@@ -216,7 +228,7 @@ class ArticleController extends AbstractController
                         <time datetime="' . $article->getPublishedAt()?->format('Y-m-d') . '">' . $publishedDate . '</time>
                     </div>
                     <h2 class="article-title">
-                        <a href="/articles/' . $article->getSlug() . '">' . htmlspecialchars($article->getTitle()) . '</a>
+                        <a href="/articles/' . $article->getSlug() . '">' . htmlspecialchars((string) $title) . '</a>
                     </h2>
                     <p class="article-excerpt">' . htmlspecialchars($excerpt) . '</p>
                     <a href="/articles/' . $article->getSlug() . '" class="read-more">Read More →</a>
@@ -225,7 +237,7 @@ class ArticleController extends AbstractController
         ';
     }
 
-    private function renderSvelteArticleCard($article): string
+    private function renderSvelteArticleCard(mixed $article): string
     {
         $articleData = [
             'id' => $article->getId(),
@@ -239,7 +251,8 @@ class ArticleController extends AbstractController
             'published_at' => $article->getPublishedAt()?->format('Y-m-d H:i:s')
         ];
 
-        return '<div class="svelte-article-card" data-article="' . htmlspecialchars(json_encode($articleData), ENT_QUOTES, 'UTF-8') . '"></div>';
+        $jsonData = json_encode($articleData);
+        return '<div class="svelte-article-card" data-article="' . htmlspecialchars($jsonData !== false ? $jsonData : '{}', ENT_QUOTES, 'UTF-8') . '"></div>';
     }
 
     private function getCategoryName(int $categoryId): string

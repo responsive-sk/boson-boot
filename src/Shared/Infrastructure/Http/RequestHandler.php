@@ -20,17 +20,24 @@ class RequestHandler
         $this->monitor = $monitor;
     }
 
+    /**
+     * @param array{0: int, 1: mixed, 2: array<string, mixed>} $routeInfo
+     */
     public function handle(string $httpMethod, string $uri): string
     {
         try {
             $router = $this->serviceFactory->createRouter();
             $routeInfo = $router->dispatch($httpMethod, $uri);
 
+            if (!is_array($routeInfo) || !isset($routeInfo[0])) {
+                return $this->handleError('Invalid route info', 500);
+            }
+
             $this->monitor->checkpoint('route_dispatched');
 
             return match ($routeInfo[0]) {
                 Dispatcher::NOT_FOUND => $this->handleNotFound(),
-                Dispatcher::METHOD_NOT_ALLOWED => $this->handleMethodNotAllowed($routeInfo[1]),
+                Dispatcher::METHOD_NOT_ALLOWED => $this->handleMethodNotAllowed($routeInfo[1] ?? []),
                 Dispatcher::FOUND => $this->handleFoundRoute($routeInfo),
                 default => $this->handleError('Unknown route status', 500)
             };
@@ -41,10 +48,17 @@ class RequestHandler
         }
     }
 
+    /**
+     * @param array{0: int, 1: mixed, 2: array<string, mixed>} $routeInfo
+     */
     private function handleFoundRoute(array $routeInfo): string
     {
-        $handler = $routeInfo[1];
-        $vars = $routeInfo[2];
+        $handler = $routeInfo[1] ?? null;
+        $vars = $routeInfo[2] ?? [];
+
+        if ($handler === null) {
+            return $this->handleError('Invalid route handler', 500);
+        }
 
         $this->monitor->checkpoint('route_found');
 
@@ -52,8 +66,18 @@ class RequestHandler
             if (is_callable($handler)) {
                 $response = $handler($vars);
             } else {
-                [$controller, $method] = explode('@', $handler);
+                $handlerParts = explode('@', (string) $handler);
+                if (count($handlerParts) !== 2) {
+                    return $this->handleError('Invalid controller method format', 500);
+                }
+
+                [$controller, $method] = $handlerParts;
                 $controllerInstance = $this->serviceFactory->createController($controller);
+
+                if (!method_exists($controllerInstance, $method)) {
+                    return $this->handleError('Controller method not found', 500);
+                }
+
                 $response = $controllerInstance->$method($vars);
             }
 
@@ -121,6 +145,7 @@ class RequestHandler
             http_response_code($status);
         }
 
+        $config = null;
         try {
             $config = $this->serviceFactory->createConfig();
             $templateEngine = $this->serviceFactory->createTemplateEngine();
@@ -133,7 +158,8 @@ class RequestHandler
                 'themeManager' => $themeManager
             ]);
         } catch (Exception $e) {
-            return $config->isDebug() ? $message : 'Internal Server Error';
+            $debugMessage = $config !== null && $config->isDebug() ? $message : 'Internal Server Error';
+            return $debugMessage;
         }
     }
 }

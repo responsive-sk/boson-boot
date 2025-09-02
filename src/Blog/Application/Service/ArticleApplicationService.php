@@ -33,7 +33,8 @@ class ArticleApplicationService
     public function getArticle(int $id, bool $publishedOnly = true): ?ArticleResponse
     {
         $query = GetArticleQuery::fromInt($id, $publishedOnly);
-        return $this->queryBus->handle($query);
+        $result = $this->queryBus->handle($query);
+        return $result instanceof ArticleResponse ? $result : null;
     }
 
     /**
@@ -42,7 +43,8 @@ class ArticleApplicationService
     public function getArticleBySlug(string $slug, bool $publishedOnly = true): ?ArticleResponse
     {
         $query = new GetArticleBySlugQuery($slug, $publishedOnly);
-        return $this->queryBus->handle($query);
+        $result = $this->queryBus->handle($query);
+        return $result instanceof ArticleResponse ? $result : null;
     }
 
     /**
@@ -57,11 +59,13 @@ class ArticleApplicationService
             $perPage
         );
 
-        return $this->queryBus->handle($query);
+        $result = $this->queryBus->handle($query);
+        return $result instanceof ArticlesResponse ? $result : new ArticlesResponse([], 0, 1, 1);
     }
 
     /**
      * Get articles by category
+     * @return array<ArticleResponse>
      */
     public function getArticlesByCategory(
         int $categoryId,
@@ -76,31 +80,36 @@ class ArticleApplicationService
             publishedOnly: $publishedOnly
         );
 
-        return $this->queryBus->handle($query);
+        $result = $this->queryBus->handle($query);
+        return is_array($result) ? $result : [];
     }
 
     /**
      * Create new article
+     * @param array<string, mixed> $data
      */
     public function createArticle(array $data): ArticleResponse
     {
         $command = CreateArticleCommand::fromArray($data);
         $articleId = $this->commandBus->handle($command);
-        
+
         // Return the created article
-        return $this->getArticle($articleId, false);
+        $article = $this->getArticle($articleId, false);
+        return $article ?? throw new \RuntimeException('Failed to create article');
     }
 
     /**
      * Update existing article
+     * @param array<string, mixed> $data
      */
     public function updateArticle(int $id, array $data): ArticleResponse
     {
         $command = UpdateArticleCommand::fromArray($id, $data);
         $this->commandBus->handle($command);
-        
+
         // Return the updated article
-        return $this->getArticle($id, false);
+        $article = $this->getArticle($id, false);
+        return $article ?? throw new \RuntimeException('Failed to update article');
     }
 
     /**
@@ -109,16 +118,18 @@ class ArticleApplicationService
     public function deleteArticle(int $id): bool
     {
         $command = DeleteArticleCommand::fromInt($id);
-        return $this->commandBus->handle($command);
+        $result = $this->commandBus->handle($command);
+        return (bool) $result;
     }
 
     /**
      * Get paginated articles with legacy format for backward compatibility
+     * @return array<string, mixed>
      */
     public function getPaginatedArticles(int $page, int $perPage): array
     {
         $articlesResponse = $this->getArticles($page, $perPage);
-        
+
         return [
             'articles' => $articlesResponse->getArticles(),
             'total' => $articlesResponse->getTotal(),

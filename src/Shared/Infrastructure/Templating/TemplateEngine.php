@@ -7,8 +7,10 @@ namespace Boson\Shared\Infrastructure\Templating;
 use Boson\Shared\Infrastructure\Caching\CacheInterface;
 use Boson\Shared\Infrastructure\Caching\FileCache;
 use Boson\Shared\Infrastructure\PathManager;
+use Boson\Shared\Infrastructure\Templating\TemplateHelper;
 use DateTime;
 use League\Plates\Engine;
+use InvalidArgumentException;
 
 use function is_string;
 use function strlen;
@@ -24,39 +26,58 @@ class TemplateEngine
     public function __construct(?string $templatesPath = null, ?CacheInterface $cache = null, bool $cacheEnabled = true)
     {
         $templatesPath ??= PathManager::templates();
+        $this->validateTemplatesPath($templatesPath);
+
         $this->plates       = new Engine($templatesPath);
         $this->cache        = $cache ?? new FileCache(PathManager::storage('templates'));
         $this->cacheEnabled = $cacheEnabled;
 
-        // Register template folders
-        $this->plates->addFolder('layout', $templatesPath . '/layout');
-        $this->plates->addFolder('pages', $templatesPath . '/pages');
-        $this->plates->addFolder('partials', $templatesPath . '/partials');
-        $this->plates->addFolder('components', $templatesPath . '/components');
-
-        // Register helper functions
-        $this->registerHelpers();
+        // Register template folders and helpers using common helper
+        CommonTemplateHelper::registerFolders($this->plates, $templatesPath);
+        CommonTemplateHelper::registerHelpers($this->plates);
     }
 
     public function render(string $template, array $data = []): string
     {
-        if (!$this->cacheEnabled) {
-            return $this->plates->render($template, $data);
+        // Debug log for template name
+        error_log("TemplateEngine: Starting render of template: '{$template}'");
+
+        try {
+            $this->validateTemplate($template);
+            error_log("TemplateEngine: Template validation passed for: '{$template}'");
+        } catch (\Throwable $e) {
+            error_log("TemplateEngine: Template validation failed for: '{$template}' - " . $e->getMessage());
+            throw $e;
         }
 
-        $cacheKey = $this->generateCacheKey($template, $data);
-        $cached   = $this->cache->get($cacheKey);
+        try {
+            if (!$this->cacheEnabled) {
+                error_log("TemplateEngine: Rendering without cache: '{$template}'");
+                return $this->plates->render($template, $data);
+            }
 
-        if ($cached !== null) {
-            return $cached;
+            $cacheKey = $this->generateCacheKey($template, $data);
+            $cached   = $this->cache->get($cacheKey);
+
+            if ($cached !== null) {
+                error_log("TemplateEngine: Cache hit for: '{$template}'");
+                return $cached;
+            }
+
+            error_log("TemplateEngine: Cache miss, rendering: '{$template}'");
+            $rendered = $this->plates->render($template, $data);
+
+            // Cache for 1 hour by default
+            $this->cache->set($cacheKey, $rendered, 3600);
+
+            return $rendered;
+        } catch (\League\Plates\Exception\TemplateNotFound $e) {
+            error_log("TemplateEngine: Template not found: '{$template}'");
+            throw new \RuntimeException("Template '{$template}' not found in templates directory", 0, $e);
+        } catch (\Throwable $e) {
+            error_log("TemplateEngine: Error rendering template '{$template}': " . $e->getMessage());
+            throw new \RuntimeException("Error rendering template '{$template}': " . $e->getMessage(), 0, $e);
         }
-
-        $rendered = $this->plates->render($template, $data);
-
-        // Cache for 1 hour by default
-        $this->cache->set($cacheKey, $rendered, 3600);
-
-        return $rendered;
     }
 
     public function clearCache(): bool
@@ -81,53 +102,15 @@ class TemplateEngine
         return "template:{$template}:{$dataHash}";
     }
 
-    private function registerHelpers(): void
+
+
+    private function validateTemplatesPath(string $path): void
     {
-        // HTML escaping helper (Plates uses 'e' by default, but we need 'escapeHtml')
-        $this->plates->registerFunction('escapeHtml', static function (string $string): string {
-            return htmlspecialchars($string, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        });
+        CommonTemplateHelper::validateTemplatesPath($path);
+    }
 
-        // URL helper
-        $this->plates->registerFunction('url', static function (string $route, array $params = []): string {
-            // Simple URL generation - can be enhanced later
-            $routes = [
-                'home'       => '/',
-                'blog.index' => '/blog',
-                'blog.show'  => '/blog/' . ($params['slug'] ?? ''),
-                'docs.index' => '/docs',
-                'docs.show'  => '/docs/' . ($params['version'] ?? 'latest') . '/' . ($params['slug'] ?? ''),
-                'search'     => '/search',
-                'about'      => '/about',
-                'contact'    => '/contact',
-                'privacy'    => '/privacy',
-                'terms'      => '/terms',
-            ];
-
-            return $routes[$route] ?? '#';
-        });
-
-        // Asset helper
-        $this->plates->registerFunction('asset', static function (string $path): string {
-            return '/assets/' . ltrim($path, '/');
-        });
-
-        // Date helper
-        $this->plates->registerFunction('formatDate', static function ($date, string $format = 'Y-m-d'): string {
-            if (is_string($date)) {
-                $date = new DateTime($date);
-            }
-
-            return $date instanceof DateTime ? $date->format($format) : '';
-        });
-
-        // Excerpt helper
-        $this->plates->registerFunction('excerpt', static function (string $text, int $length = 150): string {
-            if (strlen($text) <= $length) {
-                return $text;
-            }
-
-            return substr($text, 0, $length) . '...';
-        });
+    private function validateTemplate(string $template): void
+    {
+        CommonTemplateHelper::validateTemplateName($template);
     }
 }

@@ -435,12 +435,12 @@ class PathManager
     /**
      * Get event listeners
      */
-    public static function getListeners(string $eventName = null): array
+    public static function getListeners(?string $eventName = null): array
     {
         if ($eventName === null) {
             return self::$listeners;
         }
-        
+
         return self::$listeners[$eventName] ?? [];
     }
 }

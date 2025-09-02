@@ -10,11 +10,16 @@ use Boson\Shared\Infrastructure\Http\Middleware\RateLimitMiddleware;
 use Boson\Shared\Infrastructure\Http\Middleware\RequestHandlerMiddleware;
 use Boson\Shared\Infrastructure\Http\Middleware\LoggingMiddleware;
 // use Boson\Shared\Infrastructure\Monitoring\CompressionMiddleware;
+use Boson\Shared\Infrastructure\Http\Psr15\Psr15Kernel as Psr15KernelImpl;
+use Boson\Shared\Infrastructure\Http\Psr15\Middleware\Psr15LoggingMiddleware;
+use Boson\Shared\Infrastructure\Monitoring\PerformanceMonitor;
 use Exception;
 use Boson\Shared\Infrastructure\Environment;
 use Boson\Shared\Infrastructure\ErrorHandler;
 use Boson\Shared\Infrastructure\ServiceFactory;
 use Boson\Shared\Infrastructure\Security\SessionManager;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Application Kernel - Jadro aplikácie
@@ -26,6 +31,8 @@ class Kernel
     private MiddlewareStack $middlewareStack;
     private ErrorHandler $errorHandler;
     private bool $booted = false;
+    private bool $psr15Mode = false;
+    private ?Psr15KernelImpl $psr15Kernel = null;
 
     public function __construct()
     {
@@ -39,6 +46,10 @@ class Kernel
         $this->serviceFactory = new ServiceFactory();
         $this->middlewareStack = new MiddlewareStack();
         $this->errorHandler = new ErrorHandler($this->serviceFactory);
+
+        // Initialize PSR-15 kernel
+        $monitor = PerformanceMonitor::getInstance();
+        $this->psr15Kernel = new Psr15KernelImpl(new RequestHandler($this->serviceFactory, $monitor));
     }
 
     /**
@@ -48,11 +59,26 @@ class Kernel
     {
         try {
             $this->boot();
-            
-            $request = $this->createRequest();
-            $processedRequest = $this->middlewareStack->handle($request);
 
-            $this->sendResponse($processedRequest);
+            if ($this->psr15Mode && $this->psr15Kernel) {
+                // PSR-15 mode
+                $psrRequest = $this->createPsr7Request();
+                $psrResponse = $this->psr15Kernel->handlePsr7($psrRequest);
+                $this->sendPsr7Response($psrResponse);
+            } else {
+                // Legacy array-based mode
+                $request = $this->createRequest();
+                try {
+                    $processedRequest = $this->middlewareStack->handle($request);
+                    $this->sendResponse($processedRequest);
+                } catch (\Throwable $e) {
+                    error_log("Kernel middleware error: " . $e->getMessage());
+                    error_log("Trace: " . $e->getTraceAsString());
+                    http_response_code(500);
+                    echo "Internal Server Error";
+                }
+            }
+
             $this->terminate();
 
         } catch (Exception $e) {
@@ -86,6 +112,45 @@ class Kernel
      * Poradie je dôležité - prvý pridaný = prvý vykonaný
      */
     private function initializeMiddleware(): void
+    {
+        if ($this->psr15Mode && $this->psr15Kernel) {
+            $this->initializePsr15Middleware();
+        } else {
+            $this->initializeLegacyMiddleware();
+        }
+    }
+
+    /**
+     * Initialize PSR-15 middleware stack
+     */
+    private function initializePsr15Middleware(): void
+    {
+        // PSR-15 Logging middleware
+        if (Environment::isDevelopment() || Environment::getBool('ENABLE_LOGGING', false)) {
+            $psr15Logger = new Psr15LoggingMiddleware($this->serviceFactory->getLogger());
+            $this->psr15Kernel->addPsr15Middleware($psr15Logger);
+        }
+
+        // Add custom middlewares wrapped in PSR-15 adapters
+        $this->psr15Kernel->addCustomMiddleware(new SecurityHeadersMiddleware());
+
+        // Rate limiting (only in production or if explicitly enabled)
+        if (Environment::isProduction() || Environment::getBool('ENABLE_RATE_LIMITING', false)) {
+            $rateLimitConfig = $this->getRateLimitConfig();
+            $this->psr15Kernel->addCustomMiddleware(new RateLimitMiddleware(
+                maxAttempts: $rateLimitConfig['max_attempts'],
+                windowSeconds: $rateLimitConfig['window_seconds']
+            ));
+        }
+
+        // Request handling last
+        $this->psr15Kernel->addCustomMiddleware(new RequestHandlerMiddleware($this->serviceFactory));
+    }
+
+    /**
+     * Initialize legacy middleware stack
+     */
+    private function initializeLegacyMiddleware(): void
     {
         // Security headers first
         $this->middlewareStack->add(new SecurityHeadersMiddleware());
@@ -142,7 +207,8 @@ class Kernel
         foreach ($_SERVER as $key => $value) {
             if (strpos($key, 'HTTP_') === 0) {
                 $header = str_replace('_', '-', substr($key, 5));
-                $headers[ucwords(strtolower($header), '-')] = $value;
+                $headerName = ucwords(strtolower($header), '-');
+                $headers[] = "{$headerName}: {$value}";
             }
         }
         return $headers;
@@ -303,7 +369,7 @@ class Kernel
     private function initializeErrorHandling(): void
     {
         error_reporting(E_ALL);
-        ini_set('display_errors', Environment::isDevelopment() ? '1' : '0');
+        ini_set('display_errors', '1'); // Always show errors for debugging
         ini_set('log_errors', '1');
 
         // Set error log file
@@ -311,6 +377,9 @@ class Kernel
             dirname(__DIR__, 3) . '/storage/logs/error.log'
         );
         ini_set('error_log', $logFile);
+
+        // Also log to a custom file for debugging
+        ini_set('error_log', dirname(__DIR__, 3) . '/storage/logs/debug.log');
     }
 
     /**
@@ -370,5 +439,124 @@ class Kernel
         return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
             || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
             || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+    }
+
+    /**
+     * Enable PSR-15 mode
+     */
+    public function enablePsr15Mode(): self
+    {
+        if ($this->booted) {
+            throw new \RuntimeException('Cannot change PSR-15 mode after kernel has booted');
+        }
+
+        $this->psr15Mode = true;
+        if ($this->psr15Kernel) {
+            $this->psr15Kernel->enablePsr15Mode();
+        }
+        return $this;
+    }
+
+    /**
+     * Disable PSR-15 mode (use legacy mode)
+     */
+    public function disablePsr15Mode(): self
+    {
+        if ($this->booted) {
+            throw new \RuntimeException('Cannot change PSR-15 mode after kernel has booted');
+        }
+
+        $this->psr15Mode = false;
+        if ($this->psr15Kernel) {
+            $this->psr15Kernel->disablePsr15Mode();
+        }
+        return $this;
+    }
+
+    /**
+     * Check if PSR-15 mode is enabled
+     */
+    public function isPsr15Mode(): bool
+    {
+        return $this->psr15Mode;
+    }
+
+    /**
+     * Add PSR-15 middleware
+     */
+    public function addPsr15Middleware($middleware): self
+    {
+        if (!$this->psr15Kernel) {
+            throw new \RuntimeException('PSR-15 kernel not initialized');
+        }
+
+        $this->psr15Kernel->addPsr15Middleware($middleware);
+        return $this;
+    }
+
+    /**
+     * Handle PSR-7 request directly (for testing or programmatic use)
+     */
+    public function handlePsr7(ServerRequestInterface $request): ResponseInterface
+    {
+        if (!$this->psr15Kernel) {
+            throw new \RuntimeException('PSR-15 kernel not initialized');
+        }
+
+        $this->boot();
+        return $this->psr15Kernel->handlePsr7($request);
+    }
+
+    /**
+     * Handle array-based request directly (for testing or programmatic use)
+     */
+    public function handleArray(array $request): array
+    {
+        $this->boot();
+
+        if ($this->psr15Mode && $this->psr15Kernel) {
+            return $this->psr15Kernel->handleArray($request);
+        }
+
+        return $this->middlewareStack->handle($request);
+    }
+
+    /**
+     * Create PSR-7 ServerRequest from current HTTP request
+     */
+    private function createPsr7Request(): ServerRequestInterface
+    {
+        $arrayRequest = $this->createRequest();
+        return new \Boson\Shared\Infrastructure\Http\Psr15\PsrRequestAdapter($arrayRequest);
+    }
+
+    /**
+     * Send PSR-7 Response to client
+     */
+    private function sendPsr7Response(ResponseInterface $response): void
+    {
+        // Set HTTP status code
+        http_response_code($response->getStatusCode());
+
+        // Set headers
+        foreach ($response->getHeaders() as $name => $values) {
+            foreach ($values as $value) {
+                header($name . ': ' . $value, false);
+            }
+        }
+
+        // Send response body
+        $body = $response->getBody();
+        if ($body->isReadable()) {
+            echo $body->getContents();
+        }
+    }
+
+    /**
+     * Get PSR-15 kernel instance
+     */
+    public function getPsr15Kernel(): ?Psr15KernelImpl
+    {
+        return $this->psr15Kernel;
     }
 }

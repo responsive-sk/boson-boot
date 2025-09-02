@@ -1,15 +1,125 @@
+Article (Tests\Unit\Blog\Domain\Article)
+ [x] Create article
+ [x] Publish article
+ [x] Cannot publish already published article
+ [x] Unpublish article
+ [x] Cannot unpublish non published article
+ [x] Archive article
+ [x] Update content
+ [x] To array
+ [x] From array
+ [x] Generate slug
+
+Article Content (Tests\Unit\Blog\Domain\ValueObject\ArticleContent)
+ [x] From string valid
+ [x] From string with whitespace
+ [x] From string minimum length
+ [x] From string maximum length
+ [x] From string empty
+ [x] From string whitespace only
+ [x] From string too short
+ [x] From string too long
+ [x] Equals
+
+Article Id (Tests\Unit\Blog\Domain\ValueObject\ArticleId)
+ [x] From int valid
+ [x] From int minimum
+ [x] From int zero
+ [x] From int negative
+ [x] From string valid
+ [x] From string with spaces
+ [x] From string invalid
+ [x] From string float
+ [x] From string zero
+ [x] Equals
+
+Article Status (Tests\Unit\Blog\Domain\ValueObject\ArticleStatus)
+ [x] From string draft
+ [x] From string published
+ [x] From string archived
+ [x] From string case insensitive
+ [x] From string with whitespace
+ [x] From string invalid
+ [x] From string empty
+ [x] From string whitespace only
+ [x] Equals
+ [x] Constants
+
+Article Title (Tests\Unit\Blog\Domain\ValueObject\ArticleTitle)
+ [x] From string valid
+ [x] From string with whitespace
+ [x] From string minimum length
+ [x] From string maximum length
+ [x] From string empty
+ [x] From string whitespace only
+ [x] From string too short
+ [x] From string too long
+ [x] Equals
+
+Input Validator (Tests\Unit\Shared\Infrastructure\Security\InputValidator)
+ [x] Required validation
+ [x] Required validation fails
+ [x] Email validation
+ [x] Email validation fails
+ [x] Min length validation
+ [x] Min length validation fails
+ [x] Max length validation
+ [x] Max length validation fails
+ [x] Integer validation
+ [x] Integer validation fails
+ [x] Slug validation
+ [x] Slug validation fails
+ [x] In validation
+ [x] In validation fails
+ [x] Multiple rules
+ [x] Multiple rules with errors
+ [x] Sanitize string
+ [x] Sanitize email
+ [x] Sanitize int
+ [x] Strip tags
+ [x] Strip tags with allowed tags
+ [x] Escape html
+ [x] Get first error
+ [x] Get first error when no errors
+
 Path Manager (Tests\Unit\Shared\Infrastructure\PathManager)
  [ ] Basic path resolution
  [ ] Path caching
  [ ] Cache disabled
- [ ] Path security validation
+ [x] Path security validation
  [ ] Path sanitization
  [ ] Event system
- [ ] Directory events
+ [x] Directory events
  [ ] Event propagation
  [ ] Custom cache implementation
  [ ] Custom resolver
- [ ] Relative path
+ [x] Relative path
  [ ] Validate path
  [ ] Cache clear
+
+Psr15Integration (Tests\Unit\Shared\Infrastructure\Http\Psr15\Psr15Integration)
+ [ ] Psr 15 mode disabled by default
+ [ ] Enable psr 15 mode
+ [ ] Disable psr 15 mode
+ [ ] Add psr 15 middleware
+ [ ] Handle psr 7 request
+ [ ] Handle array request
+ [ ] Psr 15 logging middleware
+ [ ] Request adapter
+ [ ] Response adapter
+
+Sqlite Article Repository (Tests\Integration\Blog\Infrastructure\SqliteArticleRepository)
+ [ ] Save new article
+ [ ] Update existing article
+ [ ] Find by id
+ [ ] Find by id not found
+ [ ] Find by slug
+ [ ] Find by slug not found
+ [ ] Find published
+ [ ] Find by status
+ [ ] Count by status
+ [ ] Delete
+ [ ] Slug exists
+ [ ] Slug exists with exclusion
+ [ ] Search
 

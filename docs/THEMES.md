@@ -23,33 +23,26 @@ Modern theme system supporting multiple frontend frameworks with Vite build pipe
 
 ### 1. Install Dependencies
 ```bash
-# Install all theme dependencies
-npm run install:themes
-
-# Or install individually
-cd templates/assets/svelte && npm install
-cd templates/assets/tailwind && npm install  
-cd templates/assets/bootstrap && npm install
+# Install dependencies for each theme individually
+cd templates/assets/svelte && pnpm install
+cd templates/assets/tailwind && pnpm install  
+cd templates/assets/bootstrap && pnpm install
 ```
 
 ### 2. Build Themes
 ```bash
-# Build all themes for production
-npm run build:themes
-
-# Or build individually
-cd templates/assets/svelte && npm run build
+# Build themes for production (individually)
+cd templates/assets/svelte && pnpm run build
+cd templates/assets/tailwind && pnpm run build
+cd templates/assets/bootstrap && pnpm run build
 ```
 
 ### 3. Development Mode
 ```bash
-# Watch all themes (runs on ports 5173, 5174, 5175)
-npm run dev:themes
-
-# Or watch individually
-npm run dev:svelte    # Port 5173
-npm run dev:tailwind  # Port 5174
-npm run dev:bootstrap # Port 5175
+# Development mode with hot reload (run individually)
+cd templates/assets/svelte && pnpm run dev      # Port 5173
+cd templates/assets/tailwind && pnpm run dev    # Port 5174
+cd templates/assets/bootstrap && pnpm run dev   # Port 5175
 ```
 
 ## Directory Structure
@@ -128,12 +121,12 @@ export THEME=svelte  # or tailwind, bootstrap
 php -S localhost:8080 -t public
 
 # Start theme watcher (in another terminal)
-npm run dev:svelte
+cd templates/assets/svelte && pnpm run dev
 ```
 
 ### 3. Build for Production
 ```bash
-npm run build:themes
+cd templates/assets/[your-theme] && pnpm run build
 ```
 
 ## Built Assets
@@ -181,7 +174,7 @@ $themeManager->setCurrentTheme('bootstrap');
 THEME=bootstrap
 
 # Rebuild if needed
-npm run build:themes
+cd templates/assets/[theme] && pnpm run build
 ```
 
 ## Asset Management

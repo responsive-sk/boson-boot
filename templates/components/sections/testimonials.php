@@ -146,7 +146,7 @@
 
 .testimonials-section .testimonial-card:hover {
     transform: translateY(-4px);
-    border-color: var(--color-text-brand, #F93904);
+    border-color: var(--color-text-brand, #7a1a1a);
 }
 
 .testimonials-section .testimonial-content {
@@ -156,7 +156,7 @@
 
 .testimonials-section .quote-icon {
     font-size: 4rem;
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
     line-height: 1;
     position: absolute;
     top: -1rem;
@@ -209,7 +209,7 @@
 }
 
 .testimonials-section .author-company {
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
     font-size: var(--font-size-small, 0.875rem);
     font-weight: 500;
 }
@@ -236,7 +236,7 @@
 .testimonials-section .stat-number {
     font-size: 2.5rem;
     font-weight: 700;
-    color: var(--color-text-brand, #F93904);
+    color: #ffffff;
     margin-bottom: 0.5rem;
     font-family: var(--font-title);
 }
@@ -251,7 +251,7 @@
 /* Create placeholder avatars */
 .testimonials-section .author-avatar:empty::before {
     content: attr(data-initials);
-    color: var(--color-text-brand, #F93904);
+    color: #ffffff;
     font-weight: 600;
     font-size: 1.2rem;
 }

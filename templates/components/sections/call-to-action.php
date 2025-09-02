@@ -12,10 +12,10 @@
             </div>
             
             <div class="cta-text">
-                <h3>If you are a PHP developer, you can already<br />
+                <h2>If you are a PHP developer, you can already<br />
                     make native cross-platform applications.<br />
                     <span class="highlight">Boson PHP makes it possible!</span>
-                </h3>
+                </h2>
                 
                 <p>Join thousands of developers who are already building amazing desktop applications with PHP.</p>
                 
@@ -36,7 +36,7 @@
             </div>
             
             <div class="cta-actions">
-                <h4 class="cta-subtitle">Get started right now!</h4>
+                <h3 class="cta-subtitle">Get started right now!</h3>
                 
                 <div class="cta-buttons">
                     <?php $this->insert('components/ui/button', [
@@ -64,31 +64,31 @@
             <div class="feature-item">
                 <div class="feature-icon">🚀</div>
                 <div class="feature-text">
-                    <h5>Quick Start</h5>
+                    <h4>Quick Start</h4>
                     <p>Get up and running in minutes with our comprehensive documentation</p>
                 </div>
             </div>
-            
+
             <div class="feature-item">
                 <div class="feature-icon">🛠️</div>
                 <div class="feature-text">
-                    <h5>Rich Tooling</h5>
+                    <h4>Rich Tooling</h4>
                     <p>Built-in development tools and debugging capabilities</p>
                 </div>
             </div>
-            
+
             <div class="feature-item">
                 <div class="feature-icon">🌍</div>
                 <div class="feature-text">
-                    <h5>Global Community</h5>
+                    <h4>Global Community</h4>
                     <p>Join developers from around the world building with Boson</p>
                 </div>
             </div>
-            
+
             <div class="feature-item">
                 <div class="feature-icon">📚</div>
                 <div class="feature-text">
-                    <h5>Extensive Docs</h5>
+                    <h4>Extensive Docs</h4>
                     <p>Comprehensive guides, tutorials, and API documentation</p>
                 </div>
             </div>
@@ -132,13 +132,13 @@
 .call-to-action-section .bg-pattern {
     width: 100%;
     height: 100%;
-    background-image: radial-gradient(circle at 25% 25%, var(--color-text-brand, #F93904) 2px, transparent 2px),
-                      radial-gradient(circle at 75% 75%, var(--color-text-brand, #F93904) 1px, transparent 1px);
+    background-image: radial-gradient(circle at 25% 25%, var(--color-text-brand, #7a1a1a) 2px, transparent 2px),
+                      radial-gradient(circle at 75% 75%, var(--color-text-brand, #7a1a1a) 1px, transparent 1px);
     background-size: 50px 50px;
     animation: float 20s ease-in-out infinite;
 }
 
-.call-to-action-section .cta-text h3 {
+.call-to-action-section .cta-text h2 {
     font-size: var(--font-size-h2, 2.5rem);
     font-family: var(--font-title);
     color: var(--color-text, rgba(255, 255, 255, 0.9));
@@ -147,7 +147,7 @@
 }
 
 .call-to-action-section .highlight {
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
 }
 
 .call-to-action-section .cta-text p {
@@ -184,7 +184,7 @@
 }
 
 .call-to-action-section .cta-subtitle {
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
     font-size: var(--font-size-h4, 1.5rem);
     font-family: var(--font-title);
     margin: 0 0 2rem 0;
@@ -231,7 +231,7 @@
     flex-shrink: 0;
 }
 
-.call-to-action-section .feature-text h5 {
+.call-to-action-section .feature-text h4 {
     margin: 0 0 0.5rem 0;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
     font-size: var(--font-size-base, 1rem);
@@ -254,7 +254,7 @@
 }
 
 @media (max-width: 768px) {
-    .call-to-action-section .cta-text h3 {
+    .call-to-action-section .cta-text h2 {
         font-size: var(--font-size-h3, 2rem);
     }
     

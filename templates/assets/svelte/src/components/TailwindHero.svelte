@@ -191,11 +191,11 @@
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50px;
-    color: white;
+    color: #ffffff;
     font-size: 0.875rem;
     font-weight: 500;
     margin-bottom: 2rem;
@@ -241,7 +241,7 @@
   /* Subtitle */
   .hero-subtitle {
     font-size: clamp(1.125rem, 3vw, 1.25rem);
-    color: rgba(255, 255, 255, 0.8);
+    color: #ffffff;
     margin-bottom: 3rem;
     line-height: 1.6;
     max-width: 600px;
@@ -289,26 +289,39 @@
   }
 
   .btn-primary {
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.8);
   }
 
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.6);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 1);
   }
 
   .btn-secondary {
     background: transparent;
-    color: white;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    border: 2px solid rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
   }
 
   .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-outline:hover {
     background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.95);
     transform: translateY(-2px);
   }
 
@@ -357,11 +370,11 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50px;
-    color: white;
+    color: #ffffff;
     font-size: 0.875rem;
     font-weight: 500;
     opacity: 0;

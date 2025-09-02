@@ -47,7 +47,7 @@ class SessionManager
             }
 
             // Nastavenie session name
-            session_name('BOSON_SESSION');
+            session_name('BOSSON_SESSION');
         }
 
         // Spustenie session

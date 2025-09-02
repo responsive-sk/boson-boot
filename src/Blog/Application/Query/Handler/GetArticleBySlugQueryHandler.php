@@ -19,7 +19,7 @@ class GetArticleBySlugQueryHandler
     {
         $article = $this->articleService->getArticleBySlug($query->getSlug());
 
-        if (!$article) {
+        if ($article === null) {
             return null;
         }
 

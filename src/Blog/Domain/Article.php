@@ -106,12 +106,12 @@ class Article
         $this->updatedAt = new DateTimeImmutable();
     }
 
-    public function generateSlug(string $title): string
+    public static function generateSlug(string $title): string
     {
         $slug = strtolower($title);
         $slug = preg_replace('/[^a-z0-9\s-]/', '', $slug);
         $slug = preg_replace('/[\s-]+/', '-', $slug);
-        return trim($slug, '-');
+        return trim($slug ?? '', '-');
     }
 
     // Getters
@@ -218,29 +218,33 @@ class Article
      */
     public static function fromArray(array $data): self
     {
+        if (!isset($data['title'], $data['slug'], $data['content'], $data['author_id'], $data['status'])) {
+            throw new \InvalidArgumentException('Missing required fields for Article creation');
+        }
+
         $article = new self(
-            title: $data['title'],
-            slug: $data['slug'],
-            content: $data['content'],
+            title: (string) $data['title'],
+            slug: (string) $data['slug'],
+            content: (string) $data['content'],
             authorId: (int) $data['author_id'],
-            excerpt: $data['excerpt'] ?? null,
-            featuredImage: $data['featured_image'] ?? null,
+            excerpt: isset($data['excerpt']) ? (string) $data['excerpt'] : null,
+            featuredImage: isset($data['featured_image']) ? (string) $data['featured_image'] : null,
             categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
-            status: ArticleStatus::from($data['status'])
+            status: ArticleStatus::from((string) $data['status'])
         );
 
         $article->id = isset($data['id']) ? (int) $data['id'] : null;
-        
+
         if (isset($data['published_at']) && $data['published_at']) {
-            $article->publishedAt = new DateTimeImmutable($data['published_at']);
+            $article->publishedAt = new DateTimeImmutable((string) $data['published_at']);
         }
-        
+
         if (isset($data['created_at'])) {
-            $article->createdAt = new DateTimeImmutable($data['created_at']);
+            $article->createdAt = new DateTimeImmutable((string) $data['created_at']);
         }
-        
+
         if (isset($data['updated_at'])) {
-            $article->updatedAt = new DateTimeImmutable($data['updated_at']);
+            $article->updatedAt = new DateTimeImmutable((string) $data['updated_at']);
         }
 
         return $article;

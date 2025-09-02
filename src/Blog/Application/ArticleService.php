@@ -50,7 +50,7 @@ class ArticleService
     ): ?Article {
         $article = $this->repository->findById($id);
         
-        if (!$article) {
+        if ($article === null) {
             return null;
         }
 
@@ -69,7 +69,7 @@ class ArticleService
     {
         $article = $this->repository->findById($id);
         
-        if (!$article) {
+        if ($article === null) {
             return null;
         }
 
@@ -82,7 +82,7 @@ class ArticleService
     {
         $article = $this->repository->findById($id);
         
-        if (!$article) {
+        if ($article === null) {
             return null;
         }
 
@@ -95,7 +95,7 @@ class ArticleService
     {
         $article = $this->repository->findById($id);
         
-        if (!$article) {
+        if ($article === null) {
             return null;
         }
 

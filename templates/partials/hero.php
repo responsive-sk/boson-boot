@@ -146,7 +146,7 @@ $secondaryButton = $secondaryButton ?? ['text' => 'Download Now', 'url' => '/dow
 
 .floating-dot {
     position: absolute;
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #7a1a1a);
     border-radius: 50%;
     transition: all 3s ease-in-out;
 }
@@ -192,23 +192,23 @@ $secondaryButton = $secondaryButton ?? ['text' => 'Download Now', 'url' => '/dow
 }
 
 .btn-primary {
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #7a1a1a);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(249, 57, 4, 0.3);
+    box-shadow: 0 8px 25px rgba(122, 26, 26, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--color-text-brand, #F93904);
-    border: 2px solid var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #7a1a1a);
+    border: 2px solid var(--color-text-brand, #7a1a1a);
 }
 
 .btn-secondary:hover {
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #7a1a1a);
     color: white;
 }
 </style>

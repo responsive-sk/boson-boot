@@ -167,7 +167,7 @@
   .footer-aside-link {
     display: inline-block;
     padding: 1rem 2rem;
-    background: var(--color-text-brand, #F93904);
+    background: #7a1a1a;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -177,14 +177,14 @@
 
   .footer-aside-link {
     background: transparent;
-    border: 2px solid var(--color-text-brand, #F93904);
-    color: var(--color-text-brand, #F93904);
+    border: 2px solid #7a1a1a;
+    color: #ffffff;
   }
 
   .footer-main-link:hover,
   .footer-aside-link:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(249, 57, 4, 0.3);
+    box-shadow: 0 4px 12px rgba(122, 26, 26, 0.3);
   }
 
   .dots-main {
@@ -196,7 +196,7 @@
   .dots-inner {
     width: 40px;
     height: 40px;
-    background: radial-gradient(circle, var(--color-text-brand, #F93904) 2px, transparent 2px);
+    background: radial-gradient(circle, #7a1a1a 2px, transparent 2px);
     background-size: 8px 8px;
     opacity: 0.3;
   }
@@ -227,7 +227,7 @@
   .footer-icon {
     width: 16px;
     height: 16px;
-    color: var(--color-text-brand, #F93904);
+    color: #7a1a1a;
   }
 
   .footer-links {
@@ -249,7 +249,7 @@
 
   .footer-link:hover,
   .footer-link.active {
-    color: var(--color-text-brand, #F93904);
+    color: #7a1a1a;
   }
 
   .footer-bottom {
@@ -281,7 +281,7 @@
 
   .footer-legal-link:hover,
   .footer-legal-link.active {
-    color: var(--color-text-brand, #F93904);
+    color: #7a1a1a;
   }
 
   .footer-separator {

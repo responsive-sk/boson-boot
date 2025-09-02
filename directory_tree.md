@@ -30,9 +30,12 @@
 │   ├── KERNEL.md
 │   ├── PERFORMANCE.md
 │   ├── PLAN.md
+│   ├── PSR15-README.md
 │   ├── README.md
 │   ├── SECURITY.md
 │   └── THEMES.md
+├── examples
+│   └── psr15-demo.php
 ├── src
 │   ├── Blog
 │   │   ├── Application
@@ -119,6 +122,15 @@
 │       │   │   │   ├── RateLimitMiddleware.php
 │       │   │   │   ├── RequestHandlerMiddleware.php
 │       │   │   │   └── SecurityHeadersMiddleware.php
+│       │   │   ├── Psr15
+│       │   │   │   ├── Middleware
+│       │   │   │   │   └── Psr15LoggingMiddleware.php
+│       │   │   │   ├── Psr15Kernel.php
+│       │   │   │   ├── Psr15MiddlewareAdapter.php
+│       │   │   │   ├── Psr15MiddlewareStack.php
+│       │   │   │   ├── Psr15RequestHandler.php
+│       │   │   │   ├── PsrRequestAdapter.php
+│       │   │   │   └── PsrResponseAdapter.php
 │       │   │   ├── ApiKernel.php
 │       │   │   ├── Kernel.php
 │       │   │   ├── RequestHandler.php
@@ -163,7 +175,6 @@
 ├── storage
 │   ├── cache
 │   │   ├── paths
-│   │   │   ├── 0258c044d15034b87fde0eedf6919b34.cache
 │   │   │   ├── 51b8ba2e36e4f9a355f397909c254059.cache
 │   │   │   ├── 56a20ff12f65c8998612e83965ed063f.cache
 │   │   │   ├── 5d572f49ff2b6481b2637ab9e62673d9.cache
@@ -221,6 +232,7 @@
 │   │   │   ├── src
 │   │   │   │   ├── components
 │   │   │   │   │   ├── ArticleCard.svelte
+│   │   │   │   │   ├── ArticleDetail.svelte
 │   │   │   │   │   ├── Footer.svelte
 │   │   │   │   │   ├── Header.svelte
 │   │   │   │   │   ├── SearchModal.svelte
@@ -249,131 +261,6 @@
 │   │       ├── package.json
 │   │       ├── tailwind.config.js
 │   │       └── vite.config.js
-│   ├── boson-theme-Original
-│   │   ├── assets
-│   │   │   ├── components
-│   │   │   │   ├── sections
-│   │   │   │   │   ├── call-to-action-section.js
-│   │   │   │   │   ├── docs-toc.js
-│   │   │   │   │   ├── hero-section.js
-│   │   │   │   │   ├── how-it-works-section.js
-│   │   │   │   │   ├── mobile-development-section.js
-│   │   │   │   │   ├── nativeness-section.js
-│   │   │   │   │   ├── right-choice-section.js
-│   │   │   │   │   ├── segment-section.js
-│   │   │   │   │   ├── solves-section.js
-│   │   │   │   │   └── testimonials-section.js
-│   │   │   │   └── ui
-│   │   │   │       ├── logos
-│   │   │   │       │   └── logo.js
-│   │   │   │       ├── breadcrumbs.js
-│   │   │   │       ├── button.js
-│   │   │   │       ├── dots-container.js
-│   │   │   │       ├── dropdown.js
-│   │   │   │       ├── footer.js
-│   │   │   │       ├── header.js
-│   │   │   │       ├── horizontal-accordion.js
-│   │   │   │       ├── mobile-header-menu.js
-│   │   │   │       ├── page-title.js
-│   │   │   │       ├── search-input.js
-│   │   │   │       ├── slider.js
-│   │   │   │       └── subtitle.js
-│   │   │   ├── layout
-│   │   │   │   ├── blog.js
-│   │   │   │   ├── default.js
-│   │   │   │   ├── docs.js
-│   │   │   │   ├── landing.js
-│   │   │   │   └── search.js
-│   │   │   ├── styles
-│   │   │   │   ├── docs.css
-│   │   │   │   ├── layout.css
-│   │   │   │   └── typography.css
-│   │   │   ├── utils
-│   │   │   │   └── sharedStyles.js
-│   │   │   ├── app.css
-│   │   │   └── app.js
-│   │   ├── images
-│   │   │   ├── icons
-│   │   │   │   ├── android.svg
-│   │   │   │   ├── apple.svg
-│   │   │   │   ├── arrow_down.svg
-│   │   │   │   ├── arrow_primary.svg
-│   │   │   │   ├── arrow_secondary.svg
-│   │   │   │   ├── arrow_up_header.svg
-│   │   │   │   ├── arrow_up_right.svg
-│   │   │   │   ├── burger-close.svg
-│   │   │   │   ├── burger.svg
-│   │   │   │   ├── case.svg
-│   │   │   │   ├── check.svg
-│   │   │   │   ├── clients.svg
-│   │   │   │   ├── convenient.svg
-│   │   │   │   ├── discord.svg
-│   │   │   │   ├── dots_grey.svg
-│   │   │   │   ├── dots_red.svg
-│   │   │   │   ├── dots.svg
-│   │   │   │   ├── dot.svg
-│   │   │   │   ├── freebsd.svg
-│   │   │   │   ├── github.svg
-│   │   │   │   ├── laravel.svg
-│   │   │   │   ├── linux.svg
-│   │   │   │   ├── lock.svg
-│   │   │   │   ├── php.svg
-│   │   │   │   ├── plus.svg
-│   │   │   │   ├── quote.svg
-│   │   │   │   ├── red_arrow_left.svg
-│   │   │   │   ├── red_arrow_right.svg
-│   │   │   │   ├── rocket.svg
-│   │   │   │   ├── subtitle.svg
-│   │   │   │   ├── symfony.svg
-│   │   │   │   ├── telegram.svg
-│   │   │   │   ├── terminal.svg
-│   │   │   │   ├── web.svg
-│   │   │   │   └── windows.svg
-│   │   │   ├── u
-│   │   │   │   ├── butschster.png
-│   │   │   │   ├── curve.png
-│   │   │   │   ├── lee-to.png
-│   │   │   │   ├── pronskiy.png
-│   │   │   │   ├── roxblnfk.png
-│   │   │   │   ├── saundefined.png
-│   │   │   │   └── vudaltsov.png
-│   │   │   ├── credits.png
-│   │   │   ├── hero.svg
-│   │   │   ├── icon.svg
-│   │   │   ├── img_1.png
-│   │   │   ├── logo.png
-│   │   │   ├── logo.svg
-│   │   │   └── right_choice_bg.png
-│   │   ├── translations
-│   │   │   └── .gitignore
-│   │   └── views
-│   │       ├── bundles
-│   │       │   └── TwigBundle
-│   │       │       └── Exception
-│   │       │           ├── error404.html.twig
-│   │       │           ├── error500.html.twig
-│   │       │           └── error.html.twig
-│   │       ├── layout
-│   │       │   └── master.html.twig
-│   │       ├── page
-│   │       │   ├── blog
-│   │       │   │   ├── partial
-│   │       │   │   │   ├── articles_list.html.twig
-│   │       │   │   │   └── categories_list.html.twig
-│   │       │   │   ├── index_by_category.html.twig
-│   │       │   │   ├── index.html.twig
-│   │       │   │   └── show.html.twig
-│   │       │   ├── docs
-│   │       │   │   ├── partials
-│   │       │   │   │   └── version_selector.html.twig
-│   │       │   │   ├── index.html.twig
-│   │       │   │   └── show.html.twig
-│   │       │   ├── search
-│   │       │   │   └── index.html.twig
-│   │       │   └── home.html.twig
-│   │       └── partials
-│   │           ├── footer.html.twig
-│   │           └── header.html.twig
 │   ├── components
 │   │   ├── forms
 │   │   ├── sections
@@ -428,9 +315,11 @@
 │   │   ├── terms.php
 │   │   └── test.php
 │   └── partials
+│       ├── article-card.php
 │       ├── footer.php
 │       ├── header.php
 │       ├── hero.php
+│       ├── load-more-button.php
 │       ├── rate-limit-error.php
 │       ├── search-validation-error.php
 │       └── validation-error.php
@@ -453,37 +342,22 @@
 │   │   │       └── ArticleTest.php
 │   │   └── Shared
 │   │       └── Infrastructure
+│   │           ├── Http
+│   │           │   └── Psr15
+│   │           │       └── Psr15IntegrationTest.php
 │   │           ├── Security
 │   │           │   └── InputValidatorTest.php
 │   │           └── PathManagerTest.php
 │   └── bootstrap.php
-├── tools
-│   ├── analyze-binary-data
-│   ├── cache-manager
-│   ├── check-headers
-│   ├── debug-headers
-│   ├── log-monitor
-│   ├── phpstan-fix
-│   ├── phpstan-progress
-│   ├── README.md
-│   ├── test-components
-│   ├── test-error-pages
-│   ├── test-htmx
-│   ├── test-logger
-│   ├── test-paths
-│   └── test-production
 ├── behat.yml
 ├── build-themes.js
-├── COMMIT_MESSAGE.md
 ├── composer.json
 ├── composer.lock
 ├── directory_tree.md
 ├── EMERGENCY-RESPONSE.md
 ├── .env
-├── .env (copy 1)
 ├── .env.example
-├── .envH
-├── .envS
+├── .env .test.responsive.sk
 ├── .gitignore
 ├── .htaccess
 ├── .php-cs-fixer.cache
@@ -494,4 +368,4 @@
 ├── TROUBLESHOOTING.md
 └── UPLOAD-INSTRUCTIONS.txt
 
-122 directories, 373 files
+101 directories, 268 files

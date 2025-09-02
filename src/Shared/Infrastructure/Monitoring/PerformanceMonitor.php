@@ -132,7 +132,7 @@ class PerformanceMonitor
             border-radius: 5px 0 0 0;
         ">';
 
-        $html .= '<strong>Performance Debug</strong><br>';
+        $html .= '<strong>Performance Debug Monitor</strong><br>';
         $html .= 'Time: ' . $stats['execution_time'] . 'ms<br>';
         $html .= 'Memory: ' . $stats['memory_usage']['current'] . ' (Peak: ' . $stats['memory_usage']['peak'] . ')<br>';
         $html .= 'Queries: ' . $stats['queries']['count'] . ' (' . $stats['queries']['total_time'] . 'ms)<br>';

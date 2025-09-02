@@ -264,7 +264,7 @@ if (DEBUG_MODE) {
 
 2. **Asset Optimization**
    ```bash
-   npm run build:themes  # Optimized production builds
+   cd templates/assets/[theme] && pnpm run build  # Optimized production builds
    ```
 
 3. **Server Configuration**

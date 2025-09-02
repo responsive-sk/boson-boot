@@ -8,7 +8,7 @@
     <div class="container">
         <div class="section-header">
             <div class="section-badge">Rich API</div>
-            <h3>Expanding the boundaries of<br />standard capabilities</h3>
+            <h2>Expanding the boundaries of<br />standard capabilities</h2>
             <p>Boson provides not only the ability to create desktop applications, but also a variety of rich APIs for accessing PC subsystems.</p>
         </div>
         
@@ -24,7 +24,7 @@
                             <path d="M9 9L15 15M15 9L9 15" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </div>
-                    <h4>System Integration</h4>
+                    <h3>System Integration</h3>
                     <ul x-show="active" x-transition>
                         <li>File System Access</li>
                         <li>Registry Management</li>
@@ -43,7 +43,7 @@
                             <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </div>
-                    <h4>Hardware Access</h4>
+                    <h3>Hardware Access</h3>
                     <ul x-show="active" x-transition>
                         <li>Camera & Microphone</li>
                         <li>USB Devices</li>
@@ -62,7 +62,7 @@
                             <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </div>
-                    <h4>UI Components</h4>
+                    <h3>UI Components</h3>
                     <ul x-show="active" x-transition>
                         <li>Native Dialogs</li>
                         <li>System Tray</li>
@@ -81,7 +81,7 @@
                             <path d="M7 10L12 13L17 10" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </div>
-                    <h4>Network & Security</h4>
+                    <h3>Network & Security</h3>
                     <ul x-show="active" x-transition>
                         <li>HTTP/HTTPS Clients</li>
                         <li>WebSocket Support</li>
@@ -141,7 +141,7 @@ Boson\Notification::show([
 .mobile-development-section .section-badge {
     display: inline-block;
     padding: 0.5rem 1rem;
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #7a1a1a);
     color: white;
     border-radius: 20px;
     font-size: var(--font-size-small, 0.875rem);
@@ -151,7 +151,7 @@ Boson\Notification::show([
     margin-bottom: 1rem;
 }
 
-.mobile-development-section .section-header h3 {
+.mobile-development-section .section-header h2 {
     margin: 1rem 0;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
     font-size: var(--font-size-h3, 2rem);
@@ -190,15 +190,15 @@ Boson\Notification::show([
 
 .mobile-development-section .api-category:hover {
     transform: translateY(-4px);
-    border-color: var(--color-text-brand, #F93904);
+    border-color: var(--color-text-brand, #d63031);
 }
 
 .mobile-development-section .category-icon {
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #d63031);
     margin-bottom: 1rem;
 }
 
-.mobile-development-section .api-category h4 {
+.mobile-development-section .api-category h3 {
     margin: 0 0 1rem 0;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
     font-size: var(--font-size-h5, 1.25rem);

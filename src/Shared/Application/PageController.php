@@ -42,7 +42,7 @@ class PageController
     public function contact(array $params = []): string
     {
         $breadcrumbs = [
-            ['text' => 'Home', 'url' => '/'],
+            ['text' => 'Home - Boson', 'url' => '/'],
             ['text' => 'Contact', 'url' => null],
         ];
 
@@ -232,7 +232,7 @@ class PageController
     public function test(array $params = []): string
     {
         $breadcrumbs = [
-            ['label' => 'Home', 'url' => '/'],
+            ['label' => 'Home - Test', 'url' => '/'],
             ['label' => 'Components', 'url' => '/test'],
             ['label' => 'Test']
         ];

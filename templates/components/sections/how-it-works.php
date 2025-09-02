@@ -40,21 +40,21 @@
         <div class="tech-stack">
             <h4>Boson Technology Stack</h4>
             <div class="stack-items">
-                <div class="stack-item">
-                    <div class="icon">⚡</div>
-                    <h5>Native Performance</h5>
-                    <p>Direct system calls without browser overhead</p>
-                </div>
-                <div class="stack-item">
-                    <div class="icon">🔧</div>
-                    <h5>Modern PHP</h5>
-                    <p>PHP 8+ with all modern features and performance</p>
-                </div>
-                <div class="stack-item">
-                    <div class="icon">🎯</div>
-                    <h5>Cross-Platform</h5>
-                    <p>Single codebase for Windows, macOS, and Linux</p>
-                </div>
+            <div class="stack-item">
+                <div class="icon">⚡</div>
+                <h4>Native Performance</h4>
+                <p>Direct system calls without browser overhead</p>
+            </div>
+            <div class="stack-item">
+                <div class="icon">🔧</div>
+                <h4>Modern PHP</h4>
+                <p>PHP 8+ with all modern features and performance</p>
+            </div>
+            <div class="stack-item">
+                <div class="icon">🎯</div>
+                <h4>Cross-Platform</h4>
+                <p>Single codebase for Windows, macOS, and Linux</p>
+            </div>
             </div>
         </div>
     </div>
@@ -155,7 +155,7 @@
 .how-it-works-section .vs {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-text-brand, #F93904);
+    color: var(--color-text-brand, #b02425);
     flex-shrink: 0;
 }
 
@@ -191,7 +191,7 @@
     margin-bottom: 1rem;
 }
 
-.how-it-works-section .stack-item h5 {
+.how-it-works-section .stack-item h4 {
     margin: 0 0 1rem 0;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
 }

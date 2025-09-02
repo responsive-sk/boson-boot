@@ -159,7 +159,7 @@
                 theme: {
                     extend: {
                         colors: {
-                            'boson-orange': '#F93904',
+                            'boson-orange': '#7a1a1a',
                             'boson-dark': '#0d1119',
                             'boson-gray': '#0f131c'
                         }

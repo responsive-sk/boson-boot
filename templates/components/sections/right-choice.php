@@ -8,7 +8,7 @@
     <div class="container">
         <div class="choice-content">
             <div class="choice-header">
-                <h3>Why Boson is the Right Choice</h3>
+                <h2>Why Boson is the Right Choice</h2>
                 <p>Compare Boson with other desktop development solutions</p>
             </div>
             
@@ -66,19 +66,19 @@
             <div class="choice-benefits">
                 <div class="benefit">
                     <div class="benefit-icon">🚀</div>
-                    <h4>Familiar Technology</h4>
+                    <h3>Familiar Technology</h3>
                     <p>Use PHP skills you already have. No need to learn new languages or frameworks.</p>
                 </div>
                 
                 <div class="benefit">
                     <div class="benefit-icon">⚡</div>
-                    <h4>Superior Performance</h4>
+                    <h3>Superior Performance</h3>
                     <p>Native performance without the overhead of browser engines or heavy runtimes.</p>
                 </div>
-                
+
                 <div class="benefit">
                     <div class="benefit-icon">🔧</div>
-                    <h4>Rich Ecosystem</h4>
+                    <h3>Rich Ecosystem</h3>
                     <p>Access to thousands of PHP packages and libraries through Composer.</p>
                 </div>
             </div>
@@ -104,7 +104,7 @@
     margin-bottom: 3rem;
 }
 
-.right-choice-section .choice-header h3 {
+.right-choice-section .choice-header h2 {
     margin-bottom: 1rem;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
     font-size: var(--font-size-h3, 2rem);
@@ -136,7 +136,7 @@
 }
 
 .right-choice-section .table-header .boson {
-    background: var(--color-text-brand, #F93904);
+    background: var(--color-text-brand, #b02425);
     color: white;
 }
 
@@ -212,7 +212,7 @@
     margin-bottom: 1rem;
 }
 
-.right-choice-section .benefit h4 {
+.right-choice-section .benefit h3 {
     margin: 0 0 1rem 0;
     color: var(--color-text, rgba(255, 255, 255, 0.9));
 }
