@@ -22,6 +22,11 @@ if (!function_exists('env')) {
             return $default;
         }
         
+        // Clean value - remove comments and whitespace
+        if (is_string($value)) {
+            $value = trim(explode('#', $value)[0]);
+        }
+        
         // Handle boolean values
         if (is_string($value)) {
             $lower = strtolower($value);
@@ -48,11 +53,28 @@ if (!function_exists('config')) {
     function config(string $key, mixed $default = null): mixed
     {
         static $config = [];
+        static $cacheLoaded = false;
         
         // Load config if not already loaded
         if (empty($config)) {
+            // Ensure Config is loaded first to populate $_ENV
+            \Boson\Shared\Infrastructure\Config::getInstance();
+            
             $configPath = dirname(__DIR__, 3) . '/config';
-            if (is_dir($configPath)) {
+            $cacheFile = dirname(__DIR__, 3) . '/storage/cache/config.php';
+            $cacheEnabled = ($_ENV['CONFIG_CACHE'] ?? 'false') === 'true';
+            
+            // Try to load from cache first
+            if ($cacheEnabled && file_exists($cacheFile) && !$cacheLoaded) {
+                $cachedConfig = include $cacheFile;
+                if (is_array($cachedConfig)) {
+                    $config = $cachedConfig;
+                    $cacheLoaded = true;
+                }
+            }
+            
+            // Load from files if cache miss or disabled
+            if (empty($config) && is_dir($configPath)) {
                 $configFiles = glob($configPath . '/*.php');
                 foreach ($configFiles as $file) {
                     $configKey = basename($file, '.php');
@@ -60,6 +82,15 @@ if (!function_exists('config')) {
                     if (is_array($configData)) {
                         $config[$configKey] = $configData;
                     }
+                }
+                
+                // Save to cache if enabled
+                if ($cacheEnabled && !empty($config)) {
+                    $cacheDir = dirname($cacheFile);
+                    if (!is_dir($cacheDir)) {
+                        mkdir($cacheDir, 0755, true);
+                    }
+                    file_put_contents($cacheFile, '<?php return ' . var_export($config, true) . ';');
                 }
             }
         }

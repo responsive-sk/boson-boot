@@ -196,7 +196,7 @@ class ServiceFactory implements ContainerInterface
     public function createDatabase(): Database
     {
         if ($this->database === null) {
-            $this->database = new Database($this->createConfig());
+            $this->database = new Database();
         }
 
         return $this->database;
@@ -205,11 +205,10 @@ class ServiceFactory implements ContainerInterface
     public function createTemplateEngine()
     {
         if ($this->templateEngine === null) {
-            $config        = $this->createConfig();
             $templatesPath = PathManager::templates();
             $cachePath     = PathManager::cache('templates');
-            $cacheEnabled  = $config->get('TEMPLATE_CACHE', 'true') === 'true';
-            $cacheTtl      = (int) $config->get('TEMPLATE_CACHE_TTL', '3600');
+            $cacheEnabled  = config('view.cache_enabled', true);
+            $cacheTtl      = config('view.cache_ttl', 3600);
 
             $this->templateEngine = new TemplateEngineWithCache(
                 $templatesPath,
@@ -244,19 +243,18 @@ class ServiceFactory implements ContainerInterface
     public function createThemeManager(): ThemeManager
     {
         if ($this->themeManager === null) {
-            $currentTheme = $this->createConfig()->get('THEME', 'tailwind');
-
-            // Sanitize theme name to allow only valid characters (a-z, A-Z, 0-9, _, -)
-            $currentTheme = preg_replace('/[^a-zA-Z0-9_-]/', '', $currentTheme);
-
+            $currentTheme = config('themes.default', 'tailwind');
+            $availableThemes = array_keys(config('themes.available', ['tailwind' => []]));
+            
             // Validate theme and fallback to default if invalid
-            $validThemes = ['svelte', 'tailwind', 'bootstrap'];
-            if (!in_array($currentTheme, $validThemes)) {
+            if (!in_array($currentTheme, $availableThemes)) {
                 $currentTheme = 'tailwind';
             }
 
-            $version = $_ENV['VERSION'] ?? '1.0.0';
-            $this->themeManager = new ThemeManager($currentTheme, '/assets', $version);
+            $assetsPath = config('themes.assets.public_path', '/assets');
+            $version = config('themes.assets.version', '1.0.0');
+            
+            $this->themeManager = new ThemeManager($currentTheme, $assetsPath, $version);
         }
         return $this->themeManager;
     }
@@ -280,7 +278,6 @@ class ServiceFactory implements ContainerInterface
     public function createController(string $controllerName): object
     {
         $templateEngine = $this->createTemplateEngine();
-        $config         = $this->createConfig();
         $database       = $this->createDatabase();
         $articleService = $this->createArticleService();
         $themeManager   = $this->createThemeManager();

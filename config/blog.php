@@ -20,7 +20,7 @@ return [
     |
     */
 
-    'articles_per_page' => 3,
+    'articles_per_page' => env('ARTICLES_PER_PAGE', 10),
 
     /*
     |--------------------------------------------------------------------------
@@ -33,7 +33,7 @@ return [
     |
     */
 
-    'excerpt_length' => 150,
+    'excerpt_length' => env('BLOG_EXCERPT_LENGTH', 150),
 
     /*
     |--------------------------------------------------------------------------
@@ -60,8 +60,8 @@ return [
     */
 
     'search' => [
-        'min_length' => 2,
-        'max_results' => 50,
+        'min_length' => env('SEARCH_MIN_LENGTH', 2),
+        'max_results' => env('SEARCH_MAX_RESULTS', 50),
     ],
 
     /*

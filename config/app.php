@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'name' => 'Boson PHP',
+    'name' => env('APP_NAME', 'Boson PHP'),
 
     /*
     |--------------------------------------------------------------------------
@@ -25,7 +25,7 @@ return [
     |
     */
 
-    'env' => 'production',
+    'env' => env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +38,7 @@ return [
     |
     */
 
-    'debug' => false,
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ return [
     |
     */
 
-    'url' => 'http://localhost:8080',
+    'url' => env('APP_URL', 'http://localhost:8080'),
 
     /*
     |--------------------------------------------------------------------------
@@ -106,4 +106,16 @@ return [
     'key' => 'base64:',
 
     'cipher' => 'AES-256-CBC',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the default admin user that gets seeded.
+    |
+    */
+
+    'admin_email' => env('ADMIN_EMAIL', 'admin@bosonphp.com'),
+    'admin_password' => env('ADMIN_PASSWORD', 'admin123'),
 ];

@@ -1,0 +1,77 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Boson\Shared\Infrastructure\Config;
+
+function clearConfigCache(): void
+{
+    $cacheFile = __DIR__ . '/../storage/cache/config.php';
+    
+    if (file_exists($cacheFile)) {
+        unlink($cacheFile);
+        echo "✅ Config cache cleared successfully.\n";
+    } else {
+        echo "ℹ️  Config cache file does not exist.\n";
+    }
+}
+
+function generateConfigCache(): void
+{
+    // Force config loading
+    $config = [];
+    $configPath = __DIR__ . '/../config';
+    
+    if (is_dir($configPath)) {
+        // Load environment first
+        Config::getInstance();
+        
+        $configFiles = glob($configPath . '/*.php');
+        foreach ($configFiles as $file) {
+            $configKey = basename($file, '.php');
+            $configData = include $file;
+            if (is_array($configData)) {
+                $config[$configKey] = $configData;
+            }
+        }
+    }
+    
+    $cacheFile = __DIR__ . '/../storage/cache/config.php';
+    $cacheDir = dirname($cacheFile);
+    
+    if (!is_dir($cacheDir)) {
+        mkdir($cacheDir, 0755, true);
+    }
+    
+    file_put_contents($cacheFile, '<?php return ' . var_export($config, true) . ';');
+    echo "✅ Config cache generated successfully.\n";
+    echo "📁 Cache saved to: $cacheFile\n";
+}
+
+$command = $argv[1] ?? 'help';
+
+switch ($command) {
+    case 'clear':
+        clearConfigCache();
+        break;
+        
+    case 'cache':
+    case 'generate':
+        generateConfigCache();
+        break;
+        
+    case 'help':
+    default:
+        echo "Boson PHP Config Cache Management\n";
+        echo "=================================\n\n";
+        echo "Usage:\n";
+        echo "  ./bin/config-cache clear     Clear config cache\n";
+        echo "  ./bin/config-cache cache     Generate config cache\n";
+        echo "  ./bin/config-cache help      Show this help\n\n";
+        echo "Environment Variables:\n";
+        echo "  CONFIG_CACHE=true            Enable config caching\n";
+        break;
+}

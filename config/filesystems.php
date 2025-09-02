@@ -12,7 +12,7 @@ return [
     |
     */
 
-    'default' => 'local',
+    'default' => env('FILESYSTEM_DISK', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -28,47 +28,36 @@ return [
     'disks' => [
         'local' => [
             'driver' => 'local',
-            'root' => './storage/app',
+            'root' => storage_path('uploads'),
         ],
 
         'public' => [
             'driver' => 'local',
-            'root' => './storage/app/public',
-            'url' => '/storage',
+            'root' => public_path('uploads'),
+            'url' => env('APP_URL') . '/uploads',
             'visibility' => 'public',
-        ],
-
-        'uploads' => [
-            'driver' => 'local',
-            'root' => './public/uploads',
-            'url' => '/uploads',
-            'visibility' => 'public',
-        ],
-
-        's3' => [
-            'driver' => 's3',
-            'key' => '',
-            'secret' => '',
-            'region' => '',
-            'bucket' => '',
-            'url' => '',
-            'endpoint' => '',
-            'use_path_style_endpoint' => false,
         ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Symbolic Links
+    | File Upload Configuration
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
+    | Configuration for file uploads including size limits and allowed types.
     |
     */
 
-    'links' => [
-        './public/storage' => './storage/app/public',
+    'uploads' => [
+        'path' => env('UPLOAD_PATH', './public/uploads'),
+        'max_size' => env('UPLOAD_MAX_SIZE', 10485760), // 10MB in bytes
+        'allowed_types' => explode(',', env('UPLOAD_ALLOWED_TYPES', 'jpg,jpeg,png,gif,webp')),
+        'allowed_mimes' => [
+            'jpg' => 'image/jpeg',
+            'jpeg' => 'image/jpeg', 
+            'png' => 'image/png',
+            'gif' => 'image/gif',
+            'webp' => 'image/webp',
+        ],
     ],
 ];

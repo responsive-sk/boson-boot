@@ -13,7 +13,7 @@ return [
     */
 
     'paths' => [
-        'resources/views',
+        'templates',
     ],
 
     /*
@@ -21,11 +21,23 @@ return [
     | Compiled View Path
     |--------------------------------------------------------------------------
     |
-    | This option determines where all the compiled Blade templates will be
+    | This option determines where all the compiled templates will be
     | stored for your application. Typically, this is within the storage
     | directory. However, as usual, you are free to change this value.
     |
     */
 
-    'compiled' => 'storage/framework/views',
+    'compiled' => env('VIEW_COMPILED_PATH', 'storage/cache/templates'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Template Engine Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the template engine including caching and extensions.
+    |
+    */
+
+    'cache_enabled' => env('TEMPLATE_CACHE', true),
+    'cache_ttl' => env('TEMPLATE_CACHE_TTL', 3600),
 ];

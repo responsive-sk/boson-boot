@@ -78,12 +78,12 @@ class SearchController extends AbstractController
 
     private function performSearch(string $query): array
     {
-        if (strlen($query) < $this->config->getSearchMinLength()) {
+        if (strlen($query) < config('blog.search.min_length', 2)) {
             return [];
         }
 
         $results    = [];
-        $maxResults = $this->config->getSearchMaxResults();
+        $maxResults = config('blog.search.max_results', 50);
 
         // Search articles using FTS
         $articleResults = $this->searchArticles($query, $maxResults);

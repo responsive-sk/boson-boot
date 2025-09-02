@@ -6,7 +6,6 @@ namespace Boson\Shared\Infrastructure\Persistence;
 
 use Boson\Shared\Infrastructure\Caching\FileCache;
 use Boson\Shared\Infrastructure\Caching\QueryCache;
-use Boson\Shared\Infrastructure\Config;
 use Boson\Shared\Infrastructure\PathManager;
 use PDO;
 use PDOException;
@@ -18,13 +17,10 @@ class Database
 {
     private static ?PDO $connection = null;
 
-    private Config $config;
-
     private ?QueryCache $queryCache = null;
 
-    public function __construct(Config $config)
+    public function __construct()
     {
-        $this->config = $config;
     }
 
     public function getConnection(): PDO
@@ -76,7 +72,7 @@ class Database
     private function connect(): void
     {
         try {
-            $dbPath = $this->config->getDbPath();
+            $dbPath = config('database.connections.sqlite.database', './database/blog.sqlite');
             $dbDir  = dirname($dbPath);
 
             // Create database directory if it doesn't exist
@@ -93,7 +89,7 @@ class Database
             ]);
 
             // Enable foreign keys
-            if ($this->config->get('DB_FOREIGN_KEYS', 'true') === 'true') {
+            if (config('database.connections.sqlite.foreign_key_constraints', true)) {
                 self::$connection->exec('PRAGMA foreign_keys = ON');
             }
 
@@ -272,9 +268,8 @@ class Database
 
     private function seedUsers(): void
     {
-        $config   = Config::getInstance();
-        $email    = $config->get('ADMIN_EMAIL', 'admin@bosonphp.com');
-        $password = password_hash($config->get('ADMIN_PASSWORD', 'admin123'), PASSWORD_DEFAULT);
+        $email    = config('app.admin_email', 'admin@bosonphp.com');
+        $password = password_hash(config('app.admin_password', 'admin123'), PASSWORD_DEFAULT);
 
         $sql  = 'INSERT OR IGNORE INTO users (email, password, name, role) VALUES (?, ?, ?, ?)';
         $stmt = $this->getConnection()->prepare($sql);

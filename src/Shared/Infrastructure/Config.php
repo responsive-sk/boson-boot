@@ -136,6 +136,10 @@ class Config
                 $key           = trim($key);
                 $value         = trim($value, " \t\n\r\0\x0B\"'");
 
+                // Remove comments from value
+                $value = trim(explode('#', $value)[0]);
+                $value = trim($value, " \t\n\r\0\x0B\"'");
+
                 // Handle base64 encoded values
                 if (strpos($value, 'base64:') === 0) {
                     $value = base64_decode(substr($value, 7), true);
