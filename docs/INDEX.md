@@ -37,6 +37,17 @@ Comprehensive security documentation covering all implemented security measures.
 - Rate limiting
 - Authentication and authorization
 
+### [CONFIG.md](CONFIG.md)
+Laravel-style configuration system documentation with environment variables and caching.
+
+**Contents:**
+- Configuration structure and usage
+- Environment variables management
+- Config caching system
+- Migration from old system
+- Helper functions and best practices
+- CLI tools for cache management
+
 ### [THEMES.md](THEMES.md)
 Complete theme system documentation for developers working with multiple frontend frameworks.
 
@@ -79,8 +90,9 @@ Performance optimization guide and monitoring documentation.
 ### Getting Started
 1. Read [README.md](README.md) for basic setup
 2. Follow installation instructions
-3. Review [THEMES.md](THEMES.md) for theme selection
-4. Check [SECURITY.md](SECURITY.md) for security configuration
+3. Configure environment variables ([CONFIG.md](CONFIG.md))
+4. Review [THEMES.md](THEMES.md) for theme selection
+5. Check [SECURITY.md](SECURITY.md) for security configuration
 
 ### Development Workflow
 1. Set up development environment (README.md)
@@ -117,6 +129,7 @@ docs/
 ├── INDEX.md           # This file - documentation index
 ├── README.md          # Main project documentation
 ├── KERNEL.md          # Kernel architecture documentation
+├── CONFIG.md          # Configuration system documentation
 ├── SECURITY.md        # Security features and configuration
 ├── THEMES.md          # Theme system documentation
 ├── ASSETS.md          # Asset management system
@@ -131,6 +144,13 @@ docs/
 - Domain-driven design
 - Template caching
 - CLI tools
+
+### CONFIG.md
+- Laravel-style config
+- Environment variables
+- Config caching
+- Dot notation syntax
+- Helper functions
 
 ### SECURITY.md
 - Security headers
@@ -195,6 +215,7 @@ docs/
 
 ### Required Reading
 - README.md (setup and installation)
+- CONFIG.md (configuration system)
 - THEMES.md (if working with themes)
 - ASSETS.md (for asset management)
 

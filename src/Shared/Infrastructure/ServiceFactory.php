@@ -240,6 +240,13 @@ class ServiceFactory implements ContainerInterface
         return $this->articleService;
     }
 
+    private function createArticleController($templateEngine, $themeManager): ArticleController
+    {
+        $controller = new ArticleController($templateEngine, $themeManager);
+        $controller->setArticleApplicationService($this->createArticleApplicationService());
+        return $controller;
+    }
+
     public function createThemeManager(): ThemeManager
     {
         if ($this->themeManager === null) {
@@ -284,7 +291,7 @@ class ServiceFactory implements ContainerInterface
 
         $controller = match ($controllerName) {
             'HomeController'   => new HomeController($templateEngine, $themeManager),
-            'ArticleController' => new ArticleController($templateEngine, $themeManager),
+            'ArticleController' => $this->createArticleController($templateEngine, $themeManager),
             'DocsController'   => new DocsController($templateEngine, $themeManager),
             'SearchController' => new SearchController($templateEngine, $themeManager),
             'PageController'   => new PageController($templateEngine, $themeManager),
